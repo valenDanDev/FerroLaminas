@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: LaminasEquipo1, Tenant: INSTITUTO TECNOLOGICO METROPOLITANO - ITM (correo.itm.edu.co - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}
