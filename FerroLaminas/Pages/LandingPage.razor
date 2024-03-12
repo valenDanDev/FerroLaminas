@@ -1,0 +1,47 @@
+﻿@layout LadingLayout
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+
+<PageTitle>Ferro Laminas</PageTitle>
+
+<div class="Landing-page">
+    <img aria-live="polite" class="@logoClass" src="/utils/logo-img.png" alt="Logo" />
+    <img class="@logoTextClass" src="/utils/logo-text.png" alt="Logo-Text" />
+    <div class="@formClass">
+        <AuthorizeView>
+            <Authorized>
+                @{
+                    Navigation.NavigateToLogin("/home");
+                }
+            </Authorized>
+            <NotAuthorized>
+                <a href="authentication/login" class="login-button">Log in</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</div>
+
+@code {
+    private string logoClass { get; set; }
+    private string logoTextClass { get; set; }
+    private string formClass { get; set; }
+    private Timer timer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        logoClass = "logo-rotation";
+        logoTextClass = "logo-text";
+        formClass = "form-login-hiden";
+        timer = new Timer(EjecutarTimeout, null, 4000, Timeout.Infinite);
+    }
+
+    private void EjecutarTimeout(object state)
+    {
+        logoClass = "logo";
+        logoTextClass = "logo-text-hiden";
+        formClass = "form-login";
+        StateHasChanged();
+    }
+}

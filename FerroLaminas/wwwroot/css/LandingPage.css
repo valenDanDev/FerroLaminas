@@ -1,0 +1,61 @@
+﻿.Landing-page {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction: column;
+    gap: 30px;
+    min-height: 100vh;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.logo-rotation {
+    animation: rotation 2s linear infinite;
+}
+
+.form-login-hiden {
+    transform: scale(0);
+    border: none;
+    padding: 0;
+    transition: all ease-in-out 1s;
+    overflow: hidden;
+}
+
+.form-login {
+    padding: 12px 16px;
+    margin: 0 auto;
+    height: max-content;
+    overflow: hidden;
+    width: max-content;
+    max-width: 420px;
+    display: flex;
+    transform: scale(1);
+    transition: all ease-in-out 1s;
+}
+
+.login-button {
+    padding: 4px 6px;
+    border-radius: 9px;
+    border: 1px solid rgb(97, 97, 97);
+    width: max-content;
+    margin: 0 auto;
+    font-size: 22px;
+    background-color: transparent;
+    color: rgb(97, 97, 97);
+    text-decoration: none;
+}
+
+.login-button:hover {
+    color: black;
+    border: none;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
+}
