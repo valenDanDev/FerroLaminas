@@ -1,0 +1,85 @@
+﻿.cotizacion-title {
+    font-size: 22px;
+    color: rgb(97, 97, 97);
+    margin: 12px 0;
+}
+
+.cotizacion-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cotizacion-form > div {
+    display: flex;
+    gap: 6px;
+}
+
+.cotizacion-form > div > label {
+    font-size: 18px;
+    color: rgb(97, 97, 97);
+}
+
+.cotizacion-form > div > input {
+    font-size: 16px;
+    color: black;
+    border-radius: 9px;
+    width: 100%;
+}
+
+.cotizacion-form > button {
+    padding: 4px 6px;
+    border-radius: 9px;
+    border: 1px solid rgb(97, 97, 97);
+    width: max-content;
+    margin: 0 auto;
+    font-size: 18px;
+    background-color: transparent;
+    color: rgb(97, 97, 97);
+    text-decoration: none;
+}
+
+.cotizacion-form > button:hover {
+    color: black;
+    border: none;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
+}
+
+.cotizacion-total {
+    font-size: 18px;
+    color: rgb(97, 97, 97);
+}
+
+.cotizacion-submit {
+    padding: 4px 6px;
+    border-radius: 9px;
+    border: 1px solid rgb(97, 97, 97);
+    width: max-content;
+    margin: 0 auto;
+    font-size: 22px;
+    background-color: transparent;
+    color: rgb(97, 97, 97);
+    text-decoration: none;
+}
+
+.cotizacion-submit:hover {
+    color: black;
+    border: none;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
+}
+
+@media screen and (min-width: 577px) {
+    .cotizacion-title {
+        font-size: 32px;
+    }
+
+    .cotizacion-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 12px;
+    }
+
+    .cotizacion-form > button {
+        grid-column: span 2;
+    }
+}

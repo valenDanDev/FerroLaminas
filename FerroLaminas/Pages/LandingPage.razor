@@ -13,7 +13,7 @@
         <AuthorizeView>
             <Authorized>
                 @{
-                    Navigation.NavigateToLogin("/home");
+                    Navigation.NavigateToLogin("/cotizaciones");
                 }
             </Authorized>
             <NotAuthorized>
@@ -34,7 +34,7 @@
         logoClass = "logo-rotation";
         logoTextClass = "logo-text";
         formClass = "form-login-hiden";
-        timer = new Timer(EjecutarTimeout, null, 4000, Timeout.Infinite);
+        timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
     }
 
     private void EjecutarTimeout(object state)
