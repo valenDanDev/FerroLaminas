@@ -1,68 +1,135 @@
-.navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
+.navbar-mobile {
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
 }
 
-.top-row {
-    height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+.navbar {
+    display: none;
 }
 
-.navbar-brand {
-    font-size: 1.1rem;
+.logout-button {
+    padding: 4px 6px;
+    border-radius: 9px;
+    border: 1px solid rgb(97, 97, 97);
+    width: max-content;
+    margin: 0 auto;
+    font-size: 22px;
+    background-color: transparent;
+    color: rgb(97, 97, 97);
+    text-decoration: none;
 }
 
-.oi {
-    width: 2rem;
-    font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
+.logout-button:hover {
+    color: black;
+    border: none;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
 }
 
-.nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+.menu-botton {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
 }
 
-    .nav-item:first-of-type {
-        padding-top: 1rem;
-    }
-
-    .nav-item:last-of-type {
-        padding-bottom: 1rem;
-    }
-
-    .nav-item ::deep a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        line-height: 3rem;
-    }
-
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
+.menu-botton > div {
+    height: 10px;
+    width: 100%;
+    border-radius: 100px;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
 }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
+.menu-botton-active {
+    padding: 6px;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
 }
 
-@media (min-width: 641px) {
-    .navbar-toggler {
+.menu-botton-active > div {
+    height: 10px;
+    width: 100%;
+    border-radius: 100px;
+    background: black;
+}
+
+.menu,
+.menu-show {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: black;
+    z-index: 1;
+    width: 100vw;
+    height: calc(100vh - 55px);
+}
+
+.menu {
+    position: absolute;
+    top: 100%;
+    left: -100%;
+    transition: 1s all;
+}
+
+.menu-show {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transition: 1s all;
+
+}
+
+.menu-show > a,
+.menu > a {
+    font-size: 20px;
+    color: rgb(97, 97, 97);
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+.menu-show > a:hover,
+.menu-show > a:active,
+.menu > a:hover,
+.menu > a:active {
+    background: linear-gradient(to right, rgb(97, 97, 97) 0%, rgb(230, 231, 232) 50%, rgb(97, 97, 97) 100%);
+    color: black;
+    border-radius: 100px;
+}
+
+ @media screen and (min-width: 577px){
+    .navbar-mobile {
         display: none;
     }
 
-    .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
+    .navbar {
+        display: flex;
+        padding: 0 12px;
     }
-    
-    .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
-        overflow-y: auto;
+
+    .logo-navbar {
+        max-height: 50px
     }
-}
+
+    .links > a {
+        font-size: 16px;
+        color: rgb(97, 97, 97);
+        text-decoration: none;
+        padding: 8px 12px;
+    }
+
+    .links > a:hover,
+    .links > a:active {
+        border-bottom: 1px solid rgb(97, 97, 97);
+    }
+ }

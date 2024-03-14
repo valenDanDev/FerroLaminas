@@ -1,39 +1,79 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">FerroLaminas</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<nav class="navbar-mobile">
+    <button class="@getMenuButtonClass()" @onclick="@setShowMenu">
+        <div/>
+        <div />
+        <div />
+    </button>
+    <div>
+        <AuthorizeView>
+            <Authorized>
+                <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+            </Authorized>
+            <NotAuthorized>
+                <a href="authentication/login">Log in</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+    <div class="@isShowMenu()">
+        <a href="/cotizaciones">Cotizaciones</a>
+        <a href="/ordenes-de-trabajo">Órdenes de trabajo</a>
+    </div>
+</nav>
+<nav class="navbar">
+    <div>
+        <img aria-live="polite" class="logo-navbar" src="/utils/logo-img.png" alt="Logo" />
+    </div>
+    <div class="links">
+        <a href="/cotizaciones">Cotizaciones</a>
+        <a href="/ordenes-de-trabajo">Órdenes de trabajo</a>
+    </div>
+    <div>
+        <AuthorizeView>
+            <Authorized>
+                <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+            </Authorized>
+            <NotAuthorized>
+                <a href="authentication/login">Log in</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</nav>
 
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    private int menuSelected { get; set; }
+    private bool showMenu { get; set; }
+    protected override void OnInitialized()
     {
-        collapseNavMenu = !collapseNavMenu;
+        showMenu = false;
+    }
+
+    public void setShowMenu()
+    {
+        showMenu = !showMenu;
+        StateHasChanged();
+    }
+
+    public string getMenuButtonClass()
+    {
+        if (!showMenu) return "menu-botton";
+
+        return "menu-botton-active";
+    }
+
+    public string isShowMenu()
+    {
+        if (!showMenu) return "menu";
+
+        return "menu-show";
+    }
+
+    public void BeginLogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
     }
 }
