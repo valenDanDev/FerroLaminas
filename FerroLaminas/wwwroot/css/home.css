@@ -1,0 +1,12 @@
+﻿.home-title {
+    font-size: 32px;
+    color: rgb(97, 97, 97);
+    margin: 12px 0;
+    text-align: center;
+}
+
+.home-message {
+    font-size: 20px;
+    color: rgb(97, 97, 97);
+    text-align: center;
+}

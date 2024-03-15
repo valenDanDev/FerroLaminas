@@ -12,7 +12,10 @@
     <div>
         <AuthorizeView>
             <Authorized>
-                <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+                <div class="user-content">
+                    <p class="user-name">@context.User.Identity.Name</p>
+                    <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+                </div>
             </Authorized>
             <NotAuthorized>
                 <a href="authentication/login">Log in</a>
@@ -20,13 +23,16 @@
         </AuthorizeView>
     </div>
     <div class="@isShowMenu()">
+        <a href="/home">Home</a>
         <a href="/cotizaciones">Cotizaciones</a>
         <a href="/ordenes-de-trabajo">Órdenes de trabajo</a>
     </div>
 </nav>
 <nav class="navbar">
     <div>
-        <img aria-live="polite" class="logo-navbar" src="/utils/logo-img.png" alt="Logo" />
+        <a href="/home">
+            <img aria-live="polite" class="logo-navbar" src="/utils/logo-img.png" alt="Logo" />
+        </a>
     </div>
     <div class="links">
         <a href="/cotizaciones">Cotizaciones</a>
@@ -35,7 +41,10 @@
     <div>
         <AuthorizeView>
             <Authorized>
-                <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+                <div class="user-content">
+                    <p class="user-name">@context.User.Identity.Name</p>
+                    <button class="logout-button" @onclick="BeginLogOut">Log out</button>
+                </div>
             </Authorized>
             <NotAuthorized>
                 <a href="authentication/login">Log in</a>

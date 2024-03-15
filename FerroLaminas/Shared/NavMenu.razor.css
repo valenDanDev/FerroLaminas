@@ -9,6 +9,18 @@
     display: none;
 }
 
+.user-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.user-name {
+    color: rgb(97, 97, 97);
+    font-size: 12px;
+    margin: 0;
+}
+
 .logout-button {
     padding: 4px 6px;
     border-radius: 9px;
