@@ -6,8 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Configure host configuration
-//leer produccion
+//esto es para ejecutar la cadena de conexion que esta en produccion
 //builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+//esto ejecuta la cadena de conexion que esta en desarollo en el entorno local
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
