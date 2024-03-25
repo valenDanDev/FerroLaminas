@@ -6,8 +6,15 @@
         public int ClienteId { get; set; }
         public int ProyectoId { get; set; }
         public int MaterialId { get; set; }
-        public int Calibre { get; set; }
+        public int ServicioId { get; set; } // Corrección
         public decimal PrecioTotal { get; set; }
+        public decimal PesoLamina { get; set; }
+
+        public Cliente Cliente { get; set; }
+        public Material Material { get; set; }
+        public Servicio Servicio { get; set; }
+        public OrdenDeTrabajo OrdenDeTrabajo { get; set; }
+        public Proyecto Proyecto { get; set; } // Corrección
 
     }
 }

@@ -1,19 +1,13 @@
 ﻿namespace API_FerroLaminas.Models
 {
-    public class Material
+    public class Servicio
     {
         public int Id { get; set; }
-        public string Tipo { get; set; }
+        public string Nombre { get; set; }
         public decimal PrecioPorKilo { get; set; } // Precio por kilogramo
-        public decimal StockKilos { get; set; } // Stock en kilogramos
         public string Descripcion { get; set; }
-
-        // Relación con Calibre
-        public int CalibreId { get; set; }
-        public Calibre Calibre { get; set; }
 
         // Relación con Cotizaciones
         public ICollection<Cotizacion> Cotizaciones { get; set; }
-
     }
 }

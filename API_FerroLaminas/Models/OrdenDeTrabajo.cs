@@ -7,7 +7,12 @@
         public int OperarioId { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
-        public string Estado { get; set; }
+        public int EstadoId { get; set; }
+        public EstadoOrdenTrabajo Estado { get; set; }
+        // Relación con Cotizacion
+        public Cotizacion Cotizacion { get; set; } // Agregar esta propiedad
 
+        // Relación con Seguimientos
+        public ICollection<Seguimiento> Seguimientos { get; set; }
     }
 }
