@@ -25,6 +25,7 @@ namespace API_FerroLaminas.Data
         public DbSet<OrdenDeTrabajo> OrdenesDeTrabajo { get; set; }
         public DbSet<Rol> Roles { get; set; }
         public DbSet<EstadoOrdenTrabajo> EstadosOrdenTrabajo { get; set; }
+        public DbSet<TipoCorte> TiposCorte { get; set; }
 
         public DbSet<Seguimiento> Seguimientos { get; set; }
 
@@ -32,6 +33,13 @@ namespace API_FerroLaminas.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Cliente>()
+                .HasKey(c => c.cedula); // Define la propiedad cedula como clave primaria
+
+            modelBuilder.Entity<Cliente>()
+                .Property(c => c.cedula)
+                .ValueGeneratedNever(); // Indica que el valor para la propiedad cedula no es generado automáticamente
+
             modelBuilder.Entity<Cotizacion>()
                 .HasOne(c => c.Cliente)
                 .WithMany(c => c.Cotizaciones)
@@ -48,7 +56,7 @@ namespace API_FerroLaminas.Data
                 .HasForeignKey(c => c.ServicioId); // Corrección
 
             modelBuilder.Entity<Calibre>()
-                .Property(c => c.PrecioPorKilo)
+                .Property(c => c.MedidaCalibre)
                 .HasColumnType("decimal(18, 2)");
 
             modelBuilder.Entity<Cotizacion>()
@@ -95,6 +103,18 @@ namespace API_FerroLaminas.Data
             modelBuilder.Entity<Seguimiento>()
                 .Property(s => s.Avance)
                 .HasColumnType("decimal(3, 2)");
+
+            // Configuración de la relación entre Servicio y TipoCorte
+            modelBuilder.Entity<Servicio>()
+                .HasMany(s => s.TiposCorte)
+                .WithOne(tc => tc.Servicio)
+                .HasForeignKey(tc => tc.ServicioId);
+
+            modelBuilder.Entity<TipoCorte>()
+                .Property(s => s.PrecioPorKilo)
+                .HasColumnType("decimal(18, 2)");
+
+            base.OnModelCreating(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }

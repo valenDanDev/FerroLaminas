@@ -7,5 +7,7 @@
         public string Email { get; set; }
         public int RolId { get; set; } // Corrección
         public Rol Rol { get; set; }
+        // Relación con Cotizaciones
+        public ICollection<Cotizacion> Cotizaciones { get; set; }
     }
 }

@@ -30,21 +30,23 @@ namespace API_FerroLaminas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("PrecioPorKilo")
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MedidaCalibre")
                         .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
 
                     b.ToTable("Calibres");
                 });
 
             modelBuilder.Entity("API_FerroLaminas.Models.Cliente", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("cedula")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Direccion")
                         .IsRequired()
@@ -65,7 +67,7 @@ namespace API_FerroLaminas.Migrations
                     b.Property<int>("UbicacionId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("cedula");
 
                     b.HasIndex("UbicacionId");
 
@@ -98,6 +100,9 @@ namespace API_FerroLaminas.Migrations
                     b.Property<int>("ServicioId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
@@ -107,6 +112,8 @@ namespace API_FerroLaminas.Migrations
                     b.HasIndex("ProyectoId");
 
                     b.HasIndex("ServicioId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Cotizaciones");
                 });
@@ -136,9 +143,6 @@ namespace API_FerroLaminas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CalibreId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -154,8 +158,6 @@ namespace API_FerroLaminas.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CalibreId");
 
                     b.ToTable("Materiales");
                 });
@@ -180,8 +182,13 @@ namespace API_FerroLaminas.Migrations
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OperarioId")
-                        .HasColumnType("int");
+                    b.Property<string>("OperarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("nombreOperario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -287,6 +294,35 @@ namespace API_FerroLaminas.Migrations
                     b.ToTable("Servicios");
                 });
 
+            modelBuilder.Entity("API_FerroLaminas.Models.TipoCorte", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PrecioPorKilo")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("ServicioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServicioId");
+
+                    b.ToTable("TiposCorte");
+                });
+
             modelBuilder.Entity("API_FerroLaminas.Models.Ubicacion", b =>
                 {
                     b.Property<int>("Id")
@@ -338,6 +374,17 @@ namespace API_FerroLaminas.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("API_FerroLaminas.Models.Calibre", b =>
+                {
+                    b.HasOne("API_FerroLaminas.Models.Material", "Material")
+                        .WithMany("Calibres")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+                });
+
             modelBuilder.Entity("API_FerroLaminas.Models.Cliente", b =>
                 {
                     b.HasOne("API_FerroLaminas.Models.Ubicacion", "Ubicacion")
@@ -375,6 +422,12 @@ namespace API_FerroLaminas.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API_FerroLaminas.Models.Usuario", "Usuario")
+                        .WithMany("Cotizaciones")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Cliente");
 
                     b.Navigation("Material");
@@ -382,17 +435,8 @@ namespace API_FerroLaminas.Migrations
                     b.Navigation("Proyecto");
 
                     b.Navigation("Servicio");
-                });
 
-            modelBuilder.Entity("API_FerroLaminas.Models.Material", b =>
-                {
-                    b.HasOne("API_FerroLaminas.Models.Calibre", "Calibre")
-                        .WithMany()
-                        .HasForeignKey("CalibreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Calibre");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("API_FerroLaminas.Models.OrdenDeTrabajo", b =>
@@ -425,6 +469,17 @@ namespace API_FerroLaminas.Migrations
                     b.Navigation("OrdenDeTrabajo");
                 });
 
+            modelBuilder.Entity("API_FerroLaminas.Models.TipoCorte", b =>
+                {
+                    b.HasOne("API_FerroLaminas.Models.Servicio", "Servicio")
+                        .WithMany("TiposCorte")
+                        .HasForeignKey("ServicioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Servicio");
+                });
+
             modelBuilder.Entity("API_FerroLaminas.Models.Usuario", b =>
                 {
                     b.HasOne("API_FerroLaminas.Models.Rol", "Rol")
@@ -449,6 +504,8 @@ namespace API_FerroLaminas.Migrations
 
             modelBuilder.Entity("API_FerroLaminas.Models.Material", b =>
                 {
+                    b.Navigation("Calibres");
+
                     b.Navigation("Cotizaciones");
                 });
 
@@ -463,6 +520,13 @@ namespace API_FerroLaminas.Migrations
                 });
 
             modelBuilder.Entity("API_FerroLaminas.Models.Servicio", b =>
+                {
+                    b.Navigation("Cotizaciones");
+
+                    b.Navigation("TiposCorte");
+                });
+
+            modelBuilder.Entity("API_FerroLaminas.Models.Usuario", b =>
                 {
                     b.Navigation("Cotizaciones");
                 });

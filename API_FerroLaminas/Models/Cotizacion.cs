@@ -16,5 +16,9 @@
         public OrdenDeTrabajo OrdenDeTrabajo { get; set; }
         public Proyecto Proyecto { get; set; } // Corrección
 
+        // Relación con Usuarios
+        public int UsuarioId { get; set; } // Clave foránea de Usuario
+        public Usuario Usuario { get; set; }
+
     }
 }

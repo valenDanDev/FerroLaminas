@@ -6,24 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API_FerroLaminas.Migrations
 {
     /// <inheritdoc />
-    public partial class migracionModelo : Migration
+    public partial class migracionCorrecion2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Calibres",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PrecioPorKilo = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Calibres", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "EstadosOrdenTrabajo",
                 columns: table => new
@@ -35,6 +22,22 @@ namespace API_FerroLaminas.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EstadosOrdenTrabajo", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Materiales",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrecioPorKilo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    StockKilos = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Materiales", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,24 +99,21 @@ namespace API_FerroLaminas.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Materiales",
+                name: "Calibres",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PrecioPorKilo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StockKilos = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CalibreId = table.Column<int>(type: "int", nullable: false)
+                    MedidaCalibre = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaterialId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Materiales", x => x.Id);
+                    table.PrimaryKey("PK_Calibres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Materiales_Calibres_CalibreId",
-                        column: x => x.CalibreId,
-                        principalTable: "Calibres",
+                        name: "FK_Calibres_Materiales_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materiales",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -140,11 +140,32 @@ namespace API_FerroLaminas.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clientes",
+                name: "TiposCorte",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PrecioPorKilo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServicioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TiposCorte", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TiposCorte_Servicios_ServicioId",
+                        column: x => x.ServicioId,
+                        principalTable: "Servicios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Clientes",
+                columns: table => new
+                {
+                    cedula = table.Column<int>(type: "int", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -153,7 +174,7 @@ namespace API_FerroLaminas.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.PrimaryKey("PK_Clientes", x => x.cedula);
                     table.ForeignKey(
                         name: "FK_Clientes_Ubicaciones_UbicacionId",
                         column: x => x.UbicacionId,
@@ -173,7 +194,8 @@ namespace API_FerroLaminas.Migrations
                     MaterialId = table.Column<int>(type: "int", nullable: false),
                     ServicioId = table.Column<int>(type: "int", nullable: false),
                     PrecioTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PesoLamina = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    PesoLamina = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -182,7 +204,7 @@ namespace API_FerroLaminas.Migrations
                         name: "FK_Cotizaciones_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
-                        principalColumn: "Id",
+                        principalColumn: "cedula",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Cotizaciones_Materiales_MaterialId",
@@ -202,6 +224,12 @@ namespace API_FerroLaminas.Migrations
                         principalTable: "Servicios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cotizaciones_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,7 +239,8 @@ namespace API_FerroLaminas.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CotizacionId = table.Column<int>(type: "int", nullable: false),
-                    OperarioId = table.Column<int>(type: "int", nullable: false),
+                    OperarioId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    nombreOperario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstadoId = table.Column<int>(type: "int", nullable: false)
@@ -256,6 +285,11 @@ namespace API_FerroLaminas.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Calibres_MaterialId",
+                table: "Calibres",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clientes_UbicacionId",
                 table: "Clientes",
                 column: "UbicacionId");
@@ -281,9 +315,9 @@ namespace API_FerroLaminas.Migrations
                 column: "ServicioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Materiales_CalibreId",
-                table: "Materiales",
-                column: "CalibreId");
+                name: "IX_Cotizaciones_UsuarioId",
+                table: "Cotizaciones",
+                column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrdenesDeTrabajo_CotizacionId",
@@ -302,6 +336,11 @@ namespace API_FerroLaminas.Migrations
                 column: "OrdenDeTrabajoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TiposCorte_ServicioId",
+                table: "TiposCorte",
+                column: "ServicioId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_RolId",
                 table: "Usuarios",
                 column: "RolId");
@@ -311,16 +350,16 @@ namespace API_FerroLaminas.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Calibres");
+
+            migrationBuilder.DropTable(
                 name: "Seguimientos");
 
             migrationBuilder.DropTable(
-                name: "Usuarios");
+                name: "TiposCorte");
 
             migrationBuilder.DropTable(
                 name: "OrdenesDeTrabajo");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Cotizaciones");
@@ -341,10 +380,13 @@ namespace API_FerroLaminas.Migrations
                 name: "Servicios");
 
             migrationBuilder.DropTable(
+                name: "Usuarios");
+
+            migrationBuilder.DropTable(
                 name: "Ubicaciones");
 
             migrationBuilder.DropTable(
-                name: "Calibres");
+                name: "Roles");
         }
     }
 }

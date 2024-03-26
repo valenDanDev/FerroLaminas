@@ -4,7 +4,8 @@
     {
         public int Id { get; set; }
         public int CotizacionId { get; set; }
-        public int OperarioId { get; set; }
+        public string OperarioId { get; set; }
+        public string nombreOperario { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
         public int EstadoId { get; set; }

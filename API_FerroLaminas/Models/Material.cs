@@ -9,8 +9,7 @@
         public string Descripcion { get; set; }
 
         // Relación con Calibre
-        public int CalibreId { get; set; }
-        public Calibre Calibre { get; set; }
+        public ICollection<Calibre> Calibres { get; set; }
 
         // Relación con Cotizaciones
         public ICollection<Cotizacion> Cotizaciones { get; set; }

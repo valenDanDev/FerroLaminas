@@ -1,15 +1,14 @@
 ﻿namespace API_FerroLaminas.Models
 {
-    public class Servicio
+    public class TipoCorte
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
         public decimal PrecioPorKilo { get; set; } // Precio por kilogramo
         public string Descripcion { get; set; }
 
-        // Relación con Cotizaciones
-        public ICollection<Cotizacion> Cotizaciones { get; set; }
-        // Relación con los tipos de corte
-        public ICollection<TipoCorte> TiposCorte { get; set; }
+        // Relación con el servicio de corte
+        public int ServicioId { get; set; }
+        public Servicio Servicio { get; set; }
     }
 }
