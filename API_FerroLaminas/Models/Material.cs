@@ -1,4 +1,6 @@
-﻿namespace API_FerroLaminas.Models
+﻿using System.Text.Json.Serialization;
+
+namespace API_FerroLaminas.Models
 {
     public class Material
     {

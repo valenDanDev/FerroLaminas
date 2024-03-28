@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_FerroLaminas.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240326225641_migracionCorrecion2")]
-    partial class migracionCorrecion2
+    [Migration("20240328230726_migracionCorrecion3")]
+    partial class migracionCorrecion3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

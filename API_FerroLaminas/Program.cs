@@ -1,4 +1,8 @@
+using API_FerroLaminas;
 using API_FerroLaminas.Data;
+using API_FerroLaminas.Models;
+using API_FerroLaminas.Repositories;
+using API_FerroLaminas.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -21,6 +25,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Registrar MaterialService y MaterialRepository
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+
 
 var app = builder.Build();
 
@@ -32,9 +41,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
+app.UseMiddleware<LoggingMiddleware>(); // Agregar el middleware personalizado aquí
+app.UseRouting();
 app.UseAuthorization();
 
+
+
+//este es el archivo de las rutas
 app.MapControllers();
 
 app.Run();

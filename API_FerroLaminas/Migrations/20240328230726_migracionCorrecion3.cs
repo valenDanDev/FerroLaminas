@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API_FerroLaminas.Migrations
 {
     /// <inheritdoc />
-    public partial class migracionCorrecion2 : Migration
+    public partial class migracionCorrecion3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
