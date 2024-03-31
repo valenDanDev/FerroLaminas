@@ -4,10 +4,10 @@ namespace API_FerroLaminas.Services
 {
     public interface IMaterialService
     {
-        IEnumerable<Material> GetAllMaterials();
-        Material GetMaterialById(int id);
-        Material CreateMaterial(Material material);
-        void UpdateMaterial(Material material);
-        void DeleteMaterial(int id);
+        ServiceResponse<IEnumerable<Material>> GetAllMaterials();
+        ServiceResponse<Material> GetMaterialById(int id);
+        ServiceResponse<Material> CreateMaterial(Material material);
+        ServiceResponse<Material> UpdateMaterial(Material material);
+        ServiceResponse<bool> DeleteMaterial(int id);
     }
 }
