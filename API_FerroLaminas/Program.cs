@@ -30,6 +30,10 @@ builder.Services.AddScoped<IMaterialService, MaterialService>();
 
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 
+builder.Services.AddScoped<IServicioService, ServicioService>();
+builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
+
+
 
 var app = builder.Build();
 
