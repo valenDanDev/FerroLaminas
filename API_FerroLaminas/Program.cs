@@ -34,6 +34,9 @@ builder.Services.AddScoped<IServicioService, ServicioService>();
 
 builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 
+builder.Services.AddScoped<ITipoCorteService, TipoCorteService>();
+
+builder.Services.AddScoped<ITipoCorteRepository, TipoCorteRepository>();
 
 
 var app = builder.Build();
