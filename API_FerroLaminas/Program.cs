@@ -38,6 +38,12 @@ builder.Services.AddScoped<ITipoCorteService, TipoCorteService>();
 
 builder.Services.AddScoped<ITipoCorteRepository, TipoCorteRepository>();
 
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+builder.Services.AddScoped<IRolRepository, RolRepository>();
+
 
 var app = builder.Build();
 
