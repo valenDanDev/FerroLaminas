@@ -29,5 +29,10 @@ namespace API_FerroLaminas.Repositories
             _context.Usuarios.Add(usuario);
             _context.SaveChanges();
         }
+
+        public Usuario GetUsuarioById(int userId)
+        {
+            return _context.Usuarios.FirstOrDefault(u => u.Id == userId);
+        }
     }
 }

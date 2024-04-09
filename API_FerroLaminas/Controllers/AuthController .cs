@@ -20,6 +20,7 @@ namespace API_FerroLaminas.Controllers
         public ActionResult<ServiceResponse<object>> Login(LoginRequestDTO loginRequest)
         {
             var response = _usuarioService.ValidarYCrearUsuario(loginRequest);
+
             if (!response.Success)
             {
                 return BadRequest(response.Message);
@@ -28,6 +29,19 @@ namespace API_FerroLaminas.Controllers
             if (response.Message != null)
             {
                 return Ok(new { Message = response.Message, Data = response.Data });
+            }
+
+            return Ok(response.Data);
+        }
+
+        [HttpGet("rol/{userId}")]
+        public ActionResult<ServiceResponse<object>> GetRol(int userId)
+        {
+            var response = _usuarioService.GetRol(userId);
+
+            if (!response.Success)
+            {
+                return NotFound(response.Message);
             }
 
             return Ok(response.Data);
