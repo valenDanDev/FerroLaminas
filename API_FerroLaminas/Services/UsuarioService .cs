@@ -1,13 +1,10 @@
 ﻿using API_FerroLaminas.Models;
 using API_FerroLaminas.Repositories;
 using API_FerroLaminas.DTO;
-using System;
-using System.Linq;
-
 
 namespace API_FerroLaminas.Services
 {
-    public class UsuarioService: IUsuarioService
+    public class UsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IRolRepository _rolRepository;
@@ -18,17 +15,18 @@ namespace API_FerroLaminas.Services
             _rolRepository = rolRepository;
         }
 
-        public ServiceResponse<Usuario> ValidarYCrearUsuario(LoginRequestDTO loginRequest)
+        public ServiceResponse<object> ValidarYCrearUsuario(LoginRequestDTO loginRequest)
         {
             var existingUser = _usuarioRepository.GetUsuarioByEmail(loginRequest.Email);
 
             if (existingUser != null)
             {
-                // El usuario ya existe, devuelve éxito
-                return new ServiceResponse<Usuario>
+                // El usuario ya existe, devuelve los datos del usuario existente y un mensaje informativo
+                return new ServiceResponse<object>
                 {
                     Success = true,
-                    Data = existingUser
+                    Message = "Usuario existente",
+                    Data = new { Nombre = existingUser.Nombre, Email = existingUser.Email }
                 };
             }
             else
@@ -37,13 +35,14 @@ namespace API_FerroLaminas.Services
                 var rolCliente = _rolRepository.GetRolById(5); // Obtener el rol de cliente por defecto
                 if (rolCliente == null)
                 {
-                    return new ServiceResponse<Usuario>
+                    return new ServiceResponse<object>
                     {
                         Success = false,
                         Message = "Error al obtener el rol de cliente."
                     };
                 }
 
+                // Crear el usuario
                 var newUser = new Usuario
                 {
                     Nombre = loginRequest.Nombre,
@@ -53,12 +52,15 @@ namespace API_FerroLaminas.Services
 
                 _usuarioRepository.CreateUsuario(newUser);
 
-                return new ServiceResponse<Usuario>
+                // Devolver los datos del nuevo usuario creado y un mensaje informativo
+                return new ServiceResponse<object>
                 {
                     Success = true,
-                    Data = newUser
+                    Message = "Usuario creado",
+                    Data = new { Nombre = newUser.Nombre, Email = newUser.Email }
                 };
             }
         }
+
     }
 }

@@ -5,6 +5,6 @@ namespace API_FerroLaminas.Services
 {
     public interface IUsuarioService
     {
-        ServiceResponse<Usuario> ValidarYCrearUsuario(LoginRequestDTO loginRequest);
+        ServiceResponse<object> ValidarYCrearUsuario(LoginRequestDTO loginRequest);
     }
 }

@@ -17,7 +17,7 @@ namespace API_FerroLaminas.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<ServiceResponse<Usuario>> Login(LoginRequestDTO loginRequest)
+        public ActionResult<ServiceResponse<object>> Login(LoginRequestDTO loginRequest)
         {
             var response = _usuarioService.ValidarYCrearUsuario(loginRequest);
             if (!response.Success)
@@ -25,7 +25,13 @@ namespace API_FerroLaminas.Controllers
                 return BadRequest(response.Message);
             }
 
-            return Ok(response);
+            if (response.Message != null)
+            {
+                return Ok(new { Message = response.Message, Data = response.Data });
+            }
+
+            return Ok(response.Data);
         }
+
     }
 }
