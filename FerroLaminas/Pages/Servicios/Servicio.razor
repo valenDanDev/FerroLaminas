@@ -1,0 +1,63 @@
+﻿@page "/servicios/{id}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private Serveer server;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios/" + id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            server = JsonConvert.DeserializeObject<Serveer>(content);
+        }
+        else
+        {
+            server.Id = 0;
+            server.Descripcion = "";
+            server.PrecioPorKilo = 0;
+            server.Nombre = "";
+        }
+    }
+}
+
+<h3 class="cotizacion-title">Servicio</h3>
+
+<form class="cotizacion-form">
+    <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="@server.Nombre" />
+    </div>
+    <div>
+        <label for="precioporkilo2">Precio por kilo:</label>
+        <input type="number" id="precioporkilo2" name="precioporkilo2" value="@server.PrecioPorKilo" />
+    </div>
+    <div>
+        <label for="descripcion2">Descripción:</label>
+        <input type="text" id="descripcion2" name="descripcion2" value="@server.Descripcion" />
+    </div>
+    <button type="submit">Guardar servicio</button>
+</form>
+
+@code {
+    public class Serveer
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public double PrecioPorKilo { get; set; }
+        public string Descripcion { get; set; }
+    }
+}

@@ -1,0 +1,65 @@
+﻿@page "/materiales/{id}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private Materiaal material;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales/" + id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            material = JsonConvert.DeserializeObject<Materiaal>(content);
+        }
+        else
+        {
+
+        }
+    }
+}
+
+<h3 class="cotizacion-title">Material</h3>
+
+<form class="cotizacion-form">
+    <div>
+        <label for="tipo">Tipo:</label>
+        <input type="text" id="tipo" name="tipo" value="@material.Tipo"/>
+    </div>
+    <div>
+        <label for="precioporkilo">Precio por kilo:</label>
+        <input type="number" id="precioporkilo" name="precioporkilo" value="@material.PrecioPorKilo"/>
+    </div>
+    <div>
+        <label for="stockporkilo">Stock por kilo:</label>
+        <input type="number" id="stockporkilo" name="stockporkilo" value="@material.StockKilos" />
+    </div>
+    <div>
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" value="@material.Descripcion"/>
+    </div>
+    <button type="submit">Guardar material</button>
+</form>
+
+@code {
+    public class Materiaal
+    {
+        public int Id { get; set; }
+        public string Tipo { get; set; }
+        public double PrecioPorKilo { get; set; }
+        public double StockKilos { get; set; }
+        public string Descripcion { get; set; }
+    }
+}

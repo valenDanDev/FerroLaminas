@@ -1,0 +1,121 @@
+﻿@page "/servicios"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    private List<Server> servers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            servers = JsonConvert.DeserializeObject<List<Server>>(content);
+        }
+        else
+        {
+
+        }
+    }
+}
+
+<PageTitle>Ferro Laminas</PageTitle>
+
+<h3 class="order-title">Meteriales</h3>
+
+@if (servers != null)
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio por Kilo</th>
+                <th>Descripción</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var server in servers)
+            {
+                <tr class="order-table-body">
+                    <td>@server.Id</td>
+                    <td>@server.Nombre</td>
+                    <td>@server.PrecioPorKilo</td>
+                    <td>@server.Descripcion</td>
+                    <td><a href="/servicios/@server.Id">Editar</a></td>
+                    <td>...</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio por Kilo</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="order-table-body">
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+
+            </tr>
+        </tbody>
+    </table>
+}
+
+<button class="order-submit" type="button">Nuevo Servicio</button>
+
+@code {
+    public class Server
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public decimal PrecioPorKilo { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class ServerData
+    {
+        public List<Server> Values { get; set; }
+    }
+
+    private string logoClass { get; set; }
+    private string logoTextClass { get; set; }
+    private string formClass { get; set; }
+    private Timer timer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        logoClass = "logo-rotation";
+        logoTextClass = "logo-text";
+        formClass = "form-login-hiden";
+        timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    }
+
+    private void EjecutarTimeout(object state)
+    {
+        logoClass = "logo";
+        logoTextClass = "logo-text-hiden";
+        formClass = "form-login";
+        StateHasChanged();
+    }
+}
