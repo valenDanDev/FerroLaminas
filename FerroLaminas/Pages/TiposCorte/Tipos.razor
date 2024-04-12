@@ -1,4 +1,4 @@
-﻿@page "/materiales"
+﻿@page "/tipos-corte"
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net.Http
@@ -8,17 +8,17 @@
 @inject HttpClient httpClient
 
 @code {
-    private List<Material> materials;
+    private List<Type> types;
 
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
+        var response = await httpClient.GetAsync("https://localhost:7263/api/TipoCorte");
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            materials = JsonConvert.DeserializeObject<List<Material>>(content);
+            types = JsonConvert.DeserializeObject<List<Type>>(content);
         }
         else
         {
@@ -31,28 +31,30 @@
 
 <h3 class="order-title">Meteriales</h3>
 
-@if (materials != null)
+@if (types != null)
 {
     <table class="order-table table">
         <thead>
             <tr class="order-table-head">
                 <th>ID</th>
-                <th>Tipo</th>
+                <th>Nombre</th>
                 <th>Precio por Kilo</th>
-                <th>Stock en Kilos</th>
                 <th>Descripción</th>
+                <th>Servico id</th>
+                <th>Editar</th>
                 <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var material in materials)
+            @foreach (var type in types)
             {
                 <tr class="order-table-body">
-                    <td>@material.Id</td>
-                    <td>@material.Tipo</td>
-                    <td>@material.PrecioPorKilo</td>
-                    <td>@material.StockKilos</td>
-                    <td>@material.Descripcion</td>
+                    <td>@type.Id</td>
+                    <td>@type.Nombre</td>
+                    <td>@type.PrecioPorKilo</td>
+                    <td>@type.Descripcion</td>
+                    <td>@type.ServicoId</td>
+                    <td><a href="/tipos-corte/@type.Id">Editar</a></td>
                     <td>...</td>
                 </tr>
             }
@@ -87,18 +89,18 @@ else
 <button class="order-submit" type="button">Nuevo Material</button>
 
 @code {
-    public class Material
+    public class Type
     {
         public int Id { get; set; }
-        public string Tipo { get; set; }
-        public double PrecioPorKilo { get; set; }
-        public double StockKilos { get; set; }
+        public string Nombre { get; set; }
+        public decimal PrecioPorKilo { get; set; }
         public string Descripcion { get; set; }
+        public decimal ServicoId { get; set; }
     }
 
-    public class MaterialData
+    public class TypeData
     {
-        public List<Material> Values { get; set; }
+        public List<Type> Values { get; set; }
     }
 
     private string logoClass { get; set; }
