@@ -1,0 +1,124 @@
+﻿@page "/Tipos"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@* @code {
+    private List<Material> materials;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            materials = JsonConvert.DeserializeObject<List<Material>>(content);
+        }
+        else
+        {
+            
+        }
+    }
+}
+
+<PageTitle>Ferro Laminas</PageTitle>
+
+<h3 class="order-title">Meteriales</h3>
+
+@if (materials != null)
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Precio por Kilo</th>
+                <th>Stock en Kilos</th>
+                <th>Descripción</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var material in materials)
+            {
+                <tr class="order-table-body">
+                    <td>@material.Id</td>
+                    <td>@material.Tipo</td>
+                    <td>@material.PrecioPorKilo</td>
+                    <td>@material.StockKilos</td>
+                    <td>@material.Descripcion</td>
+                    <td>...</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Precio por Kilo</th>
+                <th>Stock en Kilos</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="order-table-body">
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+
+            </tr>
+        </tbody>
+    </table>
+}
+
+<button class="order-submit" type="button">Nuevo Material</button>
+
+@code {
+    public class Material
+    {
+        public int Id { get; set; }
+        public string Tipo { get; set; }
+        public decimal PrecioPorKilo { get; set; }
+        public decimal StockKilos { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class MaterialData
+    {
+        public List<Material> Values { get; set; }
+    }
+
+    private string logoClass { get; set; }
+    private string logoTextClass { get; set; }
+    private string formClass { get; set; }
+    private Timer timer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        logoClass = "logo-rotation";
+        logoTextClass = "logo-text";
+        formClass = "form-login-hiden";
+        timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    }
+
+    private void EjecutarTimeout(object state)
+    {
+        logoClass = "logo";
+        logoTextClass = "logo-text-hiden";
+        formClass = "form-login";
+        StateHasChanged();
+    }
+} *@
