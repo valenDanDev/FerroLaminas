@@ -66,7 +66,7 @@ app.UseAuthorization();
 
 app.UseCors(options =>
 {
-    options.WithOrigins("https://localhost:7219") // Reemplaza esto con tu origen permitido
+    options.WithOrigins("https://localhost:7219", "https://laminasequipo1.azurewebsites.net") // Reemplaza esto con tu origen permitido
            .AllowAnyHeader()
            .AllowAnyMethod();
 });
