@@ -30,31 +30,31 @@
             type.Descripcion = "";
             type.PrecioPorKilo = 0;
             type.Nombre = "";
-            type.ServicoId = 0;
+            type.ServicioId = 0;
         }
     }
 }
 
-<h3 class="cotizacion-title">Cotizaciones</h3>
+<h3 class="cotizacion-title">Tipo</h3>
 
 <form class="cotizacion-form">
     <div>
         <label for="nombre2">Nombre:</label>
-        <input type="text" id="nombre2" name="nombre2" value="@type.Nombre" />
+        <input type="text" id="nombre2" name="nombre2" value="@type.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
     </div>
     <div>
         <label for="precioporkilo3">Precio por kilo:</label>
-        <input type="number" id="precioporkilo3" name="precioporkilo3" value="@type.PrecioPorKilo" />
+        <input type="number" id="precioporkilo3" name="precioporkilo3" value="@type.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo3"))" />
     </div>
     <div>
         <label for="descripcion3">Descripción:</label>
-        <input type="text" id="descripcion3" name="descripcion3" value="@type.Descripcion" />
+        <input type="text" id="descripcion3" name="descripcion3" value="@type.Descripcion" @onchange="@((e) => handleChange(e,"descripcion3"))" />
     </div>
     <div>
         <label for="servicioid">Servicio id:</label>
-        <input type="number" id="servicioid" name="servicioid" value="@type.ServicoId" />
+        <input type="number" id="servicioid" name="servicioid" value="@type.ServicioId" @onchange="@((e) => handleChange(e,"servicioid"))" />
     </div>
-    <button type="submit">Guardar material</button>
+    <button type="submit" @onclick="UpdateType">Guardar material</button>
 </form>
 
 @code {
@@ -64,6 +64,53 @@
         public string Nombre { get; set; }
         public double PrecioPorKilo { get; set; }
         public string Descripcion { get; set; }
-        public double ServicoId { get; set; }
+        public int ServicioId { get; set; }
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "nombre")
+        {
+            string inputValue = e.Value.ToString();
+            type.Nombre = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + type.Nombre);
+        }
+
+        if (name == "precioporkilo3")
+        {
+            string inputValue = e.Value.ToString();
+            type.PrecioPorKilo = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + type.PrecioPorKilo);
+        }
+
+        if (name == "servicioid")
+        {
+            string inputValue = e.Value.ToString();
+            type.ServicioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + type.ServicioId);
+        }
+
+        if (name == "descripcion3")
+        {
+            string inputValue = e.Value.ToString();
+            type.Descripcion = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + type.Descripcion);
+        }
+    }
+
+    private async Task UpdateType()
+    {
+        var httpClient = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(type), Encoding.UTF8, "application/json");
+        var response = await httpClient.PutAsync("https://localhost:7263/api/TipoCorte/" + type.Id, content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+        }
+        else
+        {
+        }
+        StateHasChanged();
     }
 }
