@@ -56,7 +56,7 @@
                     <td>@material.StockKilos</td>
                     <td>@material.Descripcion</td>
                     <td><a href="/materiales/@material.Id">Editar</a></td>
-                    <td>...</td>
+                    <td><a href="/materiales" @onclick="@(() => DeleteMaterial(material.Id))">Eliminar</a></td>
                 </tr>
             }
         </tbody>
@@ -136,6 +136,22 @@ else
         else
         {
         }
+        StateHasChanged();
+    }
+
+    private async Task DeleteMaterial(int _id)
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Materiales/" + _id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+        }
+        else
+        {
+        }
+        StateHasChanged();
     }
 
     private void EjecutarTimeout(object state)

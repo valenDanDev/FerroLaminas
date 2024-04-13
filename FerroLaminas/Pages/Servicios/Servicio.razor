@@ -39,17 +39,17 @@
 <form class="cotizacion-form">
     <div>
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="@server.Nombre" />
+        <input type="text" id="nombre" name="nombre" value="@server.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
     </div>
     <div>
         <label for="precioporkilo2">Precio por kilo:</label>
-        <input type="number" id="precioporkilo2" name="precioporkilo2" value="@server.PrecioPorKilo" />
+        <input type="number" id="precioporkilo2" name="precioporkilo2" value="@server.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo2"))" />
     </div>
     <div>
         <label for="descripcion2">Descripción:</label>
-        <input type="text" id="descripcion2" name="descripcion2" value="@server.Descripcion" />
+        <input type="text" id="descripcion2" name="descripcion2" value="@server.Descripcion" @onchange="@((e) => handleChange(e,"descripcion2"))" />
     </div>
-    <button type="submit">Guardar servicio</button>
+    <button type="submit" @onclick="UpdateServer">Guardar servicio</button>
 </form>
 
 @code {
@@ -59,5 +59,45 @@
         public string Nombre { get; set; }
         public double PrecioPorKilo { get; set; }
         public string Descripcion { get; set; }
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "nombre")
+        {
+            string inputValue = e.Value.ToString();
+            server.Nombre = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + server.Nombre);
+        }
+
+        if (name == "precioporkilo2")
+        {
+            string inputValue = e.Value.ToString();
+            server.PrecioPorKilo = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + server.PrecioPorKilo);
+        }
+
+        if (name == "descripcion2")
+        {
+            string inputValue = e.Value.ToString();
+            server.Descripcion = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + server.Descripcion);
+        }
+    }
+
+    private async Task UpdateServer()
+    {
+        var httpClient = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(server), Encoding.UTF8, "application/json");
+        var response = await httpClient.PutAsync("https://localhost:7263/api/Servicios/" + server.Id, content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+        }
+        else
+        {
+        }
+        StateHasChanged();
     }
 }
