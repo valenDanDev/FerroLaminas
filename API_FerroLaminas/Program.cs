@@ -64,6 +64,13 @@ app.UseMiddleware<LoggingMiddleware>(); // Agregar el middleware personalizado a
 app.UseRouting();
 app.UseAuthorization();
 
+app.UseCors(options =>
+{
+    options.WithOrigins("https://localhost:7219") // Reemplaza esto con tu origen permitido
+           .AllowAnyHeader()
+           .AllowAnyMethod();
+});
+
 
 
 //este es el archivo de las rutas
