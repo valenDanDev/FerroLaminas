@@ -4,6 +4,7 @@
 @using System.Net.Http
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
+@using System.Text
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 
@@ -29,7 +30,7 @@
 
 <PageTitle>Ferro Laminas</PageTitle>
 
-<h3 class="order-title">Meteriales</h3>
+<h3 class="order-title">Servicios</h3>
 
 @if (servers != null)
 {
@@ -53,7 +54,7 @@
                     <td>@server.PrecioPorKilo</td>
                     <td>@server.Descripcion</td>
                     <td><a href="/servicios/@server.Id">Editar</a></td>
-                    <td>...</td>
+                    <td><a href="/servicios" @onclick="@(() => DeleteServer(server.Id))">Eliminar</a></td>
                 </tr>
             }
         </tbody>
@@ -82,7 +83,7 @@ else
     </table>
 }
 
-<button class="order-submit" type="button">Nuevo Servicio</button>
+<button class="order-submit" type="button" @onclick='CrearServer'>Nuevo Servicio</button>
 
 @code {
     public class Server
@@ -109,6 +110,42 @@ else
         logoTextClass = "logo-text";
         formClass = "form-login-hiden";
         timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    }
+
+    private async Task CrearServer()
+    {
+        Server nuevoServer = new Server();
+        nuevoServer.Id = 8;
+        nuevoServer.Nombre = "Servicio prueba";
+        nuevoServer.PrecioPorKilo = 70;
+        nuevoServer.Descripcion = "Este es un nuevo servicio";
+        var httpClient = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(nuevoServer), Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync("https://localhost:7263/api/Servicios", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+        }
+        else
+        {
+        }
+        StateHasChanged();
+    }
+
+    private async Task DeleteServer(int _id)
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Servicios/" + _id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+        }
+        else
+        {
+        }
+        StateHasChanged();
     }
 
     private void EjecutarTimeout(object state)
