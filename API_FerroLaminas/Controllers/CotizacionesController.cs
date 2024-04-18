@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API_FerroLaminas.Models;
 using API_FerroLaminas.Services;
+using API_FerroLaminas.DTO;
 
 namespace API_FerroLaminas.Controllers
 {
@@ -10,39 +11,55 @@ namespace API_FerroLaminas.Controllers
     [ApiController]
     public class CotizacionesController : ControllerBase
     {
-        private readonly CotizacionService _cotizacionService;
 
-        public CotizacionesController(CotizacionService cotizacionService)
+        private readonly ICotizacionService _cotizacionService;
+
+        public CotizacionesController(ICotizacionService cotizacionService)
         {
             _cotizacionService = cotizacionService;
         }
 
         // GET: api/Cotizaciones
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cotizacion>>> GetCotizaciones()
+        public async Task<ActionResult<IEnumerable<CotizacionDTO>>> GetCotizaciones()
         {
-            var cotizaciones = await _cotizacionService.GetAllCotizaciones();
-            return Ok(cotizaciones);
+            
+            var response = await _cotizacionService.GetAllCotizaciones();
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+
+            if (response.Data == null || !response.Data.Any())
+            {
+                return NotFound("Sin cotizaciones en el momento"); // Sin contenido para devolver
+            }
+
+            return Ok(response.Data);
         }
 
         // GET: api/Cotizaciones/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cotizacion>> GetCotizacion(int id)
+        public ActionResult<CotizacionDTO> GetCotizacion(int id)
         {
-            var cotizacion = await _cotizacionService.GetCotizacionById(id);
-            if (cotizacion == null)
+            var response = _cotizacionService.GetCotizacionById(id);
+            if (!response.Success)
             {
-                return NotFound();
+                return NotFound(response.Message);
             }
-            return Ok(cotizacion);
+            return Ok(response.Data);
         }
 
         // POST: api/Cotizaciones
         [HttpPost]
-        public async Task<ActionResult<Cotizacion>> PostCotizacion(Cotizacion cotizacion)
+        public async Task<ActionResult<CotizacionDTO>> PostCotizacion(Cotizacion cotizacion)
         {
-            var createdCotizacion = await _cotizacionService.CreateCotizacion(cotizacion);
-            return CreatedAtAction(nameof(GetCotizacion), new { id = createdCotizacion.Id }, createdCotizacion);
+            var response = await _cotizacionService.CreateCotizacion(cotizacion);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            return CreatedAtAction(nameof(GetCotizacion), new { id = response.Data.Id }, response.Data);
         }
 
         // PUT: api/Cotizaciones/5
@@ -53,10 +70,10 @@ namespace API_FerroLaminas.Controllers
             {
                 return BadRequest();
             }
-            var updatedCotizacion = await _cotizacionService.UpdateCotizacion(id, cotizacion);
-            if (updatedCotizacion == null)
+            var response = await _cotizacionService.UpdateCotizacion(id, cotizacion);
+            if (!response.Success)
             {
-                return NotFound();
+                return NotFound(response.Message);
             }
             return NoContent();
         }
@@ -65,10 +82,10 @@ namespace API_FerroLaminas.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCotizacion(int id)
         {
-            var deletedCotizacion = await _cotizacionService.DeleteCotizacion(id);
-            if (deletedCotizacion == null)
+            var response = await _cotizacionService.DeleteCotizacion(id);
+            if (!response.Success)
             {
-                return NotFound();
+                return NotFound(response.Message);
             }
             return NoContent();
         }

@@ -48,6 +48,10 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 builder.Services.AddScoped<IRolRepository, RolRepository>();
 
+builder.Services.AddScoped<ICotizacionService, CotizacionService>();
+
+builder.Services.AddScoped<ICotizacionRepository, CotizacionRepository>();
+
 
 var app = builder.Build();
 
