@@ -22,7 +22,8 @@ namespace API_FerroLaminas.Services
             try
             {
                 var cotizaciones = await _cotizacionRepository.GetAllCotizaciones();
-                response.Data = cotizaciones.Select(c => new CotizacionDTO(c));
+                response.Data = cotizaciones.Select(c => new CotizacionDTO( c.ClienteId, c.ProyectoId, c.MaterialId, c.ServicioId, c.PrecioTotal, c.PesoLamina, c.UsuarioId
+                ));
                 response.Success = true;
             }
             catch (Exception ex)
@@ -46,10 +47,22 @@ namespace API_FerroLaminas.Services
                         Message = "Cotización no encontrada."
                     };
                 }
+
+                // Inicializar CotizacionDTO con todos los parámetros requeridos
+                var cotizacionDTO = new CotizacionDTO(
+                    cotizacion.ClienteId,
+                    cotizacion.ProyectoId,
+                    cotizacion.MaterialId,
+                    cotizacion.ServicioId,
+                    cotizacion.PrecioTotal,
+                    cotizacion.PesoLamina,
+                    cotizacion.UsuarioId
+                );
+
                 return new ServiceResponse<CotizacionDTO>
                 {
                     Success = true,
-                    Data = new CotizacionDTO(cotizacion)
+                    Data = cotizacionDTO
                 };
             }
             catch (Exception ex)
@@ -69,7 +82,15 @@ namespace API_FerroLaminas.Services
             {
                 var createdCotizacion = await _cotizacionRepository.CreateCotizacion(cotizacion);
                 response.Success = true;
-                response.Data = new CotizacionDTO(createdCotizacion);
+                response.Data = new CotizacionDTO(
+                    createdCotizacion.ClienteId,
+                    createdCotizacion.ProyectoId,
+                    createdCotizacion.MaterialId,
+                    createdCotizacion.ServicioId,
+                    createdCotizacion.PrecioTotal,
+                    createdCotizacion.PesoLamina,
+                    createdCotizacion.UsuarioId
+                );
             }
             catch (Exception ex)
             {
@@ -94,7 +115,15 @@ namespace API_FerroLaminas.Services
                     };
                 }
                 response.Success = true;
-                response.Data = new CotizacionDTO(updatedCotizacion);
+                response.Data = new CotizacionDTO(
+                    updatedCotizacion.ClienteId,
+                    updatedCotizacion.ProyectoId,
+                    updatedCotizacion.MaterialId,
+                    updatedCotizacion.ServicioId,
+                    updatedCotizacion.PrecioTotal,
+                    updatedCotizacion.PesoLamina,
+                    updatedCotizacion.UsuarioId
+                );
             }
             catch (Exception ex)
             {
@@ -118,7 +147,15 @@ namespace API_FerroLaminas.Services
                 else
                 {
                     response.Success = true;
-                    response.Data = new CotizacionDTO(deletedCotizacion);
+                    response.Data = new CotizacionDTO(
+                        deletedCotizacion.ClienteId,
+                        deletedCotizacion.ProyectoId,
+                        deletedCotizacion.MaterialId,
+                        deletedCotizacion.ServicioId,
+                        deletedCotizacion.PrecioTotal,
+                        deletedCotizacion.PesoLamina,
+                        deletedCotizacion.UsuarioId
+                    );
                 }
             }
             catch (Exception ex)

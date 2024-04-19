@@ -13,21 +13,15 @@ namespace API_FerroLaminas.DTO
         public decimal PesoLamina { get; set; }
         public int UsuarioId { get; set; }
 
-        // Agregar propiedades adicionales si es necesario
-
-        // Constructor para inicializar el DTO a partir de una entidad Cotizacion
-        public CotizacionDTO(Cotizacion cotizacion)
+        public CotizacionDTO(int clienteId, int proyectoId, int materialId, int servicioId, decimal precioTotal, decimal pesoLamina, int usuarioId)
         {
-            Id = cotizacion.Id;
-            ClienteId = cotizacion.ClienteId;
-            ProyectoId = cotizacion.ProyectoId;
-            MaterialId = cotizacion.MaterialId;
-            ServicioId = cotizacion.ServicioId;
-            PrecioTotal = cotizacion.PrecioTotal;
-            PesoLamina = cotizacion.PesoLamina;
-            UsuarioId = cotizacion.UsuarioId;
-
-            // Si es necesario mapear más propiedades, agrégalas aquí
+            ClienteId = clienteId;
+            ProyectoId = proyectoId;
+            MaterialId = materialId;
+            ServicioId = servicioId;
+            PrecioTotal = precioTotal;
+            PesoLamina = pesoLamina;
+            UsuarioId = usuarioId;
         }
     }
 }
