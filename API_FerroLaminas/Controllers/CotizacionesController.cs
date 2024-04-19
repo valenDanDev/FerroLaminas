@@ -52,8 +52,20 @@ namespace API_FerroLaminas.Controllers
 
         // POST: api/Cotizaciones
         [HttpPost]
-        public async Task<ActionResult<CotizacionDTO>> PostCotizacion(Cotizacion cotizacion)
+        public async Task<ActionResult<CotizacionDTO>> PostCotizacion(CotizacionDTO cotizacionDTO)
         {
+            // Mapear el DTO a un objeto Cotizacion
+            var cotizacion = new Cotizacion
+            {
+                ClienteId = cotizacionDTO.ClienteId,
+                ProyectoId = cotizacionDTO.ProyectoId,
+                MaterialId = cotizacionDTO.MaterialId,
+                ServicioId = cotizacionDTO.ServicioId,
+                PrecioTotal = cotizacionDTO.PrecioTotal,
+                PesoLamina = cotizacionDTO.PesoLamina,
+                UsuarioId = cotizacionDTO.UsuarioId
+            };
+
             var response = await _cotizacionService.CreateCotizacion(cotizacion);
             if (!response.Success)
             {
@@ -62,14 +74,23 @@ namespace API_FerroLaminas.Controllers
             return CreatedAtAction(nameof(GetCotizacion), new { id = response.Data.Id }, response.Data);
         }
 
+
         // PUT: api/Cotizaciones/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCotizacion(int id, Cotizacion cotizacion)
+        public async Task<IActionResult> PutCotizacion(int id, CotizacionDTO updateCotizacionDTO)
         {
-            if (id != cotizacion.Id)
+            var cotizacion = new Cotizacion
             {
-                return BadRequest();
-            }
+                Id = id,
+                ClienteId = updateCotizacionDTO.ClienteId,
+                ProyectoId = updateCotizacionDTO.ProyectoId,
+                MaterialId = updateCotizacionDTO.MaterialId,
+                ServicioId = updateCotizacionDTO.ServicioId,
+                PrecioTotal = updateCotizacionDTO.PrecioTotal,
+                PesoLamina = updateCotizacionDTO.PesoLamina,
+                UsuarioId = updateCotizacionDTO.UsuarioId
+            };
+
             var response = await _cotizacionService.UpdateCotizacion(id, cotizacion);
             if (!response.Success)
             {
@@ -77,6 +98,7 @@ namespace API_FerroLaminas.Controllers
             }
             return NoContent();
         }
+
 
         // DELETE: api/Cotizaciones/5
         [HttpDelete("{id}")]
