@@ -14,8 +14,8 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
+        var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
 
         if (response.IsSuccessStatusCode)
         {
@@ -128,8 +128,8 @@ else
         nuevoMaterial.Descripcion = "Este es un nuevo material";
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoMaterial), Encoding.UTF8, "application/json");
-        //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales", content);
-        var response = await httpClient.PostAsync("https://localhost:7263/api/Materiales", content);
+        var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales", content);
+        //var response = await httpClient.PostAsync("https://localhost:7263/api/Materiales", content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -144,8 +144,8 @@ else
     private async Task DeleteMaterial(int _id)
     {
         var httpClient = new HttpClient();
-        //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
-        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Materiales/" + _id);
+        var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
+        //var response = await httpClient.DeleteAsync("https://localhost:7263/api/Materiales/" + _id);
 
         if (response.IsSuccessStatusCode)
         {

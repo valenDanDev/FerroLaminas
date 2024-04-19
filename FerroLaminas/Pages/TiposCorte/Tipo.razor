@@ -17,8 +17,8 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte/" + id);
-        var response = await httpClient.GetAsync("https://localhost:7263/api/TipoCorte/" + id);
+        var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte/" + id);
+        //var response = await httpClient.GetAsync("https://localhost:7263/api/TipoCorte/" + id);
 
         if (response.IsSuccessStatusCode)
         {
@@ -103,8 +103,8 @@
     {
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(type), Encoding.UTF8, "application/json");
-        //var response = await httpClient.PutAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte/" + type.Id, content);
-        var response = await httpClient.PutAsync("https://localhost:7263/api/TipoCorte/" + type.Id, content);
+        var response = await httpClient.PutAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte/" + type.Id, content);
+        //var response = await httpClient.PutAsync("https://localhost:7263/api/TipoCorte/" + type.Id, content);
 
         if (response.IsSuccessStatusCode)
         {
