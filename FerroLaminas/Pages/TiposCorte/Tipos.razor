@@ -14,6 +14,7 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte");
         var response = await httpClient.GetAsync("https://localhost:7263/api/TipoCorte");
 
         if (response.IsSuccessStatusCode)
@@ -127,6 +128,7 @@ else
         nuevoType.ServicioId = 7;
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoType), Encoding.UTF8, "application/json");
+        //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte", content);
         var response = await httpClient.PostAsync("https://localhost:7263/api/TipoCorte", content);
 
         if (response.IsSuccessStatusCode)
@@ -142,6 +144,7 @@ else
     private async Task DeleteType(int _id)
     {
         var httpClient = new HttpClient();
+        //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/TipoCorte/" + _id);
         var response = await httpClient.DeleteAsync("https://localhost:7263/api/TipoCorte/" + _id);
 
         if (response.IsSuccessStatusCode)

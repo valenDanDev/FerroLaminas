@@ -132,6 +132,7 @@
         nuevoUser.nombre = UserName;
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoUser), Encoding.UTF8, "application/json");
+        //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Auth/login", content);
         var response = await httpClient.PostAsync("https://localhost:7263/api/Auth/login", content);
 
         if (response.IsSuccessStatusCode)
@@ -155,6 +156,7 @@
         do
         {
             var httpClient = new HttpClient();
+            //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Auth/rol/" + UserResponse.IdUsuario);
             var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/rol/" + UserResponse.IdUsuario);
 
             if (response.IsSuccessStatusCode)
