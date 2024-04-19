@@ -1,7 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient httpClient
 
 <nav class="navbar-mobile">
     <button class="@getMenuButtonClass()" @onclick="@setShowMenu">
@@ -14,6 +21,7 @@
             <Authorized>
                 <div class="user-content">
                     <p class="user-name">@context.User.Identity.Name</p>
+                    <p class="user-name">@UserRol</p>
                     <button class="logout-button" @onclick="BeginLogOut">Log out</button>
                 </div>
             </Authorized>
@@ -45,6 +53,7 @@
             <Authorized>
                 <div class="user-content">
                     <p class="user-name">@context.User.Identity.Name</p>
+                    <p class="user-name">@UserRol</p>
                     <button class="logout-button" @onclick="BeginLogOut">Log out</button>
                 </div>
             </Authorized>
@@ -56,8 +65,31 @@
 </nav>
 
 @code {
+
+    public class User
+    {
+        public string email { get; set; }
+        public string nombre { get; set; }
+        public int IdUsuario { get; set; }
+    }
+
+    public class UserData
+    {
+        public User Data { get; set; }
+    }
+
+    public class Rol
+    {
+        public string id { get; set; }
+        public string nombre { get; set; }
+    }
+
     private int menuSelected { get; set; }
     private bool showMenu { get; set; }
+    private string UserName { get; set; }
+    private string UserEmail { get; set; }
+    private string UserRol { get; set; }
+    private User UserResponse { get; set; }
     protected override void OnInitialized()
     {
         showMenu = false;
@@ -81,6 +113,65 @@
         if (!showMenu) return "menu";
 
         return "menu-show";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        UserName = user.Identity?.Name ?? "Usuario no autenticado";
+        UserEmail = user.FindFirst(c => c.Type == "email")?.Value ?? "No email 2";
+        getUser();
+    }
+
+    private async Task getUser()
+    {
+        User nuevoUser = new User();
+        nuevoUser.email = UserEmail;
+        nuevoUser.nombre = UserName;
+        var httpClient = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(nuevoUser), Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync("https://localhost:7263/api/Auth/login", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            UserData data;
+            var content2 = await response.Content.ReadAsStringAsync();
+            data = JsonConvert.DeserializeObject<UserData>(content2);
+            UserResponse = data.Data;
+            await getRol();
+        }
+        else
+        {
+            Console.Write("Something Failed");
+            UserRol = "No hay rol";
+        }
+        StateHasChanged();
+    }
+
+    private async Task getRol()
+    {
+        do
+        {
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/rol/" + UserResponse.IdUsuario);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Rol RolResponse;
+                var content = await response.Content.ReadAsStringAsync();
+                RolResponse = JsonConvert.DeserializeObject<Rol>(content);
+                UserRol = RolResponse.nombre ?? "No hay rol";
+            }
+            else
+            {
+                Console.Write("Something Failed");
+                UserRol = "No hay rol";
+            }
+            StateHasChanged();
+
+        } while (UserResponse.IdUsuario == 0);
     }
 
     public void BeginLogOut()
