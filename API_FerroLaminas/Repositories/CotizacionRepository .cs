@@ -52,6 +52,5 @@ namespace API_FerroLaminas.Repositories
             return cotizacion;
         }
 
-        // Agrega métodos adicionales según sea necesario
     }
 }

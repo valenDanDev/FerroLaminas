@@ -48,7 +48,7 @@ namespace API_FerroLaminas.Services
                     };
                 }
 
-                // Inicializar CotizacionDTO con todos los parámetros requeridos
+                // Initialice CotizacionDTO with all required parameters
                 var cotizacionDTO = new CotizacionDTO(
                     cotizacion.ClienteId,
                     cotizacion.ProyectoId,

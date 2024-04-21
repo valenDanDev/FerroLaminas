@@ -17,7 +17,9 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
         var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales/" + id);
 
         if (response.IsSuccessStatusCode)
@@ -102,8 +104,10 @@
     {
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(material), Encoding.UTF8, "application/json");
+        //produccion
         //var response = await httpClient.PutAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + material.Id, content);
-        var response = await httpClient.PutAsync("https://localhost:7263/api/Materiales/" + material.Id, content);
+        //desarrollo
+         var response = await httpClient.PutAsync("https://localhost:7263/api/Materiales/" + material.Id, content);
 
         if (response.IsSuccessStatusCode)
         {

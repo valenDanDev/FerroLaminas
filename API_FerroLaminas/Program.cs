@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Configure host configuration
-//esto es para ejecutar la cadena de conexion que esta en produccion
+//this is for excuting appsetings in production environment
 //builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-//esto ejecuta la cadena de conexion que esta en desarollo en el entorno local
+//this is for executing appsetings in development,which runs in localhost
 builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
 
 // Add services to the container.
@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar MaterialService y MaterialRepository
+// Register MaterialService y MaterialRepository
 builder.Services.AddScoped<IMaterialService, MaterialService>();
 
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
@@ -64,20 +64,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseMiddleware<LoggingMiddleware>(); // Agregar el middleware personalizado aquí
+app.UseMiddleware<LoggingMiddleware>(); // Add custom middleware here
 app.UseRouting();
 app.UseAuthorization();
 
 app.UseCors(options =>
 {
-    options.WithOrigins("https://localhost:7219", "https://laminasequipo1.azurewebsites.net") // Reemplaza esto con tu origen permitido
+    options.WithOrigins("https://localhost:7219", "https://laminasequipo1.azurewebsites.net") // allowed origin in here
            .AllowAnyHeader()
            .AllowAnyMethod();
 });
 
 
 
-//este es el archivo de las rutas
+//callig controllers
 app.MapControllers();
 
 app.Run();

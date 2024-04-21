@@ -53,7 +53,7 @@ namespace API_FerroLaminas.Data
             modelBuilder.Entity<Cotizacion>()
                 .HasOne(c => c.Servicio)
                 .WithMany(s => s.Cotizaciones)
-                .HasForeignKey(c => c.ServicioId); // Corrección
+                .HasForeignKey(c => c.ServicioId); 
 
             modelBuilder.Entity<Calibre>()
                 .Property(c => c.MedidaCalibre)
@@ -62,7 +62,7 @@ namespace API_FerroLaminas.Data
             modelBuilder.Entity<Cotizacion>()
                 .HasOne(c => c.Proyecto)
                 .WithMany()
-                .HasForeignKey(c => c.ProyectoId); // Corrección
+                .HasForeignKey(c => c.ProyectoId); 
 
             modelBuilder.Entity<Cotizacion>()
                 .Property(c => c.PrecioTotal)

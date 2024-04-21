@@ -11,8 +11,7 @@
         public int EstadoId { get; set; }
         public EstadoOrdenTrabajo Estado { get; set; }
         // Relación con Cotizacion
-        public Cotizacion Cotizacion { get; set; } // Agregar esta propiedad
-
+        public Cotizacion Cotizacion { get; set; } 
         // Relación con Seguimientos
         public ICollection<Seguimiento> Seguimientos { get; set; }
     }

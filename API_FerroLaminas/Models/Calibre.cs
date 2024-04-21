@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public decimal MedidaCalibre { get; set; }
 
-        // Clave foránea para la relación con Material
+        // FK
         public int MaterialId { get; set; }
         public Material Material { get; set; }
     }

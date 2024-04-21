@@ -11,13 +11,13 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // Aquí puedes imprimir información sobre la solicitud HTTP entrante
+            // print information of requested method in console
             Console.WriteLine($"Request Method: {context.Request.Method}, Path: {context.Request.Path}");
 
-            // Llama al siguiente middleware en el pipeline
+            // called next pipeline 
             await _next(context);
 
-            // Aquí puedes imprimir información sobre la respuesta HTTP saliente
+            // Print response of server
             Console.WriteLine($"Response Status Code: {context.Response.StatusCode}");
         }
     }

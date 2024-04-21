@@ -8,7 +8,7 @@
         public string Direccion { get; set; }
         public string Email { get; set; }
 
-        // Relacionado con la ubicación del cliente
+        // FK
         public int UbicacionId { get; set; } // Id de la ubicación
         public Ubicacion Ubicacion { get; set; } // Propiedad de navegación hacia la ubicación
 

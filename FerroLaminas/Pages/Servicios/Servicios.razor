@@ -14,8 +14,10 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+        //desarrollo
+         var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -122,8 +124,10 @@ else
         nuevoServer.Descripcion = "Este es un nuevo servicio";
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoServer), Encoding.UTF8, "application/json");
+        //produccion
         //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios", content);
-        var response = await httpClient.PostAsync("https://localhost:7263/api/Servicios", content);
+        // desarrollo
+         var response = await httpClient.PostAsync("https://localhost:7263/api/Servicios", content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -138,8 +142,10 @@ else
     private async Task DeleteServer(int _id)
     {
         var httpClient = new HttpClient();
-        //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios/" + _id);
-        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Servicios/" + _id);
+        //produccion
+       // var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios/" + _id);
+        //desarrollo
+         var response = await httpClient.DeleteAsync("https://localhost:7263/api/Servicios/" + _id);
 
         if (response.IsSuccessStatusCode)
         {

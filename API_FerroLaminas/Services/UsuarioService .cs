@@ -63,7 +63,7 @@ namespace API_FerroLaminas.Services
 
         private ServiceResponse<object> CrearNuevoUsuario(LoginRequestDTO loginRequest)
         {
-            var rolCliente = _rolRepository.GetRolById(5); // Obtener el rol de cliente por defecto
+            var rolCliente = _rolRepository.GetRolById(5); // Get client rol by default
             if (rolCliente == null)
             {
                 return new ServiceResponse<object>
@@ -121,7 +121,7 @@ namespace API_FerroLaminas.Services
             };
         }
 
-        private ServiceResponse<Usuario> ObtenerDatosUsuario(int userId) // Cambiar el tipo de argumento a int
+        private ServiceResponse<Usuario> ObtenerDatosUsuario(int userId) 
         {
             var user = _usuarioRepository.GetUsuarioById(userId);
             if (user == null)
@@ -141,7 +141,7 @@ namespace API_FerroLaminas.Services
         }
         public ServiceResponse<object> GetUsuarioById(int userId)
         {
-            var userDataResponse = ObtenerDatosUsuario(userId); // Obtener datos del usuario
+            var userDataResponse = ObtenerDatosUsuario(userId); // Get user data
 
             if (!userDataResponse.Success)
             {
@@ -154,7 +154,7 @@ namespace API_FerroLaminas.Services
 
             var user = userDataResponse.Data;
 
-            // Devolver los datos del usuario
+            // return user data
             return new ServiceResponse<object>
             {
                 Success = true,
