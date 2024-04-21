@@ -12,7 +12,7 @@
     [Parameter]
     public string id { get; set; }
 
-    private Materiaal material;
+    private Materiaal material = new Materiaal();
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,32 +26,35 @@
         }
         else
         {
-
+            material = new Materiaal();            
         }
     }
 }
 
+@if (material != null)
+{
+    <form class="cotizacion-form">
+        <div>
+            <label for="tipo">Tipo:</label>
+            <input type="text" id="tipo" name="tipo" value="@material.Tipo" @onchange="@((e) => handleChange(e,"tipo"))" />
+        </div>
+        <div>
+            <label for="precioporkilo">Precio por kilo:</label>
+            <input type="number" id="precioporkilo" name="precioporkilo" value="@material.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo"))" />
+        </div>
+        <div>
+            <label for="stockporkilo">Stock por kilo:</label>
+            <input type="number" id="stockporkilo" name="stockporkilo" value="@material.StockKilos" @onchange="@((e) => handleChange(e,"stockporkilo"))" />
+        </div>
+        <div>
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" name="descripcion" value="@material.Descripcion" @onchange="@((e) => handleChange(e,"descripcion"))" />
+        </div>
+        <button type="submit" @onclick="UpdateMaterial">Guardar material</button>
+    </form>
+}
 <h3 class="cotizacion-title">Material</h3>
 
-<form class="cotizacion-form">
-    <div>
-        <label for="tipo">Tipo:</label>
-        <input type="text" id="tipo" name="tipo" value="@material.Tipo" @onchange="@((e) => handleChange(e,"tipo"))" />
-    </div>
-    <div>
-        <label for="precioporkilo">Precio por kilo:</label>
-        <input type="number" id="precioporkilo" name="precioporkilo" value="@material.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo"))" />
-    </div>
-    <div>
-        <label for="stockporkilo">Stock por kilo:</label>
-        <input type="number" id="stockporkilo" name="stockporkilo" value="@material.StockKilos" @onchange="@((e) => handleChange(e,"stockporkilo"))" />
-    </div>
-    <div>
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" name="descripcion" value="@material.Descripcion" @onchange="@((e) => handleChange(e,"descripcion"))" />
-    </div>
-    <button type="submit" @onclick="UpdateMaterial">Guardar material</button>
-</form>
 
 @code {
     public class Materiaal
@@ -102,7 +105,7 @@
 
         if (response.IsSuccessStatusCode)
         {
-            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+            await OnInitializedAsync();
         }
         else
         {
