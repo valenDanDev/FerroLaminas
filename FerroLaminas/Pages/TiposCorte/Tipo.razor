@@ -27,36 +27,35 @@
         }
         else
         {
-            type.Id = 0;
-            type.Descripcion = "";
-            type.PrecioPorKilo = 0;
-            type.Nombre = "";
-            type.ServicioId = 0;
+            type = new Typee();
         }
     }
 }
 
-<h3 class="cotizacion-title">Tipo</h3>
+@if (type != null)
+{
+    <h3 class="cotizacion-title">Tipo</h3>
 
-<form class="cotizacion-form">
-    <div>
-        <label for="nombre2">Nombre:</label>
-        <input type="text" id="nombre2" name="nombre2" value="@type.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
-    </div>
-    <div>
-        <label for="precioporkilo3">Precio por kilo:</label>
-        <input type="number" id="precioporkilo3" name="precioporkilo3" value="@type.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo3"))" />
-    </div>
-    <div>
-        <label for="descripcion3">Descripción:</label>
-        <input type="text" id="descripcion3" name="descripcion3" value="@type.Descripcion" @onchange="@((e) => handleChange(e,"descripcion3"))" />
-    </div>
-    <div>
-        <label for="servicioid">Servicio id:</label>
-        <input type="number" id="servicioid" name="servicioid" value="@type.ServicioId" @onchange="@((e) => handleChange(e,"servicioid"))" />
-    </div>
-    <button type="submit" @onclick="UpdateType">Guardar material</button>
-</form>
+    <form class="cotizacion-form">
+        <div>
+            <label for="nombre2">Nombre:</label>
+            <input type="text" id="nombre2" name="nombre2" value="@type.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
+        </div>
+        <div>
+            <label for="precioporkilo3">Precio por kilo:</label>
+            <input type="number" id="precioporkilo3" name="precioporkilo3" value="@type.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo3"))" />
+        </div>
+        <div>
+            <label for="descripcion3">Descripción:</label>
+            <input type="text" id="descripcion3" name="descripcion3" value="@type.Descripcion" @onchange="@((e) => handleChange(e,"descripcion3"))" />
+        </div>
+        <div>
+            <label for="servicioid">Servicio id:</label>
+            <input type="number" id="servicioid" name="servicioid" value="@type.ServicioId" @onchange="@((e) => handleChange(e,"servicioid"))" />
+        </div>
+        <button type="submit" @onclick="UpdateType">Guardar material</button>
+    </form>
+}
 
 @code {
     public class Typee
@@ -108,7 +107,8 @@
 
         if (response.IsSuccessStatusCode)
         {
-            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+            await OnInitializedAsync();
+            Navigation.NavigateTo("/tipos-corte");
         }
         else
         {

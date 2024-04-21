@@ -31,7 +31,7 @@
 
 <PageTitle>Ferro Laminas</PageTitle>
 
-<h3 class="order-title">Meteriales</h3>
+<h3 class="order-title">Materiales</h3>
 
 @if (materials != null)
 {
@@ -110,13 +110,13 @@ else
     private string formClass { get; set; }
     private Timer timer { get; set; }
 
-    protected override void OnInitialized()
-    {
-        logoClass = "logo-rotation";
-        logoTextClass = "logo-text";
-        formClass = "form-login-hiden";
-        timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
-    }
+    // protected override void OnInitialized()
+    // {
+    //     logoClass = "logo-rotation";
+    //     logoTextClass = "logo-text";
+    //     formClass = "form-login-hiden";
+    //     timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    // }
 
     private async Task CrearMaterial()
     {
@@ -133,7 +133,7 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+            await OnInitializedAsync();
         }
         else
         {
@@ -149,7 +149,7 @@ else
 
         if (response.IsSuccessStatusCode)
         {
-            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+            await OnInitializedAsync();
         }
         else
         {
@@ -157,11 +157,11 @@ else
         StateHasChanged();
     }
 
-    private void EjecutarTimeout(object state)
-    {
-        logoClass = "logo";
-        logoTextClass = "logo-text-hiden";
-        formClass = "form-login";
-        StateHasChanged();
-    }
+    // private void EjecutarTimeout(object state)
+    // {
+    //     logoClass = "logo";
+    //     logoTextClass = "logo-text-hiden";
+    //     formClass = "form-login";
+    //     StateHasChanged();
+    // }
 }

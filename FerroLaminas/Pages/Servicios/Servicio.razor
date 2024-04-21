@@ -27,31 +27,32 @@
         }
         else
         {
-            server.Id = 0;
-            server.Descripcion = "";
-            server.PrecioPorKilo = 0;
-            server.Nombre = "";
+            server = new Serveer();
         }
     }
 }
 
-<h3 class="cotizacion-title">Servicio</h3>
 
-<form class="cotizacion-form">
-    <div>
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="@server.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
-    </div>
-    <div>
-        <label for="precioporkilo2">Precio por kilo:</label>
-        <input type="number" id="precioporkilo2" name="precioporkilo2" value="@server.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo2"))" />
-    </div>
-    <div>
-        <label for="descripcion2">Descripción:</label>
-        <input type="text" id="descripcion2" name="descripcion2" value="@server.Descripcion" @onchange="@((e) => handleChange(e,"descripcion2"))" />
-    </div>
-    <button type="submit" @onclick="UpdateServer">Guardar servicio</button>
-</form>
+@if (server != null)
+{
+    <h3 class="cotizacion-title">Servicio</h3>
+
+    <form class="cotizacion-form">
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="@server.Nombre" @onchange="@((e) => handleChange(e,"nombre"))" />
+        </div>
+        <div>
+            <label for="precioporkilo2">Precio por kilo:</label>
+            <input type="number" id="precioporkilo2" name="precioporkilo2" value="@server.PrecioPorKilo" @onchange="@((e) => handleChange(e,"precioporkilo2"))" />
+        </div>
+        <div>
+            <label for="descripcion2">Descripción:</label>
+            <input type="text" id="descripcion2" name="descripcion2" value="@server.Descripcion" @onchange="@((e) => handleChange(e,"descripcion2"))" />
+        </div>
+        <button type="submit" @onclick="UpdateServer">Guardar servicio</button>
+    </form>
+}
 
 @code {
     public class Serveer
@@ -95,7 +96,8 @@
 
         if (response.IsSuccessStatusCode)
         {
-            // El material se creó exitosamente, puedes realizar alguna acción, como redirigir a otra página
+            await OnInitializedAsync();
+            Navigation.NavigateTo("/servicios");
         }
         else
         {
