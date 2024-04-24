@@ -116,7 +116,7 @@ namespace API_FerroLaminas.Data
 
             base.OnModelCreating(modelBuilder);
 
-            base.OnModelCreating(modelBuilder);
+            //base.OnModelCreating(modelBuilder);
         }
     }
 }

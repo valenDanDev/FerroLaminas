@@ -52,6 +52,10 @@ builder.Services.AddScoped<ICotizacionService, CotizacionService>();
 
 builder.Services.AddScoped<ICotizacionRepository, CotizacionRepository>();
 
+builder.Services.AddScoped<IClienteService, ClienteService>();
+
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+
 
 var app = builder.Build();
 
