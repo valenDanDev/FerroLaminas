@@ -56,6 +56,14 @@ builder.Services.AddScoped<IClienteService, ClienteService>();
 
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 
+builder.Services.AddScoped<IUbicacionesService, UbicacionesService>();
+
+builder.Services.AddScoped<IUbicacionRepository, UbicacionRepository>();
+
+builder.Services.AddScoped<IProyectoService, ProyectoService>();
+
+builder.Services.AddScoped<IProyectoRepository, ProyectoRepository>();
+
 
 var app = builder.Build();
 
