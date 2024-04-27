@@ -64,6 +64,10 @@ builder.Services.AddScoped<IProyectoService, ProyectoService>();
 
 builder.Services.AddScoped<IProyectoRepository, ProyectoRepository>();
 
+builder.Services.AddScoped<ICalibreService, CalibreService>();
+
+builder.Services.AddScoped<ICalibreRepository, CalibreRepository>();
+
 
 var app = builder.Build();
 

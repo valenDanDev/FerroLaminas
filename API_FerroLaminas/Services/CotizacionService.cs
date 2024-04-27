@@ -27,7 +27,7 @@ namespace API_FerroLaminas.Services
             try
             {
                 var cotizaciones = await _cotizacionRepository.GetAllCotizaciones();
-                response.Data = cotizaciones.Select(c => new CotizacionDTO( c.ClienteId, c.ProyectoId, c.MaterialId, c.ServicioId, c.PrecioTotal, c.PesoLamina, c.UsuarioId,c.precioMaterial,c.precioServicio
+                response.Data = cotizaciones.Select(c => new CotizacionDTO( c.ClienteId, c.ProyectoId, c.MaterialId, c.ServicioId, c.PrecioTotal, c.PesoLamina, c.UsuarioId,c.precioMaterial,c.precioServicio,c.CotizacionFinalizada
                 ));
                 response.Success = true;
             }
@@ -63,7 +63,8 @@ namespace API_FerroLaminas.Services
                     cotizacion.PesoLamina,
                     cotizacion.UsuarioId,
                     cotizacion.precioMaterial,
-                    cotizacion.precioServicio
+                    cotizacion.precioServicio,
+                    cotizacion.CotizacionFinalizada
                 );
 
                 return new ServiceResponse<CotizacionDTO>
@@ -81,6 +82,8 @@ namespace API_FerroLaminas.Services
                 };
             }
         }
+
+
 
         public async Task<ServiceResponse<CotizacionDTO>> CreateCotizacion(Cotizacion cotizacion)
         {
@@ -119,7 +122,8 @@ namespace API_FerroLaminas.Services
                     createdCotizacion.PesoLamina,
                     createdCotizacion.UsuarioId,
                     createdCotizacion.precioMaterial,
-                    createdCotizacion.precioServicio
+                    createdCotizacion.precioServicio,
+                    createdCotizacion.CotizacionFinalizada
                 );
             }
             catch (Exception ex)
@@ -196,7 +200,8 @@ namespace API_FerroLaminas.Services
                     updatedCotizacion.PesoLamina,
                     updatedCotizacion.UsuarioId,
                     updatedCotizacion.precioMaterial,
-                    updatedCotizacion.precioServicio
+                    updatedCotizacion.precioServicio,
+                    updatedCotizacion.CotizacionFinalizada
                 );
             }
             catch (Exception ex)
@@ -230,7 +235,8 @@ namespace API_FerroLaminas.Services
                         deletedCotizacion.PesoLamina,
                         deletedCotizacion.UsuarioId,
                         deletedCotizacion.precioMaterial,
-                        deletedCotizacion.precioServicio
+                        deletedCotizacion.precioServicio,
+                        deletedCotizacion.CotizacionFinalizada
                     );
                 }
             }

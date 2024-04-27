@@ -16,7 +16,9 @@ namespace API_FerroLaminas.DTO
         public decimal PrecioServicio { get; set; }
         public int UsuarioId { get; set; }
 
-        public CotizacionDTO(int clienteId, int proyectoId, int materialId, int servicioId, decimal precioTotal, decimal pesoLamina, int usuarioId,decimal precioMaterial,decimal precioServicio
+        public bool CotizacionFinalizada { get; set; }
+
+        public CotizacionDTO(int clienteId, int proyectoId, int materialId, int servicioId, decimal precioTotal, decimal pesoLamina, int usuarioId,decimal precioMaterial,decimal precioServicio,bool cotizacionFinalizada
             )
         {
             ClienteId = clienteId;
@@ -28,6 +30,7 @@ namespace API_FerroLaminas.DTO
             UsuarioId = usuarioId;
             PrecioMaterial = precioMaterial;
             PrecioServicio = precioServicio;
+            CotizacionFinalizada = cotizacionFinalizada;
         }
     }
 }

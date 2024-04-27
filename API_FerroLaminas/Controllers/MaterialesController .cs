@@ -35,7 +35,9 @@ namespace API_FerroLaminas.Controllers
                     Tipo = material.Tipo,
                     PrecioPorKilo = material.PrecioPorKilo,
                     StockKilos = material.StockKilos,
-                    Descripcion = material.Descripcion
+                    Descripcion = material.Descripcion,
+                    Densidad=material.Densidad
+                    
                     // Puedes mapear otras propiedades según sea necesario
                 }).ToList();
 
@@ -68,7 +70,8 @@ namespace API_FerroLaminas.Controllers
                     Tipo = materialDTO.Tipo,
                     PrecioPorKilo = materialDTO.PrecioPorKilo,
                     StockKilos = materialDTO.StockKilos,
-                    Descripcion = materialDTO.Descripcion
+                    Descripcion = materialDTO.Descripcion,
+                    Densidad = materialDTO.Densidad
                 };
 
                 var response = _materialService.CreateMaterial(material);
@@ -84,7 +87,8 @@ namespace API_FerroLaminas.Controllers
                     Tipo = response.Data.Tipo,
                     PrecioPorKilo = response.Data.PrecioPorKilo,
                     StockKilos = response.Data.StockKilos,
-                    Descripcion = response.Data.Descripcion
+                    Descripcion = response.Data.Descripcion,
+                    Densidad = materialDTO.Densidad
                     // Puedes mapear otras propiedades según sea necesario
                 };
 
@@ -97,7 +101,7 @@ namespace API_FerroLaminas.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateMaterial(int id, MaterialDTO materialDTO)
+        public ActionResult<MaterialDTO> UpdateMaterial(int id, MaterialDTO materialDTO)
         {
             try
             {
@@ -107,7 +111,8 @@ namespace API_FerroLaminas.Controllers
                     Tipo = materialDTO.Tipo,
                     PrecioPorKilo = materialDTO.PrecioPorKilo,
                     StockKilos = materialDTO.StockKilos,
-                    Descripcion = materialDTO.Descripcion
+                    Descripcion = materialDTO.Descripcion,
+                    Densidad = materialDTO.Densidad
                 };
 
                 var response = _materialService.UpdateMaterial(material);
@@ -117,7 +122,19 @@ namespace API_FerroLaminas.Controllers
                     return BadRequest(response.Message);
                 }
 
-                return NoContent();
+                var createdMaterialDTO = new MaterialDTO
+                {
+                    Id = response.Data.Id,
+                    Tipo = response.Data.Tipo,
+                    PrecioPorKilo = response.Data.PrecioPorKilo,
+                    StockKilos = response.Data.StockKilos,
+                    Descripcion = response.Data.Descripcion,
+                    Densidad = materialDTO.Densidad
+                    // Puedes mapear otras propiedades según sea necesario
+                };
+
+                //return NoContent();
+                return createdMaterialDTO;
             }
             catch (Exception ex)
             {
