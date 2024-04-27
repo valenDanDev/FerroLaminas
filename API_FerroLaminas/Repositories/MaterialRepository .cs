@@ -21,7 +21,7 @@ namespace API_FerroLaminas.Repositories
             return _context.Materiales;
         }
 
-        public Material GetMaterialById(int id)
+        public async Task <Material> GetMaterialById(int id)
         {
             return _context.Materiales.Find(id);
         }
@@ -38,11 +38,18 @@ namespace API_FerroLaminas.Repositories
             _context.Materiales.Update(material);
             _context.SaveChanges();
         }
-
-        public void DeleteMaterial(Material material)
+        public async Task<Material> DeleteMaterial(int id)
         {
-            _context.Materiales.Remove(material);
-            _context.SaveChanges();
+            var proyecto = await _context.Materiales.FindAsync(id);
+            if (proyecto == null)
+            {
+                return null; // Proyecto no encontrado
+            }
+
+            _context.Materiales.Remove(proyecto);
+            await _context.SaveChangesAsync();
+
+            return proyecto;
         }
     }
 }

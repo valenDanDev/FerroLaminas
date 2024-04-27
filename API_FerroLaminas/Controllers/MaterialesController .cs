@@ -48,31 +48,14 @@ namespace API_FerroLaminas.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<MaterialDTO> GetMaterial(int id)
+        public async Task<ActionResult<ServiceResponse<MaterialDTO>>> GetMaterial(int id)
         {
-            try
+            var response = await _materialService.GetMaterialById(id);
+            if (!response.Success)
             {
-                var response = _materialService.GetMaterialById(id);
-                if (!response.Success)
-                {
-                    return NotFound(response.Message);
-                }
-                var material = response.Data;
-                var materialDTO = new MaterialDTO
-                {
-                    Id = material.Id,
-                    Tipo = material.Tipo,
-                    PrecioPorKilo = material.PrecioPorKilo,
-                    StockKilos = material.StockKilos,
-                    Descripcion = material.Descripcion
-                    // Puedes mapear otras propiedades según sea necesario
-                };
-                return Ok(materialDTO);
+                return NotFound(response.Message);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener el material: " + ex.Message);
-            }
+            return Ok(response);
         }
 
         [HttpPost]
@@ -142,24 +125,16 @@ namespace API_FerroLaminas.Controllers
             }
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteMaterial(int id)
+        public async Task<ActionResult<ServiceResponse<MaterialDTO>>> DeleteMaterial(int id)
         {
-            try
+            var response = await _materialService.DeleteMaterial(id);
+            if (!response.Success)
             {
-                var response = _materialService.DeleteMaterial(id);
-
-                if (!response.Success)
-                {
-                    return NotFound(response.Message);
-                }
-
-                return NoContent();
+                return NotFound(response.Message);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al eliminar el material: " + ex.Message);
-            }
+            return Ok(response);
         }
     }
 }

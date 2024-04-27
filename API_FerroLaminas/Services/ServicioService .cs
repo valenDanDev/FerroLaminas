@@ -6,7 +6,7 @@ using API_FerroLaminas.Repositories;
 
 namespace API_FerroLaminas.Services
 {
-    public class ServicioService: IServicioService
+    public class ServicioService : IServicioService
     {
         private readonly IServicioRepository _servicioRepository;
 
@@ -20,9 +20,37 @@ namespace API_FerroLaminas.Services
             return _servicioRepository.GetServicios();
         }
 
-        public Servicio GetServicioById(int id)
+
+        public async Task<ServiceResponse<ServicioDTO>> GetServicioById(int id)
         {
-            return _servicioRepository.GetServicioById(id);
+            var response = new ServiceResponse<ServicioDTO>();
+            try
+            {
+                var proyecto = await _servicioRepository.GetServicioById(id);
+                if (proyecto == null)
+                {
+                    response.Success = false;
+                    response.Message = "Servicio no encontrado.";
+                    return response;
+                }
+
+                var proyectoDTO = new ServicioDTO
+                {
+                    Id = proyecto.Id,
+                    Descripcion = proyecto.Descripcion,
+                    PrecioPorKilo = proyecto.PrecioPorKilo,
+                    Nombre = proyecto.Nombre
+                };
+
+                response.Data = proyectoDTO;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Error al obtener el servicio: " + ex.Message;
+            }
+            return response;
         }
 
         public ServiceResponse<ServicioDTO> CreateServicio(ServicioDTO servicioDTO)
@@ -62,48 +90,36 @@ namespace API_FerroLaminas.Services
             }
         }
 
-        public ServiceResponse<ServicioDTO> UpdateServicio(int id, ServicioDTO servicioDTO)
+        public async Task<ServiceResponse<ServicioDTO>> UpdateServicio(int id, ServicioDTO servicioDTO)
         {
+            var response = new ServiceResponse<ServicioDTO>();
             try
             {
-                var servicio = _servicioRepository.GetServicioById(id);
-                if (servicio == null)
+                var proyecto = new Servicio
                 {
-                    return new ServiceResponse<ServicioDTO>
-                    {
-                        Success = false,
-                        Message = "El servicio no fue encontrado."
-                    };
+                    Id = id,
+                    Descripcion = servicioDTO.Descripcion,
+                    Nombre = servicioDTO.Nombre,
+                    PrecioPorKilo = servicioDTO.PrecioPorKilo
+                };
+
+                var updatedProyecto = await _servicioRepository.UpdateServicio(id, proyecto);
+                if (updatedProyecto == null)
+                {
+                    response.Success = false;
+                    response.Message = "Proyecto no encontrado.";
+                    return response;
                 }
 
-                servicio.Nombre = servicioDTO.Nombre;
-                servicio.PrecioPorKilo = servicioDTO.PrecioPorKilo;
-                servicio.Descripcion = servicioDTO.Descripcion;
-
-                _servicioRepository.UpdateServicio(servicio);
-
-                var servicioUpdatedDTO = new ServicioDTO
-                {
-                    Id = servicio.Id,
-                    Nombre = servicio.Nombre,
-                    PrecioPorKilo = servicio.PrecioPorKilo,
-                    Descripcion = servicio.Descripcion
-                };
-
-                return new ServiceResponse<ServicioDTO>
-                {
-                    Success = true,
-                    Data = servicioUpdatedDTO
-                };
+                response.Data = servicioDTO;
+                response.Success = true;
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<ServicioDTO>
-                {
-                    Success = false,
-                    Message = "Error al actualizar el servicio: " + ex.Message
-                };
+                response.Success = false;
+                response.Message = "Error al actualizar el proyecto: " + ex.Message;
             }
+            return response;
         }
 
         public ServiceResponse<string> DeleteServicio(int id)

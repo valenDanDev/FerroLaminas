@@ -1,4 +1,5 @@
-﻿using API_FerroLaminas.Models;
+﻿using API_FerroLaminas.DTO;
+using API_FerroLaminas.Models;
 using API_FerroLaminas.Repositories;
 
 namespace API_FerroLaminas.Services
@@ -33,33 +34,38 @@ namespace API_FerroLaminas.Services
             }
         }
 
-        public ServiceResponse<Material> GetMaterialById(int id)
+ 
+        public async Task<ServiceResponse<MaterialDTO>> GetMaterialById(int id)
         {
+            var response = new ServiceResponse<MaterialDTO>();
             try
             {
-                var material = _materialRepository.GetMaterialById(id);
-                if (material == null)
+                var proyecto = await _materialRepository.GetMaterialById(id);
+                if (proyecto == null)
                 {
-                    return new ServiceResponse<Material>
-                    {
-                        Success = false,
-                        Message = "Material no encontrado."
-                    };
+                    response.Success = false;
+                    response.Message = "Proyecto no encontrado.";
+                    return response;
                 }
-                return new ServiceResponse<Material>
+
+                var proyectoDTO = new MaterialDTO
                 {
-                    Success = true,
-                    Data = material
+                    Id = proyecto.Id,
+                    Descripcion = proyecto.Descripcion,
+                    Tipo = proyecto.Tipo,
+                    PrecioPorKilo = proyecto.PrecioPorKilo,
+                    StockKilos=proyecto.StockKilos
                 };
+
+                response.Data = proyectoDTO;
+                response.Success = true;
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<Material>
-                {
-                    Success = false,
-                    Message = "Error al obtener el material: " + ex.Message
-                };
+                response.Success = false;
+                response.Message = "Error al obtener el proyecto: " + ex.Message;
             }
+            return response;
         }
 
         public ServiceResponse<Material> CreateMaterial(Material material)
@@ -116,34 +122,28 @@ namespace API_FerroLaminas.Services
             }
         }
 
-        public ServiceResponse<bool> DeleteMaterial(int id)
+        public async Task<ServiceResponse<MaterialDTO>> DeleteMaterial(int id)
         {
+            var response = new ServiceResponse<MaterialDTO>();
             try
             {
-                var material = _materialRepository.GetMaterialById(id);
-                if (material == null)
+                var proyecto = await _materialRepository.GetMaterialById(id);
+                if (proyecto == null)
                 {
-                    return new ServiceResponse<bool>
-                    {
-                        Success = false,
-                        Message = "Material no encontrado."
-                    };
+                    response.Success = false;
+                    response.Message = "Proyecto no encontrado.";
+                    return response;
                 }
-                _materialRepository.DeleteMaterial(material);
-                return new ServiceResponse<bool>
-                {
-                    Success = true,
-                    Data = true
-                };
+
+                await _materialRepository.DeleteMaterial(id);
+                response.Success = true;
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<bool>
-                {
-                    Success = false,
-                    Message = "Error al eliminar el material: " + ex.Message
-                };
+                response.Success = false;
+                response.Message = "Error al eliminar el proyecto: " + ex.Message;
             }
+            return response;
         }
     }
 }

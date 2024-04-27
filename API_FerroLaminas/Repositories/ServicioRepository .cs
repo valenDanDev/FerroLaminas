@@ -17,9 +17,14 @@ namespace API_FerroLaminas.Repositories
             return _context.Servicios;
         }
 
-        public Servicio GetServicioById(int id)
+        public async Task<Servicio> GetServicioById(int id)
         {
             return _context.Servicios.Find(id);
+        }
+
+        public async Task<Material> GetMaterialById(int id)
+        {
+            return _context.Materiales.Find(id);
         }
 
         public void CreateServicio(Servicio servicio)
@@ -28,10 +33,23 @@ namespace API_FerroLaminas.Repositories
             _context.SaveChanges();
         }
 
-        public void UpdateServicio(Servicio servicio)
+
+        public async Task<Servicio> UpdateServicio(int id, Servicio proyecto)
         {
-            _context.Servicios.Update(servicio);
-            _context.SaveChanges();
+            var existingProyecto = await _context.Servicios.FindAsync(id);
+            if (existingProyecto == null)
+            {
+                return null; // Proyecto no encontrado
+            }
+
+            existingProyecto.Descripcion = proyecto.Descripcion;
+            existingProyecto.Nombre = proyecto.Nombre;
+            existingProyecto.PrecioPorKilo = proyecto.PrecioPorKilo;
+
+            _context.Servicios.Update(existingProyecto);
+            await _context.SaveChangesAsync();
+
+            return existingProyecto;
         }
 
         public void DeleteServicio(int id)

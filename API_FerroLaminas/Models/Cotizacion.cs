@@ -10,6 +10,9 @@
         public decimal PrecioTotal { get; set; }
         public decimal PesoLamina { get; set; }
 
+        public decimal precioMaterial { get; set; }
+        public decimal precioServicio { get; set; }
+
         public Cliente Cliente { get; set; }
         public Material Material { get; set; }
         public Servicio Servicio { get; set; }

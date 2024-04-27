@@ -5,9 +5,9 @@ namespace API_FerroLaminas.Repositories
     public interface IServicioRepository
     {
         IEnumerable<Servicio> GetServicios();
-        Servicio GetServicioById(int id);
+        Task<Servicio> GetServicioById(int id);
         void CreateServicio(Servicio servicio);
-        void UpdateServicio(Servicio servicio);
+        Task<Servicio> UpdateServicio(int id, Servicio proyecto);
         void DeleteServicio(int id);
     }
 }

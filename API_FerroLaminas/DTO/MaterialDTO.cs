@@ -7,5 +7,6 @@
         public decimal PrecioPorKilo { get; set; }
         public decimal StockKilos { get; set; }
         public string Descripcion { get; set; }
+        public decimal Densidad { get; set; }
     }
 }

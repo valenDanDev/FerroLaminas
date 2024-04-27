@@ -9,6 +9,7 @@ namespace API_FerroLaminas.Models
         public decimal PrecioPorKilo { get; set; } // Precio por kilogramo
         public decimal StockKilos { get; set; } // Stock en kilogramos
         public string Descripcion { get; set; }
+        public decimal Densidad { get; set; }
 
         // Relación con Calibre
         public ICollection<Calibre> Calibres { get; set; }

@@ -6,9 +6,9 @@ namespace API_FerroLaminas.Services
     public interface IServicioService
     {
         IEnumerable<Servicio> GetAllServicios();
-        Servicio GetServicioById(int id);
+        Task<ServiceResponse<ServicioDTO>> GetServicioById(int id);
         ServiceResponse<ServicioDTO> CreateServicio(ServicioDTO servicioDTO);
-        ServiceResponse<ServicioDTO> UpdateServicio(int id, ServicioDTO servicioDTO);
+        Task<ServiceResponse<ServicioDTO>> UpdateServicio(int id, ServicioDTO servicioDTO);
         ServiceResponse<string> DeleteServicio(int id);
     }
 }

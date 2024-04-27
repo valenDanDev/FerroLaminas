@@ -39,30 +39,14 @@ namespace API_FerroLaminas.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ServicioDTO> GetServicio(int id)
+        public async Task<ActionResult<ServiceResponse<ServicioDTO>>> GetServicio(int id)
         {
-            try
+            var response = await _servicioService.GetServicioById(id);
+            if (!response.Success)
             {
-                var servicio = _servicioService.GetServicioById(id);
-                if (servicio == null)
-                {
-                    return NotFound();
-                }
-
-                var servicioDTO = new ServicioDTO
-                {
-                    Id = servicio.Id,
-                    Nombre = servicio.Nombre,
-                    PrecioPorKilo = servicio.PrecioPorKilo,
-                    Descripcion = servicio.Descripcion
-                };
-
-                return Ok(servicioDTO);
+                return NotFound(response.Message);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener el servicio: " + ex.Message);
-            }
+            return Ok(response);
         }
 
         [HttpPost]
@@ -78,14 +62,13 @@ namespace API_FerroLaminas.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<ServiceResponse<ServicioDTO>> UpdateServicio(int id, ServicioDTO servicioDTO)
+        public async Task<ActionResult<ServiceResponse<ServicioDTO>>> UpdateServicio(int id, ServicioDTO proyectoDTO)
         {
-            var response = _servicioService.UpdateServicio(id, servicioDTO);
+            var response = await _servicioService.UpdateServicio(id, proyectoDTO);
             if (!response.Success)
             {
                 return BadRequest(response.Message);
             }
-
             return Ok(response);
         }
 
