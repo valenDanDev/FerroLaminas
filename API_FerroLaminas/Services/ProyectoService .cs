@@ -30,7 +30,8 @@ namespace API_FerroLaminas.Services
                         Id = proyecto.Id,
                         Descripcion = proyecto.Descripcion,
                         Largo = proyecto.Largo,
-                        Ancho = proyecto.Ancho
+                        Ancho = proyecto.Ancho,
+                        Calibre= proyecto.Calibre
                     };
                     proyectosDTO.Add(proyectoDTO);
                 }
@@ -63,7 +64,8 @@ namespace API_FerroLaminas.Services
                     Id = proyecto.Id,
                     Descripcion = proyecto.Descripcion,
                     Largo = proyecto.Largo,
-                    Ancho = proyecto.Ancho
+                    Ancho = proyecto.Ancho,
+                    Calibre=proyecto.Calibre
                 };
 
                 response.Data = proyectoDTO;
@@ -86,7 +88,8 @@ namespace API_FerroLaminas.Services
                 {
                     Descripcion = proyectoDTO.Descripcion,
                     Largo = proyectoDTO.Largo,
-                    Ancho = proyectoDTO.Ancho
+                    Ancho = proyectoDTO.Ancho,
+                    Calibre= proyectoDTO.Calibre
                 };
 
                 var createdProyecto = await _proyectoRepository.CreateProyecto(proyecto);
