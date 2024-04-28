@@ -88,15 +88,21 @@ namespace API_FerroLaminas.Controllers
                 ServicioId = updateCotizacionDTO.ServicioId,
                 PrecioTotal = updateCotizacionDTO.PrecioTotal,
                 PesoLamina = updateCotizacionDTO.PesoLamina,
-                UsuarioId = updateCotizacionDTO.UsuarioId
+                UsuarioId = updateCotizacionDTO.UsuarioId,
+                CotizacionFinalizada=updateCotizacionDTO.CotizacionFinalizada
+
             };
 
             var response = await _cotizacionService.UpdateCotizacion(id, cotizacion);
+
+
+
+            //return NoContent();
+            return Ok(response);
             if (!response.Success)
             {
                 return NotFound(response.Message);
             }
-            return NoContent();
         }
 
 

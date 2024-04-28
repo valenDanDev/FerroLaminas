@@ -6,8 +6,8 @@ namespace API_FerroLaminas.Services
 {
     public interface ICotizacionService
     {
-        Task<ServiceResponse<IEnumerable<CotizacionDTO>>> GetAllCotizaciones();
-        ServiceResponse<CotizacionDTO> GetCotizacionById(int id);
+        Task<ServiceResponse<IEnumerable<CotizacionVistaDTO>>> GetAllCotizaciones();
+        ServiceResponse<CotizacionEdicionDTO> GetCotizacionById(int id);
         Task<ServiceResponse<CotizacionDTO>> CreateCotizacion(Cotizacion cotizacion);
         Task<ServiceResponse<CotizacionDTO>> UpdateCotizacion(int id, Cotizacion cotizacion);
         Task<ServiceResponse<CotizacionDTO>> DeleteCotizacion(int id);

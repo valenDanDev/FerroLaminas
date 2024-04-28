@@ -12,22 +12,24 @@ namespace API_FerroLaminas.Services
         private readonly IProyectoRepository _proyectoRepository; // Agrega el repositorio de proyecto
         private readonly IMaterialRepository _materialRepository; // Agrega el repositorio de material
         private readonly IServicioRepository _servicioRepository; // Agrega el repositorio de servicio
-        public CotizacionService(ICotizacionRepository cotizacionRepository, IProyectoRepository proyectoRepository, IMaterialRepository materialRepository, IServicioRepository servicioRepository)
+        private readonly IUbicacionRepository _ubicacionRepository; // Agrega el repositorio de servicio
+        public CotizacionService(ICotizacionRepository cotizacionRepository, IProyectoRepository proyectoRepository, IMaterialRepository materialRepository, IServicioRepository servicioRepository, IUbicacionRepository ubicacionRepository)
         {
             _cotizacionRepository = cotizacionRepository;
             _proyectoRepository = proyectoRepository; // Inyecta el repositorio de proyecto
             _materialRepository = materialRepository; // Inyecta el repositorio de material
             _servicioRepository = servicioRepository;
+            _ubicacionRepository = ubicacionRepository;
         }
 
-        public async Task<ServiceResponse<IEnumerable<CotizacionDTO>>> GetAllCotizaciones()
+        public async Task<ServiceResponse<IEnumerable<CotizacionVistaDTO>>> GetAllCotizaciones()
         {
             Console.WriteLine("Este es un mensaje en C#");
-            var response = new ServiceResponse<IEnumerable<CotizacionDTO>>();
+            var response = new ServiceResponse<IEnumerable<CotizacionVistaDTO>>();
             try
             {
                 var cotizaciones = await _cotizacionRepository.GetAllCotizaciones();
-                response.Data = cotizaciones.Select(c => new CotizacionDTO( c.ClienteId, c.ProyectoId, c.MaterialId, c.ServicioId, c.PrecioTotal, c.PesoLamina, c.UsuarioId,c.precioMaterial,c.precioServicio,c.CotizacionFinalizada
+                response.Data = cotizaciones.Select(c => new CotizacionVistaDTO(c.Id,c.ClienteId, c.ProyectoId, c.MaterialId, c.ServicioId, c.PrecioTotal, c.PesoLamina, c.UsuarioId,c.precioMaterial,c.precioServicio,c.CotizacionFinalizada
                 ));
                 response.Success = true;
             }
@@ -39,14 +41,14 @@ namespace API_FerroLaminas.Services
             return response;
         }
 
-        public ServiceResponse<CotizacionDTO> GetCotizacionById(int id)
+        public ServiceResponse<CotizacionEdicionDTO> GetCotizacionById(int id)
         {
             try
             {
                 var cotizacion = _cotizacionRepository.GetCotizacionById(id);
                 if (cotizacion == null)
                 {
-                    return new ServiceResponse<CotizacionDTO>
+                    return new ServiceResponse<CotizacionEdicionDTO>
                     {
                         Success = false,
                         Message = "Cotización no encontrada."
@@ -54,7 +56,8 @@ namespace API_FerroLaminas.Services
                 }
 
                 // Initialice CotizacionDTO with all required parameters
-                var cotizacionDTO = new CotizacionDTO(
+                var cotizacionDTO = new CotizacionEdicionDTO(
+                    cotizacion.Id,
                     cotizacion.ClienteId,
                     cotizacion.ProyectoId,
                     cotizacion.MaterialId,
@@ -67,7 +70,39 @@ namespace API_FerroLaminas.Services
                     cotizacion.CotizacionFinalizada
                 );
 
-                return new ServiceResponse<CotizacionDTO>
+                // Populate related entity information if available
+                if (cotizacion.Cliente != null)
+                {
+                
+                    cotizacionDTO.Nombre = cotizacion.Cliente.Nombre;
+                    cotizacionDTO.Telefono = cotizacion.Cliente.Telefono;
+                    cotizacionDTO.Direccion = cotizacion.Cliente.Direccion;
+                    cotizacionDTO.Email = cotizacion.Cliente.Email;
+                }
+
+                if (cotizacion.Proyecto != null)
+                {
+                    cotizacionDTO.DescripcionProyecto = cotizacion.Proyecto.Descripcion;
+                    cotizacionDTO.LargoProyecto = cotizacion.Proyecto.Largo;
+                    cotizacionDTO.AnchoProyecto = cotizacion.Proyecto.Ancho;
+                    cotizacionDTO.Calibre = cotizacion.Proyecto.Calibre;
+                }
+
+                if (cotizacion.Material != null)
+                {
+                    cotizacionDTO.TipoMaterial = cotizacion.Material.Tipo;
+                }
+
+                if (cotizacion.Servicio != null)
+                {
+                    cotizacionDTO.NombreServicio = cotizacion.Servicio.Nombre;
+                }
+                if (cotizacion.Cliente.Ubicacion != null)
+                {
+                    cotizacionDTO.Ubicacion = cotizacion.Cliente.Ubicacion.Ciudad;
+                }
+
+                return new ServiceResponse<CotizacionEdicionDTO>
                 {
                     Success = true,
                     Data = cotizacionDTO
@@ -75,7 +110,7 @@ namespace API_FerroLaminas.Services
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<CotizacionDTO>
+                return new ServiceResponse<CotizacionEdicionDTO>
                 {
                     Success = false,
                     Message = "Error al obtener la cotización: " + ex.Message
@@ -125,6 +160,8 @@ namespace API_FerroLaminas.Services
                     createdCotizacion.precioServicio,
                     createdCotizacion.CotizacionFinalizada
                 );
+
+                return response;
             }
             catch (Exception ex)
             {
@@ -181,6 +218,29 @@ namespace API_FerroLaminas.Services
             var response = new ServiceResponse<CotizacionDTO>();
             try
             {
+                // Obtener información del proyecto y del material
+                Proyecto proyecto = await _proyectoRepository.GetProyectoById(cotizacion.ProyectoId);
+                Material material = await _materialRepository.GetMaterialById(cotizacion.MaterialId);
+                Servicio servicio = await _servicioRepository.GetServicioById(cotizacion.ServicioId);
+
+                // Calcular el peso del material
+                decimal pesoLamina = CalcularPesoMaterial(proyecto, material);
+
+                // Calcular el precio del material
+                decimal precioMaterial = CalcularPrecioMaterial(pesoLamina, material);
+
+                // Calcular el precio del servicio
+                decimal precioServicio = CalcularPrecioServicio(pesoLamina, servicio);
+
+                // Actualizar el peso de la lámina en la cotización
+                cotizacion.PesoLamina = pesoLamina;
+                cotizacion.precioMaterial = precioMaterial;
+                cotizacion.precioServicio = precioServicio;
+                cotizacion.PrecioTotal = precioMaterial + precioServicio;
+                cotizacion.CotizacionFinalizada = cotizacion.CotizacionFinalizada;
+                cotizacion.Material = cotizacion.Material;
+                cotizacion.Servicio = cotizacion.Servicio;
+
                 var updatedCotizacion = await _cotizacionRepository.UpdateCotizacion(id, cotizacion);
                 if (updatedCotizacion == null)
                 {
@@ -203,6 +263,8 @@ namespace API_FerroLaminas.Services
                     updatedCotizacion.precioServicio,
                     updatedCotizacion.CotizacionFinalizada
                 );
+
+                return response;
             }
             catch (Exception ex)
             {

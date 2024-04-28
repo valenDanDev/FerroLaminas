@@ -1,4 +1,5 @@
 ﻿using API_FerroLaminas.Data;
+using API_FerroLaminas.DTO;
 using API_FerroLaminas.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -22,7 +23,22 @@ namespace API_FerroLaminas.Repositories
 
         public Cotizacion GetCotizacionById(int id)
         {
-            return _context.Cotizaciones.FirstOrDefault(c => c.Id == id);
+            // Perform JOIN query with eager loading
+            var cotizacionData = _context.Cotizaciones
+                .Include(c => c.Cliente) // Include Cliente entity
+                    .Include(c => c.Cliente.Ubicacion) // Include Ubicacion entity nested within Cliente
+                .Include(c => c.Proyecto) // Include Proyecto entity
+                .Include(c => c.Servicio) // Include Servicio entity
+                .Include(c => c.Material) // Include Material entity
+                .Where(c => c.Id == id)
+                .FirstOrDefault();
+
+            if (cotizacionData == null)
+            {
+                return null; // Handle case where cotisation isn't found
+            }
+
+            return cotizacionData;
         }
 
         public async Task<Cotizacion> CreateCotizacion(Cotizacion cotizacion)
