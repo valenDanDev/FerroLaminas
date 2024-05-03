@@ -85,7 +85,7 @@ namespace API_FerroLaminas.Services
             try
             {
                 var proyecto = new Proyecto
-                {
+                {   Id=proyectoDTO.Id,
                     Descripcion = proyectoDTO.Descripcion,
                     Largo = proyectoDTO.Largo,
                     Ancho = proyectoDTO.Ancho,
@@ -93,7 +93,16 @@ namespace API_FerroLaminas.Services
                 };
 
                 var createdProyecto = await _proyectoRepository.CreateProyecto(proyecto);
-                response.Data = proyectoDTO;
+
+                response.Data = new ProyectoDTO
+                {
+                    Id = createdProyecto.Id,
+                    Descripcion = createdProyecto.Descripcion,
+                    Largo = createdProyecto.Largo,
+                    Ancho = createdProyecto.Ancho,
+                    Calibre = createdProyecto.Calibre
+                    // Agregar otras propiedades según sea necesario
+                };
                 response.Success = true;
             }
             catch (Exception ex)

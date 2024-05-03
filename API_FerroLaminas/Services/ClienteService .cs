@@ -82,18 +82,43 @@ namespace API_FerroLaminas.Services
             var response = new ServiceResponse<ClienteDTO>();
             try
             {
-                var createdCliente = await _clienteRepository.CreateCliente(cliente);
-                response.Success = true;
-                response.Data = new ClienteDTO
+                // Verificar si la cédula del cliente ya existe
+                var existingCliente = await _clienteRepository.GetClienteById(cliente.cedula);
+                if (existingCliente != null)
                 {
-                    Cedula = createdCliente.cedula,
-                    Nombre = createdCliente.Nombre,
-                    Telefono = createdCliente.Telefono,
-                    Direccion = createdCliente.Direccion,
-                    Email = createdCliente.Email,
-                    UbicacionId = createdCliente.UbicacionId
-                    // Agregar otras propiedades según sea necesario
-                };
+                    // Si el cliente ya existe, devolver la información del cliente existente
+                    response.Success = true;
+                   // response.Message = "La cédula del cliente ya existe. Información del cliente:";
+                    response.Data = new ClienteDTO
+                    {
+                        Cedula = existingCliente.cedula,
+                        Nombre = existingCliente.Nombre,
+                        Telefono = existingCliente.Telefono,
+                        Direccion = existingCliente.Direccion,
+                        Email = existingCliente.Email,
+                        UbicacionId = existingCliente.UbicacionId
+                        // Agregar otras propiedades según sea necesario
+                    };
+
+                    return response;
+                }
+                else
+                {
+                    // Si la cédula no existe, crear el nuevo cliente
+                    var createdCliente = await _clienteRepository.CreateCliente(cliente);
+                    response.Success = true;
+                    response.Message = "Cliente creado exitosamente.";
+                    response.Data = new ClienteDTO
+                    {
+                        Cedula = createdCliente.cedula,
+                        Nombre = createdCliente.Nombre,
+                        Telefono = createdCliente.Telefono,
+                        Direccion = createdCliente.Direccion,
+                        Email = createdCliente.Email,
+                        UbicacionId = createdCliente.UbicacionId
+                        // Agregar otras propiedades según sea necesario
+                    };
+                }
             }
             catch (Exception ex)
             {
@@ -102,6 +127,7 @@ namespace API_FerroLaminas.Services
             }
             return response;
         }
+
 
         public async Task<ServiceResponse<ClienteDTO>> UpdateCliente(int id, Cliente cliente)
         {
