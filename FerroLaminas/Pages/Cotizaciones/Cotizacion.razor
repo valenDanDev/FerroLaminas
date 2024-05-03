@@ -1,0 +1,488 @@
+﻿@page "/cotizacion"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    private List<Ubication> ubicationList;
+    private List<Material> materialList;
+    private List<Server> serverList;
+    private List<Calibre> calibreList;
+    private Cliente newCliente;
+    private Proyecto newProyecto;
+    private Cotization newCotization;
+    private User UserResponse;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        newCliente = new Cliente();
+        newProyecto = new Proyecto();
+        newCotization = new Cotization();
+
+        newCliente.cedula = 0;
+        newCliente.email = "";
+        newCliente.nombre = "";
+        newCliente.telefono = "";
+        newCliente.ubicacionId = 0;
+        newCliente.direccion = "";
+        newProyecto.Ancho = 0;
+        newProyecto.Largo = 0;
+        newProyecto.Descripcion = "";
+        newProyecto.Calibre = 0;
+        newProyecto.Id = 0;
+        newCotization.Id = 0;
+        newCotization.ClienteId = 0;
+        newCotization.ProyectoId = 0;
+        newCotization.MaterialId = 0;
+        newCotization.ServicioId = 0;
+        newCotization.PrecioTotal = 0;
+        newCotization.PesoLamina = 0;
+        newCotization.PrecioMaterial = 0;
+        newCotization.PrecioServicio = 0;
+        newCotization.UsuarioId = 0;
+        newCotization.CotizacionFinalizada = false;
+
+        var userResponseJson = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "User");
+
+        if (!string.IsNullOrEmpty(userResponseJson))
+        {
+            UserResponse = JsonConvert.DeserializeObject<User>(userResponseJson);
+        }
+
+        var httpClientUbication = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseUbication = await httpClientUbication.GetAsync("https://localhost:7263/api/Ubicaciones");
+
+        if (responseUbication.IsSuccessStatusCode)
+        {
+            var content = await responseUbication.Content.ReadAsStringAsync();
+            ubicationList = JsonConvert.DeserializeObject<List<Ubication>>(content);
+        }
+        else
+        {
+            ubicationList = new List<Ubication>();
+        }
+
+        var httpClientMaterial = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //desarrollo
+        var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+
+        if (responseMaterial.IsSuccessStatusCode)
+        {
+            var content = await responseMaterial.Content.ReadAsStringAsync();
+            materialList = JsonConvert.DeserializeObject<List<Material>>(content);
+        }
+        else
+        {
+            materialList = new List<Material>();
+        }
+
+        var httpClient = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            serverList = JsonConvert.DeserializeObject<List<Server>>(content);
+        }
+        else
+        {
+
+        }
+    }
+}
+<h3 class="cotizacion-title">Cotización</h3>
+<form class="cotizacion-form" onsubmit="@createClient">
+        <label for="tipo">Inforamción del Clinete:</label>
+        <br />
+        <div>
+            <label for="cedula">Cedula:</label>
+            <input type="number" id="cedula" name="cedula" value="" @onchange="@((e) => handleChange(e,"cedula"))" />
+        </div>
+        <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="" @onchange="@((e) => handleChange(e,"nombre"))" />
+        </div>
+        <div>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" value="" @onchange="@((e) => handleChange(e,"direccion"))" />
+        </div>
+        <div>
+            <label for="telefono">Telefono:</label>
+            <input type="text" id="telefono" name="telefono" value="" @onchange="@((e) => handleChange(e,"telefono"))" />
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="" @onchange="@((e) => handleChange(e,"email"))" />
+        </div>
+        <div>
+            <label for="ubicacion">Ubicación:</label>
+            <select id="ubicacion" name="ubicacion" @onchange="@((e) => handleChange(e,"ubicacion"))">
+                <option value="0">Ubicación</option>
+                @if (ubicationList != null)
+                {
+                    @foreach (var ubication in ubicationList)
+                    {
+                        <option value="@ubication.Id">@ubication.Ciudad</option>
+                    }
+                }
+            </select>
+        </div>
+        <br />
+        <label for="tipo">Inforamción del Meterial:</label>
+        <br />
+        <div>
+            <label for="material">Material:</label>
+            <select id="material" name="material" @onchange="@((e) => handleChange(e,"material"))">
+                <option value="0">Material</option>
+                @if (materialList != null)
+                {
+                    @foreach (var material in materialList)
+                    {
+                        <option value="@material.Id">@material.Tipo</option>
+                    }
+                }
+            </select>
+        </div>
+        <br />
+        <label for="tipo">Inforamción del Servicio:</label>
+        <br />
+        <div>
+            <label for="servicio">Servicio:</label>
+            <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
+                <option value="0">Servicio</option>
+                @if (serverList != null)
+                {
+                    @foreach (var server in serverList)
+                    {
+                        <option value="@server.Id">@server.Nombre</option>
+                    }
+                }
+            </select>
+        </div>
+        <br />
+        <label for="tipo">Inforamción del Proyecto:</label>
+        <br />
+        <div>
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" name="descripcion" value="" @onchange="@((e) => handleChange(e,"descripcion"))" />
+        </div>
+        <div>
+            <label for="largo">Largo:</label>
+            <input type="number" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" />
+        </div>
+        <div>
+            <label for="ancho">Ancho:</label>
+            <input type="number" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" />
+        </div>
+                @if (calibreList != null)
+                {
+        <div>
+            <label for="calibre">Calibre:</label>
+        <select id="calibre" name="calibre" @onchange="@((e) => handleChange(e,"calibre"))">
+            <option value="0">Calibre</option>
+                    @foreach (var calibre in calibreList)
+                    {
+                    <option value="@calibre.MedidaCalibre">@calibre.MedidaCalibre</option>
+                    }
+            </select>
+        </div>
+                }
+        <button type="submit" >Guardar cotización</button>
+    </form>
+
+
+
+
+
+@code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    public class Material
+    {
+        public int Id { get; set; }
+        public string Tipo { get; set; }
+        public double PrecioPorKilo { get; set; }
+        public double StockKilos { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class MaterialList
+    {
+        public List<Material> Values { get; set; }
+    }
+
+    public class Ubication
+    {
+        public int Id { get; set; }
+        public string Pais { get; set; }
+        public string Departamento { get; set; }
+        public string Ciudad { get; set; }
+    }
+
+    public class UbicationList
+    {
+        public List<Ubication> Values { get; set; }
+    }
+
+    public class Server
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public decimal PrecioPorKilo { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class ServerData
+    {
+        public List<Server> Values { get; set; }
+    }
+
+    public class Calibre
+    {
+        public int Id { get; set; }
+        public double MedidaCalibre { get; set; }
+        public int MaterialId { get; set; }
+    }
+
+    public class CalibreList
+    {
+        public List<Calibre> Values { get; set; }
+    }
+
+    public class User
+    {
+        public string email { get; set; }
+        public string nombre { get; set; }
+        public int IdUsuario { get; set; }
+    }
+
+    public class Cliente
+    {
+        public int cedula { get; set; }
+        public string nombre { get; set; }
+        public string telefono { get; set; }
+        public string direccion { get; set; }
+        public string email { get; set; }
+        public int ubicacionId { get; set; }
+    }
+
+    public class Proyecto
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; }
+        public int Largo { get; set; }
+        public int Ancho { get; set; }
+        public int Calibre { get; set; }
+    }
+
+    public class ProyectoData
+    {
+        public Proyecto Data { get; set; }
+    }
+
+    public class Cotization
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public int ProyectoId { get; set; }
+        public int MaterialId { get; set; }
+        public int ServicioId { get; set; }
+        public int PrecioTotal { get; set; }
+        public int PesoLamina { get; set; }
+        public int PrecioMaterial { get; set; }
+        public int PrecioServicio { get; set; }
+        public int UsuarioId { get; set; }
+        public bool CotizacionFinalizada { get; set; }
+    }
+
+    private async Task getCalibre()
+    {
+        var httpClientCalibre = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCalibre = await httpClientCalibre.GetAsync("https://localhost:7263/api/Calibre?id=" + newCotization.MaterialId);
+
+        if (responseCalibre.IsSuccessStatusCode)
+        {
+            var content = await responseCalibre.Content.ReadAsStringAsync();
+            calibreList = JsonConvert.DeserializeObject<List<Calibre>>(content);
+        }
+        else
+        {
+            calibreList = new List<Calibre>();
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "cedula")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.cedula = Int32.Parse(inputValue);
+            newCotization.ClienteId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.cedula);
+        }
+
+        if (name == "nombre")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.nombre = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.nombre);
+        }
+
+        if (name == "direccion")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.direccion = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.direccion);
+        }
+
+        if (name == "telefono")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.telefono = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.telefono);
+        }
+
+        if (name == "email")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.email = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.email);
+        }
+
+        if (name == "ubicacion")
+        {
+            string inputValue = e.Value.ToString();
+            newCliente.ubicacionId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newCliente.ubicacionId);
+        }
+
+        if (name == "material")
+        {
+            string inputValue = e.Value.ToString();
+            newCotization.MaterialId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newCotization.MaterialId);
+            StateHasChanged();
+            getCalibre();
+        }
+
+        if (name == "servicio")
+        {
+            string inputValue = e.Value.ToString();
+            newCotization.ServicioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newCotization.ServicioId);
+        }
+
+        if (name == "descripcion")
+        {
+            string inputValue = e.Value.ToString();
+            newProyecto.Descripcion = inputValue;
+            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Descripcion);
+        }
+
+        if (name == "largo")
+        {
+            string inputValue = e.Value.ToString();
+            newProyecto.Largo = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Largo);
+        }
+
+        if (name == "ancho")
+        {
+            string inputValue = e.Value.ToString();
+            newProyecto.Ancho = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Ancho);
+        }
+
+        if (name == "calibre")
+        {
+            string inputValue = e.Value.ToString();
+            newProyecto.Calibre = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Calibre);
+        }
+        StateHasChanged();
+    }
+
+    private async Task createCotitation(int id)
+    {
+        newCotization.ProyectoId = id;
+        newCotization.UsuarioId = UserResponse.IdUsuario;
+        var httpClientCreateCotitation = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(newCotization), Encoding.UTF8, "application/json");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCreateCotitation = await httpClientCreateCotitation.PostAsync("https://localhost:7263/api/Cotizaciones", content);
+
+        if (responseCreateCotitation.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Se creo la cotización");
+            Navigation.NavigateToLogin("/cotizaciones");
+        } else
+        {
+            Console.WriteLine("Fallo la cotización");
+        }
+    }
+
+    private async Task createProyecto()
+    {
+        var httpClientCreateProyect = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(newProyecto), Encoding.UTF8, "application/json");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCreateProyect = await httpClientCreateProyect.PostAsync("https://localhost:7263/api/Proyecto", content);
+
+        if (responseCreateProyect.IsSuccessStatusCode)
+        {
+            ProyectoData ProyectoResponse;
+            Proyecto ProyectoRes;
+            var contentResponse = await responseCreateProyect.Content.ReadAsStringAsync();
+            ProyectoResponse = JsonConvert.DeserializeObject<ProyectoData>(contentResponse);
+            Console.WriteLine(ProyectoResponse);
+            ProyectoRes = ProyectoResponse.Data;
+            Console.WriteLine("Proyecto id" + ProyectoRes.Id);
+            await createCotitation(ProyectoResponse.Data.Id);
+        } else
+        {
+            Console.WriteLine("Fallo el proyecto");
+        }
+    }
+
+    private async Task createClient()
+    {
+        var httpClientCreateClient = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(newCliente), Encoding.UTF8, "application/json");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCreateCliente = await httpClientCreateClient.PostAsync("https://localhost:7263/api/Cliente", content);
+
+        if (responseCreateCliente.IsSuccessStatusCode)
+        {
+            await createProyecto();
+        }
+        else
+        {
+            Console.WriteLine("Fallo el Cliente");
+        }
+    }
+}
