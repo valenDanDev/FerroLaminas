@@ -1,0 +1,176 @@
+﻿@page "/cotizaciones"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+@code {
+    private List<Cotization> contizations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
+        //desarrollo
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Cotizaciones");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            contizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+        }
+        else
+        {
+
+        }
+    }
+}
+
+<PageTitle>Ferro Laminas</PageTitle>
+
+<h3 class="order-title">Cotizaciones</h3>
+
+@if (contizations != null)
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Cedula</th>
+                <th>Proyecto</th>
+                <th>Material</th>
+                <th>Servicio</th>
+                <th>Total</th>
+                <th>Lamina</th>
+                <th>Precio Material</th>
+                <th>Precio Servicio</th>
+                <th>Usuario Id</th>
+                <th>Finalizada</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var contization in contizations)
+            {
+                <tr class="order-table-body">
+                    <td>@contization.Id</td>
+                    <td>@contization.ClienteId</td>
+                    <td>@contization.ProyectoId</td>
+                    <td>@contization.MaterialId</td>
+                    <td>@contization.ServicioId</td>
+                    <td>@contization.PrecioTotal</td>
+                    <td>@contization.PesoLamina</td>
+                    <td>@contization.PrecioMaterial</td>
+                    <td>@contization.PrecioServicio</td>
+                    <td>@contization.UsuarioId</td>
+                    <td>@contization.CotizacionFinalizada</td>
+                    <td><a href="/materiales/@contization.Id">Editar</a></td>
+                    <td><a href="/materiales" @onclick="@(() => DeleteMaterial(contization.Id))">Eliminar</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Cedula</th>
+                <th>Proyecto</th>
+                <th>Material</th>
+                <th>Servicio</th>
+                <th>Total</th>
+                <th>Lamina</th>
+                <th>Precio Metrial</th>
+                <th>Precio Servicio</th>
+                <th>Usuario Id</th>
+                <th>Finalizada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="order-table-body">
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+<button class="order-submit" type="button" onclick="@redirectCotization">Nuevo Material</button>
+
+@code {
+    public class Cotization
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public int ProyectoId { get; set; }
+        public int MaterialId { get; set; }
+        public int ServicioId { get; set; }
+        public double PrecioTotal { get; set; }
+        public double PesoLamina { get; set; }
+        public double PrecioMaterial { get; set; }
+        public double PrecioServicio { get; set; }
+        public int UsuarioId { get; set; }
+        public bool CotizacionFinalizada { get; set; }
+    }
+
+    private string logoClass { get; set; }
+    private string logoTextClass { get; set; }
+    private string formClass { get; set; }
+    private Timer timer { get; set; }
+
+    // protected override void OnInitialized()
+    // {
+    //     logoClass = "logo-rotation";
+    //     logoTextClass = "logo-text";
+    //     formClass = "form-login-hiden";
+    //     timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    // }
+
+    private async Task DeleteMaterial(int _id)
+    {
+        var httpClient = new HttpClient();
+        //produccion
+        //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
+        //desarrollo
+        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Materiales/" + _id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await OnInitializedAsync();
+        }
+        else
+        {
+        }
+        StateHasChanged();
+    }
+
+    private void redirectCotization()
+    {
+        Navigation.NavigateToLogin("/cotizacion");
+    }
+
+    // private void EjecutarTimeout(object state)
+    // {
+    //     logoClass = "logo";
+    //     logoTextClass = "logo-text-hiden";
+    //     formClass = "form-login";
+    //     StateHasChanged();
+    // }
+}
