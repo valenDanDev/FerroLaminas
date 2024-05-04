@@ -34,10 +34,9 @@ namespace API_FerroLaminas.Services
             }
             else
             {
-                // Return a default CalibreDTO object (optional)
                 yield return new CalibreDTO
                 {
-                    Id = 0, // Set default values as needed
+                    Id = 0, 
                     MedidaCalibre = 0,
                     MaterialId = id
                 };

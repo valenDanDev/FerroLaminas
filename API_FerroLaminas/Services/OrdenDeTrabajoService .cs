@@ -33,7 +33,6 @@ namespace API_FerroLaminas.Services
                     FechaInicio = o.FechaInicio,
                     FechaFin = o.FechaFin,
                     EstadoId = o.EstadoId,
-                    // Si es necesario, puedes mapear el estado aquí
                 });
                 response.Data = ordenesDeTrabajoDTO;
                 response.Success = true;
@@ -67,7 +66,6 @@ namespace API_FerroLaminas.Services
                     FechaInicio = ordenDeTrabajo.FechaInicio,
                     FechaFin = ordenDeTrabajo.FechaFin,
                     EstadoId = ordenDeTrabajo.EstadoId,
-                    // Si es necesario, puedes mapear el estado aquí
                 };
                 response.Data = ordenDeTrabajoDTO;
                 response.Success = true;
@@ -93,13 +91,10 @@ namespace API_FerroLaminas.Services
                     FechaInicio = ordenDeTrabajoDTO.FechaInicio,
                     FechaFin = ordenDeTrabajoDTO.FechaFin,
                     EstadoId = ordenDeTrabajoDTO.EstadoId
-                    // Si es necesario, puedes mapear el estado aquí
                 };
 
                 await _ordenDeTrabajoRepository.CreateOrdenDeTrabajo(ordenDeTrabajo);
 
-                // Si lo deseas, puedes volver a cargar la orden de trabajo desde el repositorio
-                // para obtener el ID generado por la base de datos
 
                 response.Data = ordenDeTrabajoDTO;
                 response.Success = true;
@@ -126,7 +121,6 @@ namespace API_FerroLaminas.Services
                     FechaInicio = ordenDeTrabajoDTO.FechaInicio,
                     FechaFin = ordenDeTrabajoDTO.FechaFin,
                     EstadoId = ordenDeTrabajoDTO.EstadoId
-                    // Si es necesario, puedes mapear el estado aquí
                 };
 
                 await _ordenDeTrabajoRepository.UpdateOrdenDeTrabajo(id,ordenDeTrabajo);
@@ -147,7 +141,6 @@ namespace API_FerroLaminas.Services
             var response = new ServiceResponse<OrdenDeTrabajoDTO>();
             try
             {
-                // Puedes obtener la orden de trabajo primero si necesitas devolverla en la respuesta
                 var ordenDeTrabajo = await _ordenDeTrabajoRepository.GetOrdenDeTrabajoById(id);
 
                 await _ordenDeTrabajoRepository.DeleteOrdenDeTrabajo(id);

@@ -38,7 +38,6 @@ namespace API_FerroLaminas.Controllers
                     Descripcion = material.Descripcion,
                     Densidad=material.Densidad
                     
-                    // Puedes mapear otras propiedades según sea necesario
                 }).ToList();
 
                 return Ok(materialesDTO);
@@ -89,7 +88,6 @@ namespace API_FerroLaminas.Controllers
                     StockKilos = response.Data.StockKilos,
                     Descripcion = response.Data.Descripcion,
                     Densidad = materialDTO.Densidad
-                    // Puedes mapear otras propiedades según sea necesario
                 };
 
                 return CreatedAtAction(nameof(GetMaterial), new { id = createdMaterialDTO.Id }, createdMaterialDTO);
@@ -130,7 +128,6 @@ namespace API_FerroLaminas.Controllers
                     StockKilos = response.Data.StockKilos,
                     Descripcion = response.Data.Descripcion,
                     Densidad = materialDTO.Densidad
-                    // Puedes mapear otras propiedades según sea necesario
                 };
 
                 //return NoContent();

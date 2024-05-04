@@ -101,7 +101,6 @@ namespace API_FerroLaminas.Services
                     Largo = createdProyecto.Largo,
                     Ancho = createdProyecto.Ancho,
                     Calibre = createdProyecto.Calibre
-                    // Agregar otras propiedades según sea necesario
                 };
                 response.Success = true;
             }

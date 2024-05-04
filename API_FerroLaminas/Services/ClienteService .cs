@@ -31,7 +31,6 @@ namespace API_FerroLaminas.Services
                     Direccion = c.Direccion,
                     Email = c.Email,
                     UbicacionId = c.UbicacionId,
-                    // Agregar otras propiedades según sea necesario
                 });
                 response.Success = true;
             }
@@ -97,7 +96,6 @@ namespace API_FerroLaminas.Services
                         Direccion = existingCliente.Direccion,
                         Email = existingCliente.Email,
                         UbicacionId = existingCliente.UbicacionId
-                        // Agregar otras propiedades según sea necesario
                     };
 
                     return response;
@@ -116,7 +114,6 @@ namespace API_FerroLaminas.Services
                         Direccion = createdCliente.Direccion,
                         Email = createdCliente.Email,
                         UbicacionId = createdCliente.UbicacionId
-                        // Agregar otras propiedades según sea necesario
                     };
                 }
             }
@@ -151,7 +148,6 @@ namespace API_FerroLaminas.Services
                         Direccion = updatedCliente.Direccion,
                         Email = updatedCliente.Email,
                         UbicacionId = updatedCliente.UbicacionId
-                        // Agregar otras propiedades según sea necesario
                     };
                 }
             }
@@ -185,7 +181,6 @@ namespace API_FerroLaminas.Services
                         Direccion = deletedCliente.Direccion,
                         Email = deletedCliente.Email,
                         UbicacionId = deletedCliente.UbicacionId
-                        // Agregar otras propiedades según sea necesario
                     };
                 }
             }
