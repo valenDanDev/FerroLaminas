@@ -68,6 +68,10 @@ builder.Services.AddScoped<ICalibreService, CalibreService>();
 
 builder.Services.AddScoped<ICalibreRepository, CalibreRepository>();
 
+builder.Services.AddScoped<IOrdenDeTrabajoService, OrdenDeTrabajoService>();
+
+builder.Services.AddScoped<IOrdenDeTrabajoRepository, OrdenDeTrabajoRepository>();
+
 
 var app = builder.Build();
 
