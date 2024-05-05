@@ -72,6 +72,10 @@ builder.Services.AddScoped<IOrdenDeTrabajoService, OrdenDeTrabajoService>();
 
 builder.Services.AddScoped<IOrdenDeTrabajoRepository, OrdenDeTrabajoRepository>();
 
+builder.Services.AddScoped<ISeguimientoService, SeguimientoService>();
+
+builder.Services.AddScoped<ISeguimientoRepository, SeguimientoRepository>();
+
 
 var app = builder.Build();
 
