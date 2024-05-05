@@ -34,5 +34,10 @@ namespace API_FerroLaminas.Repositories
         {
             return _context.Usuarios.FirstOrDefault(u => u.Id == userId);
         }
+
+        public IEnumerable<Usuario> ObtenerTodosOperarios()
+        {
+            return _context.Usuarios.Where(u => u.RolId == 4).ToList();
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace API_FerroLaminas.Repositories
         Task<OrdenDeTrabajo> CreateOrdenDeTrabajo(OrdenDeTrabajo ordenDeTrabajo);
         Task<OrdenDeTrabajo> UpdateOrdenDeTrabajo(int id, OrdenDeTrabajo ordenDeTrabajo);
         Task<OrdenDeTrabajo> DeleteOrdenDeTrabajo(int id);
+
+        Task<IEnumerable<OrdenDeTrabajo>> GetOrdenesDeTrabajoPendientes();
     }
 }

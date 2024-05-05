@@ -13,5 +13,7 @@ namespace API_FerroLaminas.Services
         Task<ServiceResponse<OrdenDeTrabajoDTO>> CreateOrdenDeTrabajo(OrdenDeTrabajoDTO ordenDeTrabajoDTO);
         Task<ServiceResponse<OrdenDeTrabajoDTO>> UpdateOrdenDeTrabajo(int id, OrdenDeTrabajoDTO ordenDeTrabajoDTO);
         Task<ServiceResponse<OrdenDeTrabajoDTO>> DeleteOrdenDeTrabajo(int id);
+
+        Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> OrdenesTrabajoPendientes();
     }
 }

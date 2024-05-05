@@ -47,5 +47,24 @@ namespace API_FerroLaminas.Controllers
             return Ok(response.Data);
         }
 
+        [HttpGet("Operarios")]
+        public async Task<IActionResult> ObtenerTodosOperarios()
+        {
+            try
+            {
+                var response = _usuarioService.ObtenerTodosOperarios();
+                if (!response.Success)
+                {
+                    return BadRequest(response);
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
     }
 }

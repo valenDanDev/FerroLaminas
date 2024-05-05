@@ -71,5 +71,10 @@ namespace API_FerroLaminas.Repositories
 
             return ordenDeTrabajo;
         }
+
+        public async Task<IEnumerable<OrdenDeTrabajo>> GetOrdenesDeTrabajoPendientes()
+        {
+            return await _context.OrdenesDeTrabajo.Where(o => o.EstadoId == 1).ToListAsync();
+        }
     }
 }

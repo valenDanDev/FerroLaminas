@@ -161,5 +161,40 @@ namespace API_FerroLaminas.Services
                 Data = new { Nombre = user.Nombre, Email = user.Email }
             };
         }
+
+        public ServiceResponse<IEnumerable<Usuario>> ObtenerTodosOperarios()
+        {
+            var response = new ServiceResponse<IEnumerable<Usuario>>();
+
+            try
+            {
+                var operarios = _usuarioRepository.ObtenerTodosOperarios();
+
+                if (operarios == null || !operarios.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No se encontraron operarios.";
+                    return response;
+                }
+
+                var operariosDTO = operarios.Select(u => new Usuario
+                {
+                    Id = u.Id,
+                    Nombre = u.Nombre,
+                    Email = u.Email,
+                    RolId = u.RolId
+                });
+
+                response.Data = operariosDTO;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Error al obtener operarios: " + ex.Message;
+            }
+
+            return response;
+        }
     }
 }

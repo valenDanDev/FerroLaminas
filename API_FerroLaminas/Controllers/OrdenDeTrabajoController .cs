@@ -71,5 +71,16 @@ namespace API_FerroLaminas.Controllers
             }
             return NotFound(response.Message);
         }
+
+        [HttpGet("OrdenesTrabajoPendientes")]
+        public async Task<IActionResult> OrdenesTrabajoPendientes()
+        {
+            var response = await _ordenDeTrabajoService.OrdenesTrabajoPendientes();
+            if (response.Success)
+            {
+                return Ok(response.Data);
+            }
+            return BadRequest(response.Message);
+        }
     }
 }

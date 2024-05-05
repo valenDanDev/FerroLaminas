@@ -154,5 +154,35 @@ namespace API_FerroLaminas.Services
             }
             return response;
         }
-    }
+
+        public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> OrdenesTrabajoPendientes()
+        {
+            var response = new ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>();
+            try
+            {
+                var ordenesDeTrabajo = await _ordenDeTrabajoRepository.GetOrdenesDeTrabajoPendientes();
+                var ordenesDeTrabajoDTO = ordenesDeTrabajo.Select(o => new OrdenDeTrabajoDTO
+                {
+                    Id = o.Id,
+                    CotizacionId = o.CotizacionId,
+                    OperarioId = o.OperarioId,
+                    NombreOperario = o.nombreOperario,
+                    FechaInicio = o.FechaInicio,
+                    FechaFin = o.FechaFin,
+                    EstadoId = o.EstadoId,
+                });
+                response.Data = ordenesDeTrabajoDTO;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "Error al obtener las órdenes de trabajo pendientes: " + ex.Message;
+            }
+            return response;
+        }
+    
+}
+
+
 }

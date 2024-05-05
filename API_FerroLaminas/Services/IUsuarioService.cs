@@ -8,5 +8,7 @@ namespace API_FerroLaminas.Services
         ServiceResponse<object> ValidarYCrearUsuario(LoginRequestDTO loginRequest);
         ServiceResponse<object> GetRol(int userId);
         ServiceResponse<object> GetUsuarioById(int userId);
+
+        ServiceResponse<IEnumerable<Usuario>> ObtenerTodosOperarios();
     }
 }

@@ -7,5 +7,6 @@ namespace API_FerroLaminas.Repositories
         Usuario GetUsuarioByEmail(string email);
         Usuario GetUsuarioById(int userId);
         void CreateUsuario(Usuario usuario);
+        IEnumerable<Usuario> ObtenerTodosOperarios();
     }
 }
