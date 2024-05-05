@@ -18,13 +18,13 @@ namespace API_FerroLaminas.Services
             _ordenDeTrabajoRepository = ordenDeTrabajoRepository;
         }
 
-        public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> GetAllOrdenesDeTrabajo()
+        public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>> GetAllOrdenesDeTrabajo()
         {
-            var response = new ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>();
+            var response = new ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>();
             try
             {
                 var ordenesDeTrabajo = await _ordenDeTrabajoRepository.GetAllOrdenesDeTrabajo();
-                var ordenesDeTrabajoDTO = ordenesDeTrabajo.Select(o => new OrdenDeTrabajoDTO
+                var ordenesDeTrabajoDTO = ordenesDeTrabajo.Select(o => new OrdenDeTrabajo_vista_DTO
                 {
                     Id = o.Id,
                     CotizacionId = o.CotizacionId,
@@ -33,6 +33,7 @@ namespace API_FerroLaminas.Services
                     FechaInicio = o.FechaInicio,
                     FechaFin = o.FechaFin,
                     EstadoId = o.EstadoId,
+                    Estado = o.Estado.Nombre
                 });
                 response.Data = ordenesDeTrabajoDTO;
                 response.Success = true;
@@ -45,9 +46,9 @@ namespace API_FerroLaminas.Services
             return response;
         }
 
-        public async Task<ServiceResponse<OrdenDeTrabajoDTO>> GetOrdenDeTrabajoById(int id)
+        public async Task<ServiceResponse<OrdenDeTrabajo_vista_DTO>> GetOrdenDeTrabajoById(int id)
         {
-            var response = new ServiceResponse<OrdenDeTrabajoDTO>();
+            var response = new ServiceResponse<OrdenDeTrabajo_vista_DTO>();
             try
             {
                 var ordenDeTrabajo = await _ordenDeTrabajoRepository.GetOrdenDeTrabajoById(id);
@@ -57,7 +58,7 @@ namespace API_FerroLaminas.Services
                     response.Message = "Orden de trabajo no encontrada.";
                     return response;
                 }
-                var ordenDeTrabajoDTO = new OrdenDeTrabajoDTO
+                var ordenDeTrabajoDTO = new OrdenDeTrabajo_vista_DTO
                 {
                     Id = ordenDeTrabajo.Id,
                     CotizacionId = ordenDeTrabajo.CotizacionId,
@@ -66,6 +67,7 @@ namespace API_FerroLaminas.Services
                     FechaInicio = ordenDeTrabajo.FechaInicio,
                     FechaFin = ordenDeTrabajo.FechaFin,
                     EstadoId = ordenDeTrabajo.EstadoId,
+                    Estado = ordenDeTrabajo.Estado.Nombre
                 };
                 response.Data = ordenDeTrabajoDTO;
                 response.Success = true;
@@ -155,13 +157,13 @@ namespace API_FerroLaminas.Services
             return response;
         }
 
-        public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> OrdenesTrabajoPendientes()
+        public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>> OrdenesTrabajoPendientes()
         {
-            var response = new ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>();
+            var response = new ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>();
             try
             {
                 var ordenesDeTrabajo = await _ordenDeTrabajoRepository.GetOrdenesDeTrabajoPendientes();
-                var ordenesDeTrabajoDTO = ordenesDeTrabajo.Select(o => new OrdenDeTrabajoDTO
+                var ordenesDeTrabajoDTO = ordenesDeTrabajo.Select(o => new OrdenDeTrabajo_vista_DTO
                 {
                     Id = o.Id,
                     CotizacionId = o.CotizacionId,
@@ -170,6 +172,7 @@ namespace API_FerroLaminas.Services
                     FechaInicio = o.FechaInicio,
                     FechaFin = o.FechaFin,
                     EstadoId = o.EstadoId,
+                    Estado = o.Estado.Nombre
                 });
                 response.Data = ordenesDeTrabajoDTO;
                 response.Success = true;

@@ -8,12 +8,12 @@ namespace API_FerroLaminas.Services
 {
     public interface IOrdenDeTrabajoService
     {
-        Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> GetAllOrdenesDeTrabajo();
-        Task<ServiceResponse<OrdenDeTrabajoDTO>> GetOrdenDeTrabajoById(int id);
+        Task<ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>> GetAllOrdenesDeTrabajo();
+        Task<ServiceResponse<OrdenDeTrabajo_vista_DTO>> GetOrdenDeTrabajoById(int id);
         Task<ServiceResponse<OrdenDeTrabajoDTO>> CreateOrdenDeTrabajo(OrdenDeTrabajoDTO ordenDeTrabajoDTO);
         Task<ServiceResponse<OrdenDeTrabajoDTO>> UpdateOrdenDeTrabajo(int id, OrdenDeTrabajoDTO ordenDeTrabajoDTO);
         Task<ServiceResponse<OrdenDeTrabajoDTO>> DeleteOrdenDeTrabajo(int id);
 
-        Task<ServiceResponse<IEnumerable<OrdenDeTrabajoDTO>>> OrdenesTrabajoPendientes();
+        Task<ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>> OrdenesTrabajoPendientes();
     }
 }
