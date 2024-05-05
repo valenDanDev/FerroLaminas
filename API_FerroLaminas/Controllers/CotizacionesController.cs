@@ -63,7 +63,8 @@ namespace API_FerroLaminas.Controllers
                 ServicioId = cotizacionDTO.ServicioId,
                 PrecioTotal = cotizacionDTO.PrecioTotal,
                 PesoLamina = cotizacionDTO.PesoLamina,
-                UsuarioId = cotizacionDTO.UsuarioId
+                UsuarioId = cotizacionDTO.UsuarioId,
+                CotizacionFinalizada=cotizacionDTO.CotizacionFinalizada
             };
 
             var response = await _cotizacionService.CreateCotizacion(cotizacion);

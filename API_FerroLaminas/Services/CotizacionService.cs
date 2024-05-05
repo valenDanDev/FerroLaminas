@@ -13,13 +13,15 @@ namespace API_FerroLaminas.Services
         private readonly IMaterialRepository _materialRepository; // Agrega el repositorio de material
         private readonly IServicioRepository _servicioRepository; // Agrega el repositorio de servicio
         private readonly IUbicacionRepository _ubicacionRepository; // Agrega el repositorio de servicio
-        public CotizacionService(ICotizacionRepository cotizacionRepository, IProyectoRepository proyectoRepository, IMaterialRepository materialRepository, IServicioRepository servicioRepository, IUbicacionRepository ubicacionRepository)
+        private readonly IOrdenDeTrabajoService _ordenDeTrabajoService;
+        public CotizacionService(ICotizacionRepository cotizacionRepository, IProyectoRepository proyectoRepository, IMaterialRepository materialRepository, IServicioRepository servicioRepository, IUbicacionRepository ubicacionRepository, IOrdenDeTrabajoService ordenDeTrabajoService)
         {
             _cotizacionRepository = cotizacionRepository;
             _proyectoRepository = proyectoRepository; // Inyecta el repositorio de proyecto
             _materialRepository = materialRepository; // Inyecta el repositorio de material
             _servicioRepository = servicioRepository;
             _ubicacionRepository = ubicacionRepository;
+            _ordenDeTrabajoService = ordenDeTrabajoService;
         }
 
         public async Task<ServiceResponse<IEnumerable<CotizacionVistaDTO>>> GetAllCotizaciones()
@@ -123,52 +125,100 @@ namespace API_FerroLaminas.Services
         public async Task<ServiceResponse<CotizacionDTO>> CreateCotizacion(Cotizacion cotizacion)
         {
             var response = new ServiceResponse<CotizacionDTO>();
+
             try
             {
+                var proyecto = await _proyectoRepository.GetProyectoById(cotizacion.ProyectoId);
+                var material = await _materialRepository.GetMaterialById(cotizacion.MaterialId);
+                var servicio = await _servicioRepository.GetServicioById(cotizacion.ServicioId);
 
-                // Obtener información del proyecto y del material
-                Proyecto proyecto = await _proyectoRepository.GetProyectoById(cotizacion.ProyectoId);
-                Material material = await _materialRepository.GetMaterialById(cotizacion.MaterialId);
-                Servicio servicio = await _servicioRepository.GetServicioById(cotizacion.ServicioId);
+                var cotizacionCalculada = await CalcularCotizacion(cotizacion, proyecto, material, servicio);
 
-                // Calcular el peso del material
-                decimal pesoLamina = CalcularPesoMaterial(proyecto, material);
+                var createdCotizacion = await _cotizacionRepository.CreateCotizacion(cotizacionCalculada);
 
-                // Calcular el precio del material
-                decimal precioMaterial = CalcularPrecioMaterial(pesoLamina, material);
-
-                // Calcular el precio del servicio
-                decimal precioServicio = CalcularPrecioServicio(pesoLamina, servicio);
-
-                // Actualizar el peso de la lámina en la cotización
-                cotizacion.PesoLamina = pesoLamina;
-                cotizacion.precioMaterial = precioMaterial;
-                cotizacion.precioServicio = precioServicio;
-                cotizacion.PrecioTotal = precioMaterial + precioServicio;
-
-                var createdCotizacion = await _cotizacionRepository.CreateCotizacion(cotizacion);
                 response.Success = true;
-                response.Data = new CotizacionDTO(
-                    createdCotizacion.ClienteId,
-                    createdCotizacion.ProyectoId,
-                    createdCotizacion.MaterialId,
-                    createdCotizacion.ServicioId,
-                    createdCotizacion.PrecioTotal,
-                    createdCotizacion.PesoLamina,
-                    createdCotizacion.UsuarioId,
-                    createdCotizacion.precioMaterial,
-                    createdCotizacion.precioServicio,
-                    createdCotizacion.CotizacionFinalizada
-                );
+                response.Data = MapToCotizacionDTO(createdCotizacion);
 
-                return response;
+                if (createdCotizacion.CotizacionFinalizada)
+                {
+                    await CrearOrdenDeTrabajo(createdCotizacion);
+                }
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = "Error al crear la cotización: " + ex.Message;
             }
+
             return response;
+        }
+
+        private async Task<Cotizacion> CalcularCotizacion(Cotizacion cotizacion, Proyecto proyecto, Material material, Servicio servicio)
+        {
+            var pesoLamina = CalcularPesoMaterial(proyecto, material);
+            var precioMaterial = CalcularPrecioMaterial(pesoLamina, material);
+            var precioServicio = CalcularPrecioServicio(pesoLamina, servicio);
+
+            cotizacion.PesoLamina = pesoLamina;
+            cotizacion.precioMaterial = precioMaterial;
+            cotizacion.precioServicio = precioServicio;
+            cotizacion.PrecioTotal = precioMaterial + precioServicio;
+
+            return cotizacion;
+        }
+
+        private CotizacionDTO MapToCotizacionDTO(Cotizacion cotizacion)
+        {
+            return new CotizacionDTO
+            {
+                ClienteId = cotizacion.ClienteId,
+                ProyectoId = cotizacion.ProyectoId,
+                MaterialId = cotizacion.MaterialId,
+                ServicioId = cotizacion.ServicioId,
+                PrecioTotal = cotizacion.PrecioTotal,
+                PesoLamina = cotizacion.PesoLamina,
+                UsuarioId = cotizacion.UsuarioId,
+                PrecioMaterial = cotizacion.precioMaterial,
+                PrecioServicio = cotizacion.precioServicio,
+                CotizacionFinalizada = cotizacion.CotizacionFinalizada
+            };
+        }
+
+
+        private async Task CrearOrdenDeTrabajo(Cotizacion cotizacion)
+        {
+            var fechaActualUtc = DateTime.UtcNow;
+            var fechaActualColombia = fechaActualUtc.AddHours(-5);
+            var fechaFinColombia = CalcularFechaFinColombia(fechaActualColombia);
+
+            var ordenDeTrabajoDTO = new OrdenDeTrabajoDTO
+            {
+                CotizacionId = cotizacion.Id,
+                OperarioId = "sin asignar",
+                NombreOperario = "sin asignar",
+                FechaInicio = fechaActualColombia,
+                FechaFin = fechaFinColombia,
+                EstadoId = 1
+            };
+
+            await _ordenDeTrabajoService.CreateOrdenDeTrabajo(ordenDeTrabajoDTO);
+        }
+
+        private DateTime CalcularFechaFinColombia(DateTime fechaActualColombia)
+        {
+            var fechaFinColombia = fechaActualColombia;
+
+            for (int i = 0; i < 3; i++)
+            {
+                fechaFinColombia = fechaFinColombia.AddDays(1);
+
+                while (fechaFinColombia.DayOfWeek == DayOfWeek.Saturday || fechaFinColombia.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    fechaFinColombia = fechaFinColombia.AddDays(1);
+                }
+            }
+
+            return fechaFinColombia;
         }
 
         // Método para calcular el peso del material
@@ -213,35 +263,19 @@ namespace API_FerroLaminas.Services
             decimal precioServicio = pesoLamina * servicio.PrecioPorKilo;
             return precioServicio;
         }
+
         public async Task<ServiceResponse<CotizacionDTO>> UpdateCotizacion(int id, Cotizacion cotizacion)
         {
             var response = new ServiceResponse<CotizacionDTO>();
             try
             {
-                // Obtener información del proyecto y del material
-                Proyecto proyecto = await _proyectoRepository.GetProyectoById(cotizacion.ProyectoId);
-                Material material = await _materialRepository.GetMaterialById(cotizacion.MaterialId);
-                Servicio servicio = await _servicioRepository.GetServicioById(cotizacion.ServicioId);
+                var proyecto = await _proyectoRepository.GetProyectoById(cotizacion.ProyectoId);
+                var material = await _materialRepository.GetMaterialById(cotizacion.MaterialId);
+                var servicio = await _servicioRepository.GetServicioById(cotizacion.ServicioId);
 
-                // Calcular el peso del material
-                decimal pesoLamina = CalcularPesoMaterial(proyecto, material);
+                var cotizacionCalculada = await CalcularCotizacion(cotizacion, proyecto, material, servicio);
 
-                // Calcular el precio del material
-                decimal precioMaterial = CalcularPrecioMaterial(pesoLamina, material);
-
-                // Calcular el precio del servicio
-                decimal precioServicio = CalcularPrecioServicio(pesoLamina, servicio);
-
-                // Actualizar el peso de la lámina en la cotización
-                cotizacion.PesoLamina = pesoLamina;
-                cotizacion.precioMaterial = precioMaterial;
-                cotizacion.precioServicio = precioServicio;
-                cotizacion.PrecioTotal = precioMaterial + precioServicio;
-                cotizacion.CotizacionFinalizada = cotizacion.CotizacionFinalizada;
-                cotizacion.Material = cotizacion.Material;
-                cotizacion.Servicio = cotizacion.Servicio;
-
-                var updatedCotizacion = await _cotizacionRepository.UpdateCotizacion(id, cotizacion);
+                var updatedCotizacion = await _cotizacionRepository.UpdateCotizacion(id, cotizacionCalculada);
                 if (updatedCotizacion == null)
                 {
                     return new ServiceResponse<CotizacionDTO>
@@ -264,7 +298,10 @@ namespace API_FerroLaminas.Services
                     updatedCotizacion.CotizacionFinalizada
                 );
 
-                return response;
+                if (updatedCotizacion.CotizacionFinalizada)
+                {
+                    await CrearOrdenDeTrabajo(updatedCotizacion);
+                }
             }
             catch (Exception ex)
             {
@@ -273,7 +310,6 @@ namespace API_FerroLaminas.Services
             }
             return response;
         }
-
         public async Task<ServiceResponse<CotizacionDTO>> DeleteCotizacion(int id)
         {
             var response = new ServiceResponse<CotizacionDTO>();

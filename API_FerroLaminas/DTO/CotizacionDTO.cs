@@ -32,5 +32,7 @@ namespace API_FerroLaminas.DTO
             PrecioServicio = precioServicio;
             CotizacionFinalizada = cotizacionFinalizada;
         }
+
+        public CotizacionDTO() { }
     }
 }
