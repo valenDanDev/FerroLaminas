@@ -12,7 +12,7 @@
     [Parameter]
     public string id { get; set; }
 
-    private Materiaal material = new Materiaal();
+    private Materiaal material;
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,8 +24,10 @@
 
         if (response.IsSuccessStatusCode)
         {
+            MateriaalData data;
             var content = await response.Content.ReadAsStringAsync();
-            material = JsonConvert.DeserializeObject<Materiaal>(content);
+            data = JsonConvert.DeserializeObject<MateriaalData>(content);
+            material = data.Data;
         }
         else
         {
@@ -53,6 +55,10 @@
             <label for="descripcion">Descripción:</label>
             <input type="text" id="descripcion" name="descripcion" value="@material.Descripcion" @onchange="@((e) => handleChange(e,"descripcion"))" />
         </div>
+        <div>
+            <label for="densidad">Descripción:</label>
+            <input type="number" id="densidad" name="densidad" value="@material.Densidad" @onchange="@((e) => handleChange(e,"densidad"))" />
+        </div>
         <button type="submit" @onclick="UpdateMaterial">Guardar material</button>
     </form>
 }
@@ -67,6 +73,12 @@
         public double PrecioPorKilo { get; set; }
         public double StockKilos { get; set; }
         public string Descripcion { get; set; }
+        public double Densidad { get; set; }
+    }
+
+    public class MateriaalData
+    {
+        public Materiaal Data { get; set; }
     }
 
     public void handleChange(ChangeEventArgs e, string name)
@@ -97,6 +109,13 @@
             string inputValue = e.Value.ToString();
             material.Descripcion = inputValue;
             Console.WriteLine("El valor del input ha cambiado: " + material.Descripcion);
+        }
+
+        if (name == "densidad")
+        {
+            string inputValue = e.Value.ToString();
+            material.Densidad = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + material.Densidad);
         }
     } 
 

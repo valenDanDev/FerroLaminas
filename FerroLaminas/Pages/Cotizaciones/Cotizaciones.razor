@@ -69,8 +69,8 @@
                     <td>@contization.PrecioServicio</td>
                     <td>@contization.UsuarioId</td>
                     <td>@contization.CotizacionFinalizada</td>
-                    <td><a href="/materiales/@contization.Id">Editar</a></td>
-                    <td><a href="/materiales" @onclick="@(() => DeleteMaterial(contization.Id))">Eliminar</a></td>
+                    <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
+                    <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>
                 </tr>
             }
         </tbody>
@@ -143,13 +143,13 @@ else
     //     timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
     // }
 
-    private async Task DeleteMaterial(int _id)
+    private async Task DeleteCotitation(int _id)
     {
         var httpClient = new HttpClient();
         //produccion
         //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
         //desarrollo
-        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Materiales/" + _id);
+        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Cotizaciones/" + _id);
 
         if (response.IsSuccessStatusCode)
         {
