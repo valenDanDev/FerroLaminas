@@ -425,6 +425,7 @@
     {
         newCotization.ProyectoId = id;
         newCotization.UsuarioId = UserResponse.IdUsuario;
+        newCotization.CotizacionFinalizada = true;
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newCotization), Encoding.UTF8, "application/json");
         //produccion
