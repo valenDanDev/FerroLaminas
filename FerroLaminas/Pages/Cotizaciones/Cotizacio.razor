@@ -126,102 +126,64 @@
     }
 }
 <h3 class="cotizacion-title">Cotización</h3>
-<form class="cotizacion-form" onsubmit="@createClient">
-        <label for="tipo">Inforamción del Clinete:</label>
+<form class="cotizacion-form" onsubmit="@updateCotitation">
+        <label for="tipo">Inforamción de la cotiazación:</label>
         <br />
         <div>
             <label for="cedula">Cedula:</label>
-            <input type="number" id="cedula" name="cedula" value="" @onchange="@((e) => handleChange(e,"cedula"))" />
+            <input type="number" id="cedula" name="cedula" value="@editCotization.ClienteId" @onchange="@((e) => handleChange(e,"cedula"))" />
         </div>
         <div>
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" value="" @onchange="@((e) => handleChange(e,"nombre"))" />
+            <label for="proyect">Proyecto:</label>
+        <input type="text" id="proyect" name="proyect" value="@editCotization.ProyectoId" @onchange="@((e) => handleChange(e,"proyect"))" />
         </div>
-        <div>
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" value="" @onchange="@((e) => handleChange(e,"direccion"))" />
-        </div>
-        <div>
-            <label for="telefono">Telefono:</label>
-            <input type="text" id="telefono" name="telefono" value="" @onchange="@((e) => handleChange(e,"telefono"))" />
-        </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="" @onchange="@((e) => handleChange(e,"email"))" />
-        </div>
-        <div>
-            <label for="ubicacion">Ubicación:</label>
-            <select id="ubicacion" name="ubicacion" @onchange="@((e) => handleChange(e,"ubicacion"))">
-                <option value="0">Ubicación</option>
-                @if (ubicationList != null)
+    <div>
+        <label for="material">Material:</label>
+        <select id="material" name="material"  @onchange="@((e) => handleChange(e,"material"))">
+            <option value="0">Material</option>
+            @if (materialList != null)
+            {
+                @foreach (var material in materialList)
                 {
-                    @foreach (var ubication in ubicationList)
-                    {
-                        <option value="@ubication.Id">@ubication.Ciudad</option>
-                    }
+                    <option value="@material.Id">@material.Tipo</option>
                 }
-            </select>
-        </div>
-        <br />
-        <label for="tipo">Inforamción del Meterial:</label>
-        <br />
-        <div>
-            <label for="material">Material:</label>
-            <select id="material" name="material" @onchange="@((e) => handleChange(e,"material"))">
-                <option value="0">Material</option>
-                @if (materialList != null)
+            }
+        </select>
+    </div>
+    <div>
+        <label for="servicio">Servicio:</label>
+        <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
+            <option value="0">Servicio</option>
+            @if (serverList != null)
+            {
+                @foreach (var server in serverList)
                 {
-                    @foreach (var material in materialList)
-                    {
-                        <option value="@material.Id">@material.Tipo</option>
-                    }
+                    <option value="@server.Id">@server.Nombre</option>
                 }
-            </select>
-        </div>
-        <br />
-        <label for="tipo">Inforamción del Servicio:</label>
-        <br />
+            }
+        </select>
+    </div>
         <div>
-            <label for="servicio">Servicio:</label>
-            <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
-                <option value="0">Servicio</option>
-                @if (serverList != null)
-                {
-                    @foreach (var server in serverList)
-                    {
-                        <option value="@server.Id">@server.Nombre</option>
-                    }
-                }
-            </select>
-        </div>
-        <br />
-        <label for="tipo">Inforamción del Proyecto:</label>
-        <br />
-        <div>
-            <label for="descripcion">Descripción:</label>
-            <input type="text" id="descripcion" name="descripcion" value="" @onchange="@((e) => handleChange(e,"descripcion"))" />
+            <label for="precioTotal">Precio Total:</label>
+        <input type="text" id="precioTotal" name="precioTotal" value="@editCotization.PrecioTotal" @onchange="@((e) => handleChange(e,"precioTotal"))" />
         </div>
         <div>
-            <label for="largo">Largo:</label>
-            <input type="number" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" />
+            <label for="pesoLamina">Peso Lamina:</label>
+        <input type="text" id="pesoLamina" name="pesoLamina" value="@editCotization.PesoLamina" @onchange="@((e) => handleChange(e,"pesoLamina"))" />
         </div>
         <div>
-            <label for="ancho">Ancho:</label>
-            <input type="number" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" />
+        <label for="precioMaterial">Precio Material:</label>
+        <input type="text" id="precioMaterial" name="precioMaterial" value="@editCotization.PrecioMaterial" @onchange="@((e) => handleChange(e,"precioMaterial"))" />
         </div>
-                @if (calibreList != null)
-                {
         <div>
-            <label for="calibre">Calibre:</label>
-        <select id="calibre" name="calibre" @onchange="@((e) => handleChange(e,"calibre"))">
-            <option value="0">Calibre</option>
-                    @foreach (var calibre in calibreList)
-                    {
-                    <option value="@calibre.MedidaCalibre">@calibre.MedidaCalibre</option>
-                    }
-            </select>
+        <label for="precioServicio">Precio Servicio:</label>
+        <input type="text" id="precioServicio" name="precioServicio" value="@editCotization.PrecioServicio" @onchange="@((e) => handleChange(e,"precioServicio"))" />
         </div>
-                }
+        <div>
+        <label for="usuarioId">Usuario Id:</label>
+        <input type="number" id="usuarioId" name="usuarioId" value="@editCotization.UsuarioId" @onchange="@((e) => handleChange(e,"usuarioId"))" />
+        </div>
+
         <button type="submit" >Guardar cotización</button>
     </form>
 
@@ -331,179 +293,90 @@
         public bool CotizacionFinalizada { get; set; }
     }
 
-    private async Task getCalibre()
-    {
-        var httpClientCalibre = new HttpClient();
-        //produccion
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
-        //desarrollo
-        var responseCalibre = await httpClientCalibre.GetAsync("https://localhost:7263/api/Calibre?id=" + newCotization.MaterialId);
-
-        if (responseCalibre.IsSuccessStatusCode)
-        {
-            var content = await responseCalibre.Content.ReadAsStringAsync();
-            calibreList = JsonConvert.DeserializeObject<List<Calibre>>(content);
-        }
-        else
-        {
-            calibreList = new List<Calibre>();
-        }
-        InvokeAsync(StateHasChanged);
-    }
-
     public void handleChange(ChangeEventArgs e, string name)
     {
         if (name == "cedula")
         {
             string inputValue = e.Value.ToString();
-            newCliente.cedula = Int32.Parse(inputValue);
-            newCotization.ClienteId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.cedula);
+            editCotization.ClienteId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ClienteId);
         }
 
-        if (name == "nombre")
+        if (name == "proyect")
         {
             string inputValue = e.Value.ToString();
-            newCliente.nombre = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.nombre);
-        }
-
-        if (name == "direccion")
-        {
-            string inputValue = e.Value.ToString();
-            newCliente.direccion = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.direccion);
-        }
-
-        if (name == "telefono")
-        {
-            string inputValue = e.Value.ToString();
-            newCliente.telefono = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.telefono);
-        }
-
-        if (name == "email")
-        {
-            string inputValue = e.Value.ToString();
-            newCliente.email = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.email);
-        }
-
-        if (name == "ubicacion")
-        {
-            string inputValue = e.Value.ToString();
-            newCliente.ubicacionId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newCliente.ubicacionId);
+            editCotization.ProyectoId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ProyectoId);
         }
 
         if (name == "material")
         {
             string inputValue = e.Value.ToString();
-            newCotization.MaterialId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newCotization.MaterialId);
-            StateHasChanged();
-            getCalibre();
+            editCotization.MaterialId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.MaterialId);
         }
 
         if (name == "servicio")
         {
             string inputValue = e.Value.ToString();
-            newCotization.ServicioId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newCotization.ServicioId);
+            editCotization.ServicioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ServicioId);
         }
 
-        if (name == "descripcion")
+        if (name == "precioTotal")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Descripcion = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Descripcion);
+            editCotization.PrecioTotal = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioTotal);
         }
 
-        if (name == "largo")
+        if (name == "pesoLamina")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Largo = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Largo);
+            editCotization.PesoLamina = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PesoLamina);
         }
 
-        if (name == "ancho")
+        if (name == "precioMaterial")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Ancho = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Ancho);
+            editCotization.PrecioMaterial = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioMaterial);
         }
 
-        if (name == "calibre")
+        if (name == "precioServicio")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Calibre = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Calibre);
+            editCotization.PrecioServicio = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioServicio);
+        }
+
+
+        if (name == "usuarioId")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.UsuarioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.UsuarioId);
         }
         StateHasChanged();
     }
 
-    private async Task createCotitation(int id)
+    private async Task updateCotitation()
     {
-        newCotization.ProyectoId = id;
-        newCotization.UsuarioId = UserResponse.IdUsuario;
         var httpClientCreateCotitation = new HttpClient();
-        var content = new StringContent(JsonConvert.SerializeObject(newCotization), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonConvert.SerializeObject(editCotization), Encoding.UTF8, "application/json");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCotitation = await httpClientCreateCotitation.PostAsync("https://localhost:7263/api/Cotizaciones", content);
+        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/Cotizaciones/" + id, content);
 
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
-            Console.WriteLine("Se creo la cotización");
+            Console.WriteLine("Se Modifico la cotización");
             Navigation.NavigateToLogin("/cotizaciones");
         } else
         {
             Console.WriteLine("Fallo la cotización");
-        }
-    }
-
-    private async Task createProyecto()
-    {
-        var httpClientCreateProyect = new HttpClient();
-        var content = new StringContent(JsonConvert.SerializeObject(newProyecto), Encoding.UTF8, "application/json");
-        //produccion
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
-        //desarrollo
-        var responseCreateProyect = await httpClientCreateProyect.PostAsync("https://localhost:7263/api/Proyecto", content);
-
-        if (responseCreateProyect.IsSuccessStatusCode)
-        {
-            ProyectoData ProyectoResponse;
-            Proyecto ProyectoRes;
-            var contentResponse = await responseCreateProyect.Content.ReadAsStringAsync();
-            ProyectoResponse = JsonConvert.DeserializeObject<ProyectoData>(contentResponse);
-            Console.WriteLine(ProyectoResponse);
-            ProyectoRes = ProyectoResponse.Data;
-            Console.WriteLine("Proyecto id" + ProyectoRes.Id);
-            await createCotitation(ProyectoResponse.Data.Id);
-        } else
-        {
-            Console.WriteLine("Fallo el proyecto");
-        }
-    }
-
-    private async Task createClient()
-    {
-        var httpClientCreateClient = new HttpClient();
-        var content = new StringContent(JsonConvert.SerializeObject(newCliente), Encoding.UTF8, "application/json");
-        //produccion
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
-        //desarrollo
-        var responseCreateCliente = await httpClientCreateClient.PostAsync("https://localhost:7263/api/Cliente", content);
-
-        if (responseCreateCliente.IsSuccessStatusCode)
-        {
-            await createProyecto();
-        }
-        else
-        {
-            Console.WriteLine("Fallo el Cliente");
         }
     }
 }
