@@ -81,41 +81,55 @@
         public Materiaal Data { get; set; }
     }
 
+    public Boolean validateValue(string value)
+    {
+        if (value == "")
+        {
+            return false;
+        }
+        return true;
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
-        if (name == "tipo")
-        {
-            string inputValue = e.Value.ToString();
-            material.Tipo = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + material.Tipo);
-        }
 
-        if (name == "precioporkilo")
-        {
-            string inputValue = e.Value.ToString();
-            material.PrecioPorKilo = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + material.PrecioPorKilo);
-        }
+        string inputValue = e.Value.ToString();
 
-        if (name == "stockporkilo")
+        if (validateValue(inputValue))
         {
-            string inputValue = e.Value.ToString();
-            material.StockKilos = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + material.StockKilos);
-        }
+            if (name == "tipo")
+            {
+                material.Tipo = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + material.Tipo);
+            }
 
-        if (name == "descripcion")
-        {
-            string inputValue = e.Value.ToString();
-            material.Descripcion = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + material.Descripcion);
-        }
+            if (name == "precioporkilo")
+            {
+                material.PrecioPorKilo = Double.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + material.PrecioPorKilo);
+            }
 
-        if (name == "densidad")
+            if (name == "stockporkilo")
+            {
+                material.StockKilos = Double.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + material.StockKilos);
+            }
+
+            if (name == "descripcion")
+            {
+                material.Descripcion = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + material.Descripcion);
+            }
+
+            if (name == "densidad")
+            {
+                material.Densidad = Double.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + material.Densidad);
+            }
+        }
+        else
         {
-            string inputValue = e.Value.ToString();
-            material.Densidad = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + material.Densidad);
+            Console.WriteLine("error");
         }
     } 
 

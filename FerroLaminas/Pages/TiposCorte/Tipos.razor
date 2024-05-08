@@ -5,11 +5,19 @@
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
 @using System.Text
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 
 @code {
     private List<Type> types;
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
 
     protected override async Task OnInitializedAsync()
     {
@@ -23,6 +31,8 @@
         {
             var content = await response.Content.ReadAsStringAsync();
             types = JsonConvert.DeserializeObject<List<Type>>(content);
+            var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+            rol = JsonConvert.DeserializeObject<Rol>(response_rol);
         }
         else
         {
@@ -35,7 +45,7 @@
 
 <h3 class="order-title">Tipos</h3>
 
-@if (types != null)
+@if (types != null && rol != null)
 {
     <table class="order-table table">
         <thead>
@@ -45,8 +55,11 @@
                 <th>Precio por Kilo</th>
                 <th>Descripción</th>
                 <th>Servico id</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
+                @if (rol.Nombre == "Administrador del sistema")
+                {
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -58,8 +71,11 @@
                     <td>@type.PrecioPorKilo</td>
                     <td>@type.Descripcion</td>
                     <td>@type.ServicioId</td>
-                    <td><a href="/tipos-corte/@type.Id">Editar</a></td>
-                    <td><a href="/tipos-corte" @onclick="@(() => DeleteType(type.Id))">Eliminar</a></td>
+                    @if (rol.Nombre == "Administrador del sistema")
+                    {
+                        <td><a href="/tipos-corte/@type.Id">Editar</a></td>
+                        <td><a href="/tipos-corte" @onclick="@(() => DeleteType(type.Id))">Eliminar</a></td>                        
+                    }
                 </tr>
             }
         </tbody>
@@ -90,7 +106,10 @@ else
     </table>
 }
 
-<button class="order-submit" type="button" @onclick="CrearType">Nuevo Tipo</button>
+@if (rol != null && rol.Nombre == "Administrador del sistema")
+{
+    <button class="order-submit" type="button" @onclick="CrearType">Nuevo Tipo</button>
+}
 
 @code {
     public class Type

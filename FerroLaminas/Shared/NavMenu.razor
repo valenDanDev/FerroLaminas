@@ -35,7 +35,10 @@
         <a href="/materiales">Materiales</a>
         <a href="/servicios">Servicios</a>
         <a href="/tipos-corte">Tipo de corte</a>
-        <a href="/cotizaciones">Cotizaciones</a>
+        @if (UserRol == "Cliente" || UserRol == "Vendedor")
+        {
+            <a href="/cotizaciones">Cotizaciones</a>
+        }
     </div>
 </nav>
 <nav class="navbar">
@@ -48,7 +51,10 @@
         <a href="/materiales">Materiales</a>
         <a href="/servicios">Servicios</a>
         <a href="/tipos-corte">Tipo de corte</a>
-        <a href="/cotizaciones">Cotizaciones</a>
+        @if (UserRol == "Cliente" || UserRol == "Vendedor")
+        {
+            <a href="/cotizaciones">Cotizaciones</a>
+        }
     </div>
     <div>
         <AuthorizeView>
@@ -88,6 +94,12 @@
         public string nombre { get; set; }
     }
 
+    public class ApplicacionData
+    {
+        public Boolean ISONLINE { get; set; }
+        public string path { get; set; }
+    }
+
     private int menuSelected { get; set; }
     private bool showMenu { get; set; }
     private string UserName { get; set; }
@@ -124,12 +136,25 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        UserName = user.Identity?.Name ?? "Usuario no autenticado";
+        ApplicacionData appData = new ApplicacionData();
+
+        appData.ISONLINE = false;
+
+        @if (appData.ISONLINE == true)
+        {
+            appData.path = "https://apiferrolaminas.azurewebsites.net/api/Auth/login";
+        }
+        else
+        {
+            appData.path = "https://localhost:7263/api/Auth/login";
+        }
+
+    UserName = user.Identity?.Name ?? "Usuario no autenticado";
         UserEmail = user.FindFirst(c => c.Type == "email")?.Value ?? "No email 2";
-        getUser();
+        getUser(appData);
     }
 
-    private async Task getUser()
+    private async Task getUser(ApplicacionData appData)
     {
         User nuevoUser = new User();
         nuevoUser.email = UserEmail;
@@ -147,6 +172,7 @@
             var content2 = await response.Content.ReadAsStringAsync();
             data = JsonConvert.DeserializeObject<UserData>(content2);
             UserResponse = data.Data;
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "path", appData.path);
             await JSRuntime.InvokeVoidAsync("localStorage.setItem", "User", JsonConvert.SerializeObject(UserResponse));
             await getRol();
         } 

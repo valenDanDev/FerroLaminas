@@ -1,15 +1,25 @@
 ﻿@page "/materiales"
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
 @using System.Net.Http
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
 @using System.Text
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 
 @code {
     private List<Material> materials;
+
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
 
     protected override async Task OnInitializedAsync()
     {
@@ -17,12 +27,14 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-         var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales");
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
             materials = JsonConvert.DeserializeObject<List<Material>>(content);
+            var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+            rol = JsonConvert.DeserializeObject<Rol>(response_rol);
         }
         else
         {
@@ -35,7 +47,7 @@
 
 <h3 class="order-title">Materiales</h3>
 
-@if (materials != null)
+@if (materials != null && rol != null)
 {
     <table class="order-table table">
         <thead>
@@ -45,8 +57,11 @@
                 <th>Precio por Kilo</th>
                 <th>Stock en Kilos</th>
                 <th>Descripción</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
+                @if (rol.Nombre == "Administrador del sistema")
+                {
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -58,8 +73,11 @@
                     <td>@material.PrecioPorKilo</td>
                     <td>@material.StockKilos</td>
                     <td>@material.Descripcion</td>
-                    <td><a href="/materiales/@material.Id">Editar</a></td>
-                    <td><a href="/materiales" @onclick="@(() => DeleteMaterial(material.Id))">Eliminar</a></td>
+                    @if (rol.Nombre == "Administrador del sistema")
+                    {
+                        <td><a href="/materiales/@material.Id">Editar</a></td>
+                        <td><a href="/materiales" @onclick="@(() => DeleteMaterial(material.Id))">Eliminar</a></td>                        
+                    }
                 </tr>
             }
         </tbody>
@@ -89,10 +107,13 @@ else
         </tbody>
     </table>
 }
-
-<button class="order-submit" type="button" @onclick="CrearMaterial">Nuevo Material</button>
+@if (rol != null && rol.Nombre == "Administrador del sistema")
+{
+    <button class="order-submit" type="button" @onclick="CrearMaterial">Nuevo Material</button>
+}
 
 @code {
+
     public class Material
     {
         public int Id { get; set; }

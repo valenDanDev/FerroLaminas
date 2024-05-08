@@ -69,34 +69,44 @@
         public int ServicioId { get; set; }
     }
 
+    public Boolean validateValue(string value)
+    {
+        if (value == "")
+        {
+            return false;
+        }
+        return true;
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
-        if (name == "nombre")
-        {
-            string inputValue = e.Value.ToString();
-            type.Nombre = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + type.Nombre);
-        }
+        string inputValue = e.Value.ToString();
 
-        if (name == "precioporkilo3")
+        if (validateValue(inputValue))
         {
-            string inputValue = e.Value.ToString();
-            type.PrecioPorKilo = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + type.PrecioPorKilo);
-        }
+            if (name == "nombre")
+            {
+                type.Nombre = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + type.Nombre);
+            }
 
-        if (name == "servicioid")
-        {
-            string inputValue = e.Value.ToString();
-            type.ServicioId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + type.ServicioId);
-        }
+            if (name == "precioporkilo3")
+            {
+                type.PrecioPorKilo = Double.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + type.PrecioPorKilo);
+            }
 
-        if (name == "descripcion3")
-        {
-            string inputValue = e.Value.ToString();
-            type.Descripcion = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + type.Descripcion);
+            if (name == "servicioid")
+            {
+                type.ServicioId = Int32.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + type.ServicioId);
+            }
+
+            if (name == "descripcion3")
+            {
+                type.Descripcion = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + type.Descripcion);
+            }            
         }
     }
 
