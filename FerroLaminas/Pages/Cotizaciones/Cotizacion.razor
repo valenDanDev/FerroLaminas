@@ -182,11 +182,11 @@
         </div>
         <div>
             <label for="largo">Largo:</label>
-            <input type="number" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" />
+            <input type="text" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" />
         </div>
         <div>
             <label for="ancho">Ancho:</label>
-            <input type="number" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" />
+            <input type="text" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" />
         </div>
                 @if (calibreList != null)
                 {
@@ -285,9 +285,9 @@
     {
         public int Id { get; set; }
         public string Descripcion { get; set; }
-        public int Largo { get; set; }
-        public int Ancho { get; set; }
-        public int Calibre { get; set; }
+        public double Largo { get; set; }
+        public double Ancho { get; set; }
+        public double Calibre { get; set; }
     }
 
     public class ProyectoData
@@ -401,21 +401,21 @@
         if (name == "largo")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Largo = Int32.Parse(inputValue);
+            newProyecto.Largo = Double.Parse(inputValue);
             Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Largo);
         }
 
         if (name == "ancho")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Ancho = Int32.Parse(inputValue);
+            newProyecto.Ancho = Double.Parse(inputValue);
             Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Ancho);
         }
 
         if (name == "calibre")
         {
             string inputValue = e.Value.ToString();
-            newProyecto.Calibre = Int32.Parse(inputValue);
+            newProyecto.Calibre = Double.Parse(inputValue);
             Console.WriteLine("El valor del input ha cambiado: " + newProyecto.Calibre);
         }
         StateHasChanged();

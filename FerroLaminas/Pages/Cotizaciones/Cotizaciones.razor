@@ -41,14 +41,10 @@
             <tr class="order-table-head">
                 <th>ID</th>
                 <th>Cedula</th>
-                <th>Proyecto</th>
-                <th>Material</th>
-                <th>Servicio</th>
                 <th>Total</th>
                 <th>Lamina</th>
                 <th>Precio Material</th>
                 <th>Precio Servicio</th>
-                <th>Usuario Id</th>
                 <th>Finalizada</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
@@ -60,14 +56,10 @@
                 <tr class="order-table-body">
                     <td>@contization.Id</td>
                     <td>@contization.ClienteId</td>
-                    <td>@contization.ProyectoId</td>
-                    <td>@contization.MaterialId</td>
-                    <td>@contization.ServicioId</td>
                     <td>@contization.PrecioTotal</td>
                     <td>@contization.PesoLamina</td>
                     <td>@contization.PrecioMaterial</td>
                     <td>@contization.PrecioServicio</td>
-                    <td>@contization.UsuarioId</td>
                     <td>@contization.CotizacionFinalizada</td>
                     <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
                     <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>
@@ -83,23 +75,15 @@ else
             <tr class="order-table-head">
                 <th>ID</th>
                 <th>Cedula</th>
-                <th>Proyecto</th>
-                <th>Material</th>
-                <th>Servicio</th>
                 <th>Total</th>
                 <th>Lamina</th>
                 <th>Precio Metrial</th>
                 <th>Precio Servicio</th>
-                <th>Usuario Id</th>
                 <th>Finalizada</th>
             </tr>
         </thead>
         <tbody>
             <tr class="order-table-body">
-                <td>...</td>
-                <td>...</td>
-                <td>...</td>
-                <td>...</td>
                 <td>...</td>
                 <td>...</td>
                 <td>...</td>
