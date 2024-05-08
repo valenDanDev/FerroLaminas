@@ -12,68 +12,16 @@
     [Parameter]
     public string id { get; set; }
 
-    private List<Ubication> ubicationList;
     private List<Material> materialList;
     private List<Server> serverList;
-    private List<Calibre> calibreList;
-    private Cliente newCliente;
-    private Proyecto newProyecto;
-    private Cotization newCotization;
-    private User UserResponse;
     private Cotization editCotization;
 
 
     protected override async Task OnInitializedAsync()
     {
-        newCliente = new Cliente();
-        newProyecto = new Proyecto();
-        newCotization = new Cotization();
-
-        newCliente.cedula = 0;
-        newCliente.email = "";
-        newCliente.nombre = "";
-        newCliente.telefono = "";
-        newCliente.ubicacionId = 0;
-        newCliente.direccion = "";
-        newProyecto.Ancho = 0;
-        newProyecto.Largo = 0;
-        newProyecto.Descripcion = "";
-        newProyecto.Calibre = 0;
-        newProyecto.Id = 0;
-        newCotization.Id = 0;
-        newCotization.ClienteId = 0;
-        newCotization.ProyectoId = 0;
-        newCotization.MaterialId = 0;
-        newCotization.ServicioId = 0;
-        newCotization.PrecioTotal = 0;
-        newCotization.PesoLamina = 0;
-        newCotization.PrecioMaterial = 0;
-        newCotization.PrecioServicio = 0;
-        newCotization.UsuarioId = 0;
-        newCotization.CotizacionFinalizada = false;
-
-        var userResponseJson = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "User");
-
-        if (!string.IsNullOrEmpty(userResponseJson))
-        {
-            UserResponse = JsonConvert.DeserializeObject<User>(userResponseJson);
-        }
-
-        var httpClientUbication = new HttpClient();
-        //produccion
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
-        //desarrollo
-        var responseUbication = await httpClientUbication.GetAsync("https://localhost:7263/api/Ubicaciones");
-
-        if (responseUbication.IsSuccessStatusCode)
-        {
-            var content = await responseUbication.Content.ReadAsStringAsync();
-            ubicationList = JsonConvert.DeserializeObject<List<Ubication>>(content);
-        }
-        else
-        {
-            ubicationList = new List<Ubication>();
-        }
+        materialList = new List<Material>();
+        serverList = new List<Server>();
+        editCotization = new Cotization();
 
         var httpClientMaterial = new HttpClient();
         //produccion
@@ -209,19 +157,6 @@
         public List<Material> Values { get; set; }
     }
 
-    public class Ubication
-    {
-        public int Id { get; set; }
-        public string Pais { get; set; }
-        public string Departamento { get; set; }
-        public string Ciudad { get; set; }
-    }
-
-    public class UbicationList
-    {
-        public List<Ubication> Values { get; set; }
-    }
-
     public class Server
     {
         public int Id { get; set; }
@@ -233,49 +168,6 @@
     public class ServerData
     {
         public List<Server> Values { get; set; }
-    }
-
-    public class Calibre
-    {
-        public int Id { get; set; }
-        public double MedidaCalibre { get; set; }
-        public int MaterialId { get; set; }
-    }
-
-    public class CalibreList
-    {
-        public List<Calibre> Values { get; set; }
-    }
-
-    public class User
-    {
-        public string email { get; set; }
-        public string nombre { get; set; }
-        public int IdUsuario { get; set; }
-    }
-
-    public class Cliente
-    {
-        public int cedula { get; set; }
-        public string nombre { get; set; }
-        public string telefono { get; set; }
-        public string direccion { get; set; }
-        public string email { get; set; }
-        public int ubicacionId { get; set; }
-    }
-
-    public class Proyecto
-    {
-        public int Id { get; set; }
-        public string Descripcion { get; set; }
-        public int Largo { get; set; }
-        public int Ancho { get; set; }
-        public int Calibre { get; set; }
-    }
-
-    public class ProyectoData
-    {
-        public Proyecto Data { get; set; }
     }
 
     public class Cotization
