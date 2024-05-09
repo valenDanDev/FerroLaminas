@@ -110,27 +110,27 @@
         <br />
         <div>
             <label for="cedula">Cedula:</label>
-            <input type="number" id="cedula" name="cedula" value="" @onchange="@((e) => handleChange(e,"cedula"))" />
+            <input type="number" id="cedula" name="cedula" value="" @onchange="@((e) => handleChange(e,"cedula"))" required/>
         </div>
         <div>
             <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" value="" @onchange="@((e) => handleChange(e,"nombre"))" />
+        <input type="text" id="nombre" name="nombre" value="" @onchange="@((e) => handleChange(e,"nombre"))" required />
         </div>
         <div>
             <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" value="" @onchange="@((e) => handleChange(e,"direccion"))" />
+        <input type="text" id="direccion" name="direccion" value="" @onchange="@((e) => handleChange(e,"direccion"))" required />
         </div>
         <div>
             <label for="telefono">Telefono:</label>
-            <input type="text" id="telefono" name="telefono" value="" @onchange="@((e) => handleChange(e,"telefono"))" />
+        <input type="text" id="telefono" name="telefono" value="" @onchange="@((e) => handleChange(e,"telefono"))" required />
         </div>
         <div>
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="" @onchange="@((e) => handleChange(e,"email"))" />
+        <input type="email" id="email" name="email" value="" @onchange="@((e) => handleChange(e,"email"))" required />
         </div>
         <div>
             <label for="ubicacion">Ubicación:</label>
-            <select id="ubicacion" name="ubicacion" @onchange="@((e) => handleChange(e,"ubicacion"))">
+        <select id="ubicacion" name="ubicacion" @onchange="@((e) => handleChange(e,"ubicacion"))" required>
                 <option value="0">Ubicación</option>
                 @if (ubicationList != null)
                 {
@@ -146,7 +146,7 @@
         <br />
         <div>
             <label for="material">Material:</label>
-            <select id="material" name="material" @onchange="@((e) => handleChange(e,"material"))">
+        <select id="material" name="material" @onchange="@((e) => handleChange(e,"material"))" required>
                 <option value="0">Material</option>
                 @if (materialList != null)
                 {
@@ -162,7 +162,7 @@
         <br />
         <div>
             <label for="servicio">Servicio:</label>
-            <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
+        <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))" required>
                 <option value="0">Servicio</option>
                 @if (serverList != null)
                 {
@@ -178,21 +178,21 @@
         <br />
         <div>
             <label for="descripcion">Descripción:</label>
-            <input type="text" id="descripcion" name="descripcion" value="" @onchange="@((e) => handleChange(e,"descripcion"))" />
+        <input type="text" id="descripcion" name="descripcion" value="" @onchange="@((e) => handleChange(e,"descripcion"))" required />
         </div>
         <div>
             <label for="largo">Largo:</label>
-            <input type="text" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" />
+        <input type="text" id="largo" name="largo" value="" @onchange="@((e) => handleChange(e,"largo"))" required />
         </div>
         <div>
             <label for="ancho">Ancho:</label>
-            <input type="text" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" />
+        <input type="text" id="ancho" name="ancho" value="" @onchange="@((e) => handleChange(e,"ancho"))" required />
         </div>
                 @if (calibreList != null)
                 {
         <div>
             <label for="calibre">Calibre:</label>
-        <select id="calibre" name="calibre" @onchange="@((e) => handleChange(e,"calibre"))">
+            <select id="calibre" name="calibre" @onchange="@((e) => handleChange(e,"calibre"))" required>
             <option value="0">Calibre</option>
                     @foreach (var calibre in calibreList)
                     {
@@ -436,10 +436,12 @@
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
             Console.WriteLine("Se creo la cotización");
+            await JSRuntime.InvokeVoidAsync("alert", "Se creo la cotización");
             Navigation.NavigateToLogin("/cotizaciones");
         } else
         {
             Console.WriteLine("Fallo la cotización");
+            await JSRuntime.InvokeVoidAsync("alert", "Fallo la cotización");
         }
     }
 
@@ -464,6 +466,7 @@
             await createCotitation(ProyectoResponse.Data.Id);
         } else
         {
+            await JSRuntime.InvokeVoidAsync("alert", "Fallo el proyecto");
             Console.WriteLine("Fallo el proyecto");
         }
     }
@@ -483,6 +486,7 @@
         }
         else
         {
+            await JSRuntime.InvokeVoidAsync("alert", "Fallo el Cliente");
             Console.WriteLine("Fallo el Cliente");
         }
     }
