@@ -45,7 +45,6 @@
                 <th>Lamina</th>
                 <th>Precio Material</th>
                 <th>Precio Servicio</th>
-                <th>Finalizada</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
             </tr>
@@ -60,7 +59,6 @@
                     <td>@contization.PesoLamina</td>
                     <td>@contization.PrecioMaterial</td>
                     <td>@contization.PrecioServicio</td>
-                    <td>@contization.CotizacionFinalizada</td>
                     <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
                     <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>
                 </tr>
@@ -79,12 +77,10 @@ else
                 <th>Lamina</th>
                 <th>Precio Metrial</th>
                 <th>Precio Servicio</th>
-                <th>Finalizada</th>
             </tr>
         </thead>
         <tbody>
             <tr class="order-table-body">
-                <td>...</td>
                 <td>...</td>
                 <td>...</td>
                 <td>...</td>
