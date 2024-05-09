@@ -72,27 +72,38 @@
         public Serveer Data { get; set; }
     }
 
+    public Boolean validateValue(string value)
+    {
+        if (value == "")
+        {
+            return false;
+        }
+        return true;
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
-        if (name == "nombre")
-        {
-            string inputValue = e.Value.ToString();
-            server.Nombre = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + server.Nombre);
-        }
+        string inputValue = e.Value.ToString();
 
-        if (name == "precioporkilo2")
+        if (validateValue(inputValue))
         {
-            string inputValue = e.Value.ToString();
-            server.PrecioPorKilo = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + server.PrecioPorKilo);
-        }
+            if (name == "nombre")
+            {
+                server.Nombre = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + server.Nombre);
+            }
 
-        if (name == "descripcion2")
-        {
-            string inputValue = e.Value.ToString();
-            server.Descripcion = inputValue;
-            Console.WriteLine("El valor del input ha cambiado: " + server.Descripcion);
+            if (name == "precioporkilo2")
+            {
+                server.PrecioPorKilo = Double.Parse(inputValue);
+                Console.WriteLine("El valor del input ha cambiado: " + server.PrecioPorKilo);
+            }
+
+            if (name == "descripcion2")
+            {
+                server.Descripcion = inputValue;
+                Console.WriteLine("El valor del input ha cambiado: " + server.Descripcion);
+            }            
         }
     }
 
