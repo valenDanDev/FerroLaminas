@@ -142,6 +142,61 @@ namespace API_FerroLaminas.Services
                 if (createdCotizacion.CotizacionFinalizada)
                 {
                     await CrearOrdenDeTrabajo(createdCotizacion);
+                    var cotizacionCorr = _cotizacionRepository.GetCotizacionById(createdCotizacion.Id);
+                    // Lógica para enviar el correo electrónico
+                    var emailService = new EmailService();
+                    var cliente =  cotizacionCorr.Cliente.Email;
+                    var subject = "Nueva cotización creada";
+                    var body = $@"
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                        <title>Nueva cotización creada</title>
+                        </head>
+                        <body>
+                        <p>Estimado {cotizacionCorr.Cliente.Nombre},</p>
+
+                        <p>Se ha creado una nueva cotización para usted.</p>
+
+                        <h2>Detalles de la cotización:</h2>
+
+                        <h3>Información del Cliente:</h3>
+                        <ul>
+                        <li>Cedula: {cotizacionCorr.ClienteId}</li>
+                        <li>Nombre: {cotizacionCorr.Cliente.Nombre}</li>
+                        <li>Telefono: {cotizacionCorr.Cliente.Telefono}</li>
+                        <li>Dirección: {cotizacionCorr.Cliente.Direccion}</li>
+                        <li>Ubicación: {cotizacionCorr.Cliente.Ubicacion?.Ciudad ?? "No disponible"}, {cotizacionCorr.Cliente.Ubicacion?.Pais ?? "No disponible"}</li>
+                        </ul>
+
+                        <h3>Información del Proyecto:</h3>
+                        <ul>
+                        <li>Descripción: {cotizacionCorr.Proyecto.Descripcion}</li>
+                        <li>Largo: {cotizacionCorr.Proyecto.Largo:F2} m</li>
+                        <li>Ancho: {cotizacionCorr.Proyecto.Ancho:F2} m</li>
+                        <li>Calibre: {cotizacionCorr.Proyecto.Calibre} mm</li>
+                        <li>Material: {cotizacionCorr.Material.Tipo}</li>
+                        <li>Servicio: {cotizacionCorr.Servicio.Nombre}</li>
+                        <li>Peso Lamina: {cotizacionCorr.PesoLamina:F4} kg</li>
+                        </ul>
+
+                        <h2>Costo:</h2>
+                        <ul>
+                        <li>Costo del Material: {cotizacionCorr.precioMaterial:C2}</li>
+                        <li>Costo del Servicio: {cotizacionCorr.precioServicio:C2}</li>
+                        <li>Precio Total: {cotizacionCorr.PrecioTotal:C2}</li>
+                        </ul>
+
+                        <p>FerroLaminas su mejor aliado</p>
+
+                        </body>
+                        </html>
+                        ";
+
+                    //con esto activa el correo electronico
+                    //await emailService.SendEmail(cliente, subject, body);
+
+                    response.Success = true;
                 }
             }
             catch (Exception ex)
