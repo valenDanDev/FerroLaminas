@@ -1,4 +1,4 @@
-﻿@page "/cotizaciones"
+﻿@page "/ordenes"
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net.Http
@@ -8,7 +8,7 @@
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 @code {
-    private List<Cotization> contizations;
+    private List<Order> orders;
 
     protected override async Task OnInitializedAsync()
     {
@@ -16,12 +16,12 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Cotizaciones");
+        var response = await httpClient.GetAsync("https://localhost:7263/api/OrdenDeTrabajo");
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            contizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+            orders = JsonConvert.DeserializeObject<List<Order>>(content);
         }
         else
         {
@@ -32,35 +32,37 @@
 
 <PageTitle>Ferro Laminas</PageTitle>
 
-<h3 class="order-title">Cotizaciones</h3>
+<h3 class="order-title">Ordenes de Trabajo</h3>
 
-@if (contizations != null)
+@if (orders != null)
 {
     <table class="order-table table">
         <thead>
             <tr class="order-table-head">
                 <th>ID</th>
-                <th>Cedula</th>
-                <th>Total</th>
-                <th>Peso Lamina</th>
-                <th>Precio Material</th>
-                <th>Precio Servicio</th>
+                <th>Cotizacion Id</th>
+                <th>Operario Id</th>
+                <th>Nombre Operario</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var contization in contizations)
+            @foreach (var order in orders)
             {
                 <tr class="order-table-body">
-                    <td>@contization.Id</td>
-                    <td>@contization.ClienteId</td>
-                    <td>@contization.PrecioTotal</td>
-                    <td>@contization.PesoLamina</td>
-                    <td>@contization.PrecioMaterial</td>
-                    <td>@contization.PrecioServicio</td>
-                    <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
-                    <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>
+                    <td>@order.Id</td>
+                    <td>@order.CotizacionId</td>
+                    <td>@order.OperarioId</td>
+                    <td>@order.NombreOperario</td>
+                    <td>@order.FechaInicio</td>
+                    <td>@order.FechaFin</td>
+                    <td>@order.EstadoId</td>
+                    <td><a href="/ordenes/@order.Id">Editar</a></td>
+                    <td><a href="/ordenes" @onclick="@(() => DeleteCotitation(order.Id))">Eliminar</a></td>
                 </tr>
             }
         </tbody>
@@ -72,15 +74,17 @@ else
         <thead>
             <tr class="order-table-head">
                 <th>ID</th>
-                <th>Cedula</th>
-                <th>Total</th>
-                <th>Peso Lamina</th>
-                <th>Precio Metrial</th>
-                <th>Precio Servicio</th>
+                <th>Cotizacion Id</th>
+                <th>Operario Id</th>
+                <th>Nombre Operario</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
             <tr class="order-table-body">
+                <td>...</td>
                 <td>...</td>
                 <td>...</td>
                 <td>...</td>
@@ -92,22 +96,18 @@ else
     </table>
 }
 
-<button class="order-submit" type="button" onclick="@redirectCotization">Nuevo Material</button>
+<button class="order-submit" type="button" onclick="@redirectOrder">Nuevo Material</button>
 
 @code {
-    public class Cotization
+    public class Order
     {
         public int Id { get; set; }
-        public int ClienteId { get; set; }
-        public int ProyectoId { get; set; }
-        public int MaterialId { get; set; }
-        public int ServicioId { get; set; }
-        public double PrecioTotal { get; set; }
-        public double PesoLamina { get; set; }
-        public double PrecioMaterial { get; set; }
-        public double PrecioServicio { get; set; }
-        public int UsuarioId { get; set; }
-        public bool CotizacionFinalizada { get; set; }
+        public int CotizacionId { get; set; }
+        public string OperarioId { get; set; }
+        public string NombreOperario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public int EstadoId { get; set; }
     }
 
     private string logoClass { get; set; }
@@ -129,7 +129,7 @@ else
         //produccion
         //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
         //desarrollo
-        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Cotizaciones/" + _id);
+        var response = await httpClient.DeleteAsync("https://localhost:7263/api/OrdenDeTrabajo/" + _id);
 
         if (response.IsSuccessStatusCode)
         {
@@ -141,9 +141,9 @@ else
         StateHasChanged();
     }
 
-    private void redirectCotization()
+    private void redirectOrder()
     {
-        Navigation.NavigateToLogin("/cotizacion");
+        Navigation.NavigateToLogin("/orden");
     }
 
     // private void EjecutarTimeout(object state)
