@@ -12,127 +12,145 @@
     [Parameter]
     public string id { get; set; }
 
-    private List<Material> materialList;
-    private List<Server> serverList;
-    private Cotization editCotization;
+    private List<Cotization> cotizations;
+    private List<Operario> operarios;
+    private OperarioData operariosData;
+    private Order editOrder;
+    string InitialDate;
+    string FinalDate;
 
 
     protected override async Task OnInitializedAsync()
     {
-        materialList = new List<Material>();
-        serverList = new List<Server>();
-        editCotization = new Cotization();
+        editOrder = new Order();
+        cotizations = new List<Cotization>();
+        operarios = new List<Operario>();
+        operariosData = new OperarioData();
 
-        var httpClientMaterial = new HttpClient();
+        var httpClientCotization = new HttpClient();
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones");
 
-        if (responseMaterial.IsSuccessStatusCode)
+        if (responseCotization.IsSuccessStatusCode)
         {
-            var content = await responseMaterial.Content.ReadAsStringAsync();
-            materialList = JsonConvert.DeserializeObject<List<Material>>(content);
+            var content = await responseCotization.Content.ReadAsStringAsync();
+            cotizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+            List<Cotization> filteredItems = new List<Cotization>();
+            foreach (var cotization in cotizations)
+            {
+                if (cotization.CotizacionFinalizada == true)
+                {
+                    filteredItems.Add(cotization);
+                }
+            }
+            cotizations = filteredItems;
         }
         else
         {
-            materialList = new List<Material>();
+            cotizations = new List<Cotization>();
         }
 
         var httpClient = new HttpClient();
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/Operarios");
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            serverList = JsonConvert.DeserializeObject<List<Server>>(content);
+            Console.WriteLine(content);
+            operariosData = JsonConvert.DeserializeObject<OperarioData>(content);
+            Console.WriteLine(operariosData);
+            operarios = operariosData.Data;
         }
         else
         {
 
         }
 
-        var httpClientCotization = new HttpClient();
+        var httpClientOrder = new HttpClient();
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones/" + id);
+        var responseOrder = await httpClientOrder.GetAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id);
 
-        if (responseCotization.IsSuccessStatusCode)
+        if (responseOrder.IsSuccessStatusCode)
         {
-            var content = await responseCotization.Content.ReadAsStringAsync();
-            editCotization = JsonConvert.DeserializeObject<Cotization>(content);
-            Console.WriteLine("Get new cotitation" + editCotization);
+            var content = await responseOrder.Content.ReadAsStringAsync();
+            editOrder = JsonConvert.DeserializeObject<Order>(content);
+            Console.WriteLine("Get new Order" + editOrder);
+            InitialDate = editOrder.FechaInicio;
+            FinalDate = editOrder.FechaFin;
+            
+            if (DateTime.TryParseExact(InitialDate, "yyyy-MM-ddTHH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime fecha))
+            {
+                // Formatear la fecha según el formato deseado 'aaaa-mm-dd'
+                InitialDate = fecha.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                // La cadena de fecha no está en el formato esperado
+                InitialDate = "Formato de fecha no válido";
+            }
+            if (DateTime.TryParseExact(FinalDate, "yyyy-MM-ddTHH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime fechafinal))
+            {
+                // Formatear la fecha según el formato deseado 'aaaa-mm-dd'
+                FinalDate = fechafinal.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                // La cadena de fecha no está en el formato esperado
+                FinalDate = "Formato de fecha no válido";
+            }
+            Console.WriteLine("Date" + InitialDate + " " + FinalDate);
         }
         else
         {
-            editCotization = new Cotization();
+            editOrder = new Order();
         }
     }
 }
-<h3 class="cotizacion-title">Cotización</h3>
-<form class="cotizacion-form" onsubmit="@updateCotitation">
-        <label for="tipo">Inforamción de la cotiazación:</label>
-        <br />
-        <div>
-            <label for="cedula">Cedula:</label>
-            <input type="number" id="cedula" name="cedula" value="@editCotization.ClienteId" @onchange="@((e) => handleChange(e,"cedula"))" />
-        </div>
-        <div>
-            <label for="proyect">Proyecto:</label>
-        <input type="text" id="proyect" name="proyect" value="@editCotization.ProyectoId" @onchange="@((e) => handleChange(e,"proyect"))" />
-        </div>
+<h3 class="cotizacion-title">Orden</h3>
+<form class="cotizacion-form" onsubmit="@updateOrder">
     <div>
-        <label for="material">Material:</label>
-        <select id="material" name="material"  @onchange="@((e) => handleChange(e,"material"))">
-            <option value="0">Material</option>
-            @if (materialList != null)
+        <label for="cotazation">Cotización:</label>
+        <select id="cotazation" name="cotazation" @onchange="@((e) => handleChange(e,"cotazation"))" required>
+            <option value="0">Cotización</option>
+            @if (cotizations != null)
             {
-                @foreach (var material in materialList)
+                @foreach (var cotization in cotizations)
                 {
-                    <option value="@material.Id">@material.Tipo</option>
+                    <option value="@cotization.Id">@cotization.Id</option>
                 }
             }
         </select>
     </div>
     <div>
-        <label for="servicio">Servicio:</label>
-        <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
-            <option value="0">Servicio</option>
-            @if (serverList != null)
+        <label for="operario">Operario:</label>
+        <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" required>
+            <option value="0">Operario</option>
+            @if (operarios != null)
             {
-                @foreach (var server in serverList)
+                @foreach (var operario in operarios)
                 {
-                    <option value="@server.Id">@server.Nombre</option>
+                    <option value="@operario.Id">@operario.Nombre</option>
                 }
             }
         </select>
     </div>
-        <div>
-            <label for="precioTotal">Precio Total:</label>
-        <input type="text" id="precioTotal" name="precioTotal" value="@editCotization.PrecioTotal" @onchange="@((e) => handleChange(e,"precioTotal"))" />
-        </div>
-        <div>
-            <label for="pesoLamina">Peso Lamina:</label>
-        <input type="text" id="pesoLamina" name="pesoLamina" value="@editCotization.PesoLamina" @onchange="@((e) => handleChange(e,"pesoLamina"))" />
-        </div>
-        <div>
-        <label for="precioMaterial">Precio Material:</label>
-        <input type="text" id="precioMaterial" name="precioMaterial" value="@editCotization.PrecioMaterial" @onchange="@((e) => handleChange(e,"precioMaterial"))" />
-        </div>
-        <div>
-        <label for="precioServicio">Precio Servicio:</label>
-        <input type="text" id="precioServicio" name="precioServicio" value="@editCotization.PrecioServicio" @onchange="@((e) => handleChange(e,"precioServicio"))" />
-        </div>
-        <div>
-        <label for="usuarioId">Usuario Id:</label>
-        <input type="number" id="usuarioId" name="usuarioId" value="@editCotization.UsuarioId" @onchange="@((e) => handleChange(e,"usuarioId"))" />
-        </div>
+    <div>
+        <label for="fechaInicio">Fecha Incio:</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" value="@InitialDate" @onchange="@((e) => handleChange(e,"fechaInicio"))" required />
+    </div>
+    <div>
+        <label for="fechaFin">Fecha Fin:</label>
+        <input type="date" id="fechaFin" name="fechaFin" value="@FinalDate" @onchange="@((e) => handleChange(e,"fechaFin"))" required />
+    </div>
 
-        <button type="submit" >Guardar cotización</button>
+    <button type="submit">Guardar Orden</button>
     </form>
 
 
@@ -143,31 +161,20 @@
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
-    public class Material
-    {
-        public int Id { get; set; }
-        public string Tipo { get; set; }
-        public double PrecioPorKilo { get; set; }
-        public double StockKilos { get; set; }
-        public string Descripcion { get; set; }
-    }
-
-    public class MaterialList
-    {
-        public List<Material> Values { get; set; }
-    }
-
-    public class Server
+    public class Operario
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public decimal PrecioPorKilo { get; set; }
-        public string Descripcion { get; set; }
+        public string Email { get; set; }
+        public int RolId { get; set; }
+        public object Rol { get; set; }
+        public object Cotizaciones { get; set; }
+
     }
 
-    public class ServerData
+    public class OperarioData
     {
-        public List<Server> Values { get; set; }
+        public List<Operario> Data { get; set; }
     }
 
     public class Cotization
@@ -185,90 +192,74 @@
         public bool CotizacionFinalizada { get; set; }
     }
 
+    public class Order
+    {
+        public int Id { get; set; }
+        public int CotizacionId { get; set; }
+        public string OperarioId { get; set; }
+        public string NombreOperario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public int EstadoId { get; set; }
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
-        if (name == "cedula")
+        if (name == "cotazation")
         {
             string inputValue = e.Value.ToString();
-            editCotization.ClienteId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ClienteId);
+            editOrder.CotizacionId = Int32.Parse(inputValue);
+            Console.WriteLine("Cambio el valor " + editOrder.CotizacionId);
         }
 
-        if (name == "proyect")
+        if (name == "operario")
         {
-            string inputValue = e.Value.ToString();
-            editCotization.ProyectoId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ProyectoId);
+            int id = Int32.Parse(e.Value.ToString());
+            Operario oper = operarios.FirstOrDefault(item => item.Id == id);
+            editOrder.OperarioId = oper.Id.ToString();
+            editOrder.NombreOperario = oper.Nombre;
+            Console.WriteLine("Operario" + editOrder.OperarioId + " " + editOrder.NombreOperario);
+
         }
 
-        if (name == "material")
+        if (name == "fechaInicio")
         {
             string inputValue = e.Value.ToString();
-            editCotization.MaterialId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.MaterialId);
+            InitialDate = inputValue;
+            DateTime fecha = DateTime.Parse(inputValue);
+            string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            editOrder.FechaInicio = fechaFormateada;
+            Console.WriteLine("Fecha Inicio" + editOrder.FechaInicio);
         }
 
-        if (name == "servicio")
+        if (name == "fechaFin")
         {
             string inputValue = e.Value.ToString();
-            editCotization.ServicioId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ServicioId);
-        }
-
-        if (name == "precioTotal")
-        {
-            string inputValue = e.Value.ToString();
-            editCotization.PrecioTotal = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioTotal);
-        }
-
-        if (name == "pesoLamina")
-        {
-            string inputValue = e.Value.ToString();
-            editCotization.PesoLamina = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PesoLamina);
-        }
-
-        if (name == "precioMaterial")
-        {
-            string inputValue = e.Value.ToString();
-            editCotization.PrecioMaterial = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioMaterial);
-        }
-
-        if (name == "precioServicio")
-        {
-            string inputValue = e.Value.ToString();
-            editCotization.PrecioServicio = Double.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioServicio);
-        }
-
-
-        if (name == "usuarioId")
-        {
-            string inputValue = e.Value.ToString();
-            editCotization.UsuarioId = Int32.Parse(inputValue);
-            Console.WriteLine("El valor del input ha cambiado: " + editCotization.UsuarioId);
+            FinalDate = inputValue;
+            DateTime fecha = DateTime.Parse(inputValue);
+            string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            editOrder.FechaFin = fechaFormateada;
+            Console.WriteLine("Fecha Fin" + editOrder.FechaFin);
         }
         StateHasChanged();
     }
 
-    private async Task updateCotitation()
+    private async Task updateOrder()
     {
         var httpClientCreateCotitation = new HttpClient();
-        var content = new StringContent(JsonConvert.SerializeObject(editCotization), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonConvert.SerializeObject(editOrder), Encoding.UTF8, "application/json");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/Cotizaciones/" + id, content);
+        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id, content);
 
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
-            Console.WriteLine("Se Modifico la cotización");
-            Navigation.NavigateToLogin("/cotizaciones");
+            Console.WriteLine("Se Modifico la ordenes");
+            Navigation.NavigateToLogin("/ordenes");
         } else
         {
-            Console.WriteLine("Fallo la cotización");
+            Console.WriteLine("Fallo la ordenes");
         }
     }
 }
