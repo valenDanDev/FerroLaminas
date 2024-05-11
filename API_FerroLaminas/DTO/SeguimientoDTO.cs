@@ -1,4 +1,4 @@
-﻿namespace API_FerroLaminas.Models
+﻿namespace API_FerroLaminas.DTO
 {
     public class SeguimientoDTO
     {
