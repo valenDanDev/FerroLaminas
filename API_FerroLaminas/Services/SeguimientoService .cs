@@ -80,6 +80,12 @@ namespace API_FerroLaminas.Services
         public async Task<ServiceResponse<SeguimientoDTO>> CreateSeguimiento(SeguimientoDTO seguimientoDTO)
         {
             var response = new ServiceResponse<SeguimientoDTO>();
+            if(seguimientoDTO.Avance>100 || seguimientoDTO.Avance < 1)
+            {
+                response.Success = false;
+                response.Message = "el porcentaje de avance debe ser mayor a 0 y menor a 100: ";
+                return response;
+            }
             float avanceBd = (float)seguimientoDTO.Avance;
             float valueAvance = avanceBd * 0.01f;
             try
