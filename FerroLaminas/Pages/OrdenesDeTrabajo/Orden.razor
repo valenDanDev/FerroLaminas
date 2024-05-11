@@ -1,0 +1,265 @@
+﻿@page "/ordenes/{id}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private List<Cotization> cotizations;
+    private List<Operario> operarios;
+    private OperarioData operariosData;
+    private Order editOrder;
+    string InitialDate;
+    string FinalDate;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        editOrder = new Order();
+        cotizations = new List<Cotization>();
+        operarios = new List<Operario>();
+        operariosData = new OperarioData();
+
+        var httpClientCotization = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //desarrollo
+        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones");
+
+        if (responseCotization.IsSuccessStatusCode)
+        {
+            var content = await responseCotization.Content.ReadAsStringAsync();
+            cotizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+            List<Cotization> filteredItems = new List<Cotization>();
+            foreach (var cotization in cotizations)
+            {
+                if (cotization.CotizacionFinalizada == true)
+                {
+                    filteredItems.Add(cotization);
+                }
+            }
+            cotizations = filteredItems;
+        }
+        else
+        {
+            cotizations = new List<Cotization>();
+        }
+
+        var httpClient = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/Operarios");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            operariosData = JsonConvert.DeserializeObject<OperarioData>(content);
+            Console.WriteLine(operariosData);
+            operarios = operariosData.Data;
+        }
+        else
+        {
+
+        }
+
+        var httpClientOrder = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //desarrollo
+        var responseOrder = await httpClientOrder.GetAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id);
+
+        if (responseOrder.IsSuccessStatusCode)
+        {
+            var content = await responseOrder.Content.ReadAsStringAsync();
+            editOrder = JsonConvert.DeserializeObject<Order>(content);
+            Console.WriteLine("Get new Order" + editOrder);
+            InitialDate = editOrder.FechaInicio;
+            FinalDate = editOrder.FechaFin;
+            
+            if (DateTime.TryParseExact(InitialDate, "yyyy-MM-ddTHH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime fecha))
+            {
+                // Formatear la fecha según el formato deseado 'aaaa-mm-dd'
+                InitialDate = fecha.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                // La cadena de fecha no está en el formato esperado
+                InitialDate = "Formato de fecha no válido";
+            }
+            if (DateTime.TryParseExact(FinalDate, "yyyy-MM-ddTHH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime fechafinal))
+            {
+                // Formatear la fecha según el formato deseado 'aaaa-mm-dd'
+                FinalDate = fechafinal.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                // La cadena de fecha no está en el formato esperado
+                FinalDate = "Formato de fecha no válido";
+            }
+            Console.WriteLine("Date" + InitialDate + " " + FinalDate);
+        }
+        else
+        {
+            editOrder = new Order();
+        }
+    }
+}
+<h3 class="cotizacion-title">Orden</h3>
+<form class="cotizacion-form" onsubmit="@updateOrder">
+    <div>
+        <label for="cotazation">Cotización:</label>
+        <select id="cotazation" name="cotazation" @onchange="@((e) => handleChange(e,"cotazation"))" required>
+            <option value="0">Cotización</option>
+            @if (cotizations != null)
+            {
+                @foreach (var cotization in cotizations)
+                {
+                    <option value="@cotization.Id">@cotization.Id</option>
+                }
+            }
+        </select>
+    </div>
+    <div>
+        <label for="operario">Operario:</label>
+        <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" required>
+            <option value="0">Operario</option>
+            @if (operarios != null)
+            {
+                @foreach (var operario in operarios)
+                {
+                    <option value="@operario.Id">@operario.Nombre</option>
+                }
+            }
+        </select>
+    </div>
+    <div>
+        <label for="fechaInicio">Fecha Incio:</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" value="@InitialDate" @onchange="@((e) => handleChange(e,"fechaInicio"))" required />
+    </div>
+    <div>
+        <label for="fechaFin">Fecha Fin:</label>
+        <input type="date" id="fechaFin" name="fechaFin" value="@FinalDate" @onchange="@((e) => handleChange(e,"fechaFin"))" required />
+    </div>
+
+    <button type="submit">Guardar Orden</button>
+    </form>
+
+
+
+
+
+@code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    public class Operario
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public int RolId { get; set; }
+        public object Rol { get; set; }
+        public object Cotizaciones { get; set; }
+
+    }
+
+    public class OperarioData
+    {
+        public List<Operario> Data { get; set; }
+    }
+
+    public class Cotization
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public int ProyectoId { get; set; }
+        public int MaterialId { get; set; }
+        public int ServicioId { get; set; }
+        public double PrecioTotal { get; set; }
+        public double PesoLamina { get; set; }
+        public double PrecioMaterial { get; set; }
+        public double PrecioServicio { get; set; }
+        public int UsuarioId { get; set; }
+        public bool CotizacionFinalizada { get; set; }
+    }
+
+    public class Order
+    {
+        public int Id { get; set; }
+        public int CotizacionId { get; set; }
+        public string OperarioId { get; set; }
+        public string NombreOperario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public int EstadoId { get; set; }
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "cotazation")
+        {
+            string inputValue = e.Value.ToString();
+            editOrder.CotizacionId = Int32.Parse(inputValue);
+            Console.WriteLine("Cambio el valor " + editOrder.CotizacionId);
+        }
+
+        if (name == "operario")
+        {
+            int id = Int32.Parse(e.Value.ToString());
+            Operario oper = operarios.FirstOrDefault(item => item.Id == id);
+            editOrder.OperarioId = oper.Id.ToString();
+            editOrder.NombreOperario = oper.Nombre;
+            Console.WriteLine("Operario" + editOrder.OperarioId + " " + editOrder.NombreOperario);
+
+        }
+
+        if (name == "fechaInicio")
+        {
+            string inputValue = e.Value.ToString();
+            InitialDate = inputValue;
+            DateTime fecha = DateTime.Parse(inputValue);
+            string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            editOrder.FechaInicio = fechaFormateada;
+            Console.WriteLine("Fecha Inicio" + editOrder.FechaInicio);
+        }
+
+        if (name == "fechaFin")
+        {
+            string inputValue = e.Value.ToString();
+            FinalDate = inputValue;
+            DateTime fecha = DateTime.Parse(inputValue);
+            string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            editOrder.FechaFin = fechaFormateada;
+            Console.WriteLine("Fecha Fin" + editOrder.FechaFin);
+        }
+        StateHasChanged();
+    }
+
+    private async Task updateOrder()
+    {
+        var httpClientCreateCotitation = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(editOrder), Encoding.UTF8, "application/json");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id, content);
+
+        if (responseCreateCotitation.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Se Modifico la ordenes");
+            Navigation.NavigateToLogin("/ordenes");
+        } else
+        {
+            Console.WriteLine("Fallo la ordenes");
+        }
+    }
+}
