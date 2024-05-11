@@ -23,10 +23,11 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-         var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+         var response = await httpClient.GetAsync($"{path}/Servicios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -144,10 +145,11 @@ else
         nuevoServer.Descripcion = "Este es un nuevo servicio";
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoServer), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios", content);
         // desarrollo
-         var response = await httpClient.PostAsync("https://localhost:7263/api/Servicios", content);
+         var response = await httpClient.PostAsync($"{path}/Servicios", content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -162,10 +164,11 @@ else
     private async Task DeleteServer(int _id)
     {
         var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
        // var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios/" + _id);
         //desarrollo
-         var response = await httpClient.DeleteAsync("https://localhost:7263/api/Servicios/" + _id);
+         var response = await httpClient.DeleteAsync($"{path}/Servicios/" + _id);
 
         if (response.IsSuccessStatusCode)
         {

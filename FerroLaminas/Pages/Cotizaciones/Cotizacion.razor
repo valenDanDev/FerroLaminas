@@ -56,10 +56,11 @@
         }
 
         var httpClientUbication = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseUbication = await httpClientUbication.GetAsync("https://localhost:7263/api/Ubicaciones");
+        var responseUbication = await httpClientUbication.GetAsync($"{path}/Ubicaciones");
 
         if (responseUbication.IsSuccessStatusCode)
         {
@@ -75,7 +76,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+        var responseMaterial = await httpClientMaterial.GetAsync($"{path}/Materiales");
 
         if (responseMaterial.IsSuccessStatusCode)
         {
@@ -91,7 +92,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+        var response = await httpClient.GetAsync($"{path}/Servicios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -313,10 +314,11 @@
     private async Task getCalibre()
     {
         var httpClientCalibre = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCalibre = await httpClientCalibre.GetAsync("https://localhost:7263/api/Calibre?id=" + newCotization.MaterialId);
+        var responseCalibre = await httpClientCalibre.GetAsync($"{path}/Calibre?id=" + newCotization.MaterialId);
 
         if (responseCalibre.IsSuccessStatusCode)
         {
@@ -428,10 +430,11 @@
         newCotization.CotizacionFinalizada = true;
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newCotization), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCotitation = await httpClientCreateCotitation.PostAsync("https://localhost:7263/api/Cotizaciones", content);
+        var responseCreateCotitation = await httpClientCreateCotitation.PostAsync($"{path}/Cotizaciones", content);
 
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
@@ -449,10 +452,11 @@
     {
         var httpClientCreateProyect = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newProyecto), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateProyect = await httpClientCreateProyect.PostAsync("https://localhost:7263/api/Proyecto", content);
+        var responseCreateProyect = await httpClientCreateProyect.PostAsync($"{path}/Proyecto", content);
 
         if (responseCreateProyect.IsSuccessStatusCode)
         {
@@ -475,10 +479,11 @@
     {
         var httpClientCreateClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newCliente), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCliente = await httpClientCreateClient.PostAsync("https://localhost:7263/api/Cliente", content);
+        var responseCreateCliente = await httpClientCreateClient.PostAsync($"{path}/Cliente", content);
 
         if (responseCreateCliente.IsSuccessStatusCode)
         {

@@ -131,6 +131,11 @@
         return "menu-show";
     }
 
+    public static class GlobalVariables
+    {
+        public static string path { get; set; }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -142,11 +147,11 @@
 
         @if (appData.ISONLINE == true)
         {
-            appData.path = "https://apiferrolaminas.azurewebsites.net/api/Auth/login";
+            appData.path = "https://apiferrolaminas.azurewebsites.net/api";
         }
         else
         {
-            appData.path = "https://localhost:7263/api/Auth/login";
+            appData.path = "https://localhost:7263/api";
         }
 
     UserName = user.Identity?.Name ?? "Usuario no autenticado";
@@ -161,10 +166,13 @@
         nuevoUser.nombre = UserName;
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(nuevoUser), Encoding.UTF8, "application/json");
+        await JSRuntime.InvokeVoidAsync("localStorage.setItem", "path", appData.path);
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.PostAsync("https://apiferrolaminas.azurewebsites.net/api/Auth/login", content);
         //desarollo
-        var response = await httpClient.PostAsync("https://localhost:7263/api/Auth/login", content);
+        // var response = await httpClient.PostAsync($"https://localhost:7263/api/Auth/login", content);
+        var response = await httpClient.PostAsync($"{path}/Auth/login", content);
 
         if (response.IsSuccessStatusCode)
         {
@@ -172,7 +180,6 @@
             var content2 = await response.Content.ReadAsStringAsync();
             data = JsonConvert.DeserializeObject<UserData>(content2);
             UserResponse = data.Data;
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "path", appData.path);
             await JSRuntime.InvokeVoidAsync("localStorage.setItem", "User", JsonConvert.SerializeObject(UserResponse));
             await getRol();
         } 

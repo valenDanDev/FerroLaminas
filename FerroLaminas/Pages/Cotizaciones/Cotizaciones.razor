@@ -5,6 +5,7 @@
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
 @using System.Text
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 @code {
@@ -13,10 +14,11 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Cotizaciones");
+        var response = await httpClient.GetAsync($"{path}/Cotizaciones");
 
         if (response.IsSuccessStatusCode)
         {
@@ -126,10 +128,11 @@ else
     private async Task DeleteCotitation(int _id)
     {
         var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
         //desarrollo
-        var response = await httpClient.DeleteAsync("https://localhost:7263/api/Cotizaciones/" + _id);
+        var response = await httpClient.DeleteAsync($"{path}/Cotizaciones/" + _id);
 
         if (response.IsSuccessStatusCode)
         {

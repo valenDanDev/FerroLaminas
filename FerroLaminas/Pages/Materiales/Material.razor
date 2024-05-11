@@ -5,6 +5,7 @@
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
 @using System.Text
+@inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 
@@ -17,10 +18,11 @@
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Materiales/" + id);
+        var response = await httpClient.GetAsync($"{path}/Materiales/" + id);
 
         if (response.IsSuccessStatusCode)
         {
@@ -137,10 +139,11 @@
     {
         var httpClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(material), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.PutAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + material.Id, content);
         //desarrollo
-         var response = await httpClient.PutAsync("https://localhost:7263/api/Materiales/" + material.Id, content);
+         var response = await httpClient.PutAsync($"{path}/Materiales/" + material.Id, content);
 
         if (response.IsSuccessStatusCode)
         {

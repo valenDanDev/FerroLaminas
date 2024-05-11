@@ -4,7 +4,7 @@
 @using System.Net.Http
 @using static FerroLaminas.Pages.FetchData
 @using Newtonsoft.Json;
-@using System.Text
+@using System.Text;
 @inject NavigationManager Navigation
 @inject HttpClient httpClient
 
@@ -24,10 +24,12 @@
         editCotization = new Cotization();
 
         var httpClientMaterial = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+        // var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+        var responseMaterial = await httpClientMaterial.GetAsync($"{path}/Materiales");
 
         if (responseMaterial.IsSuccessStatusCode)
         {
@@ -40,10 +42,11 @@
         }
 
         var httpClient = new HttpClient();
+
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Servicios");
+        var response = await httpClient.GetAsync($"{path}/Servicios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -59,7 +62,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones/" + id);
+        var responseCotization = await httpClientCotization.GetAsync($"{path}/Cotizaciones/" + id);
 
         if (responseCotization.IsSuccessStatusCode)
         {
@@ -257,10 +260,11 @@
     {
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(editCotization), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/Cotizaciones/" + id, content);
+        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync($"{path}/Cotizaciones/" + id, content);
 
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
