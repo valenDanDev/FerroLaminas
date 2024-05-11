@@ -28,10 +28,11 @@
         operariosData = new OperarioData();
 
         var httpClientCotization = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones");
+        var responseCotization = await httpClientCotization.GetAsync($"{path}/Cotizaciones");
 
         if (responseCotization.IsSuccessStatusCode)
         {
@@ -56,7 +57,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/Operarios");
+        var response = await httpClient.GetAsync($"{path}/Auth/Operarios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -75,7 +76,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseOrder = await httpClientOrder.GetAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id);
+        var responseOrder = await httpClientOrder.GetAsync($"{path}/OrdenDeTrabajo/" + id);
 
         if (responseOrder.IsSuccessStatusCode)
         {
@@ -248,10 +249,11 @@
     {
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(editOrder), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync("https://localhost:7263/api/OrdenDeTrabajo/" + id, content);
+        var responseCreateCotitation = await httpClientCreateCotitation.PutAsync($"{path}/OrdenDeTrabajo/" + id, content);
 
         if (responseCreateCotitation.IsSuccessStatusCode)
         {

@@ -23,10 +23,11 @@
         operariosData = new OperarioData();
 
         var httpClientCotization = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
         //desarrollo
-        var responseCotization = await httpClientCotization.GetAsync("https://localhost:7263/api/Cotizaciones");
+        var responseCotization = await httpClientCotization.GetAsync($"{path}/Cotizaciones");
 
         if (responseCotization.IsSuccessStatusCode)
         {
@@ -51,7 +52,7 @@
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/Operarios");
+        var response = await httpClient.GetAsync($"{path}/Auth/Operarios");
 
         if (response.IsSuccessStatusCode)
         {
@@ -201,10 +202,11 @@
         newOrder.EstadoId = 2;
         var httpClientCreateOrder = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newOrder), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
         //desarrollo
-        var responseCreateOrder = await httpClientCreateOrder.PostAsync("https://localhost:7263/api/OrdenDeTrabajo", content);
+        var responseCreateOrder = await httpClientCreateOrder.PostAsync($"{path}/OrdenDeTrabajo", content);
 
         if (responseCreateOrder.IsSuccessStatusCode)
         {
