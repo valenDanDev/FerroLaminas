@@ -23,12 +23,13 @@ namespace API_FerroLaminas.Services
             try
             {
                 var seguimientos = await _seguimientoRepository.GetAllSeguimientos();
+
                 var seguimientosDTO = seguimientos.Select(s => new SeguimientoDTO
                 {
                     Id = s.Id,
                     OrdenDeTrabajoId = s.OrdenDeTrabajoId,
                     Fecha = s.Fecha,
-                    Avance = s.Avance,
+                    Avance = s.Avance * 100,
                     Observaciones = s.Observaciones
                 });
                 response.Data = seguimientosDTO;
@@ -54,12 +55,15 @@ namespace API_FerroLaminas.Services
                     response.Message = "Seguimiento no encontrado.";
                     return response;
                 }
+
+                float avanceBd = (float)seguimiento.Avance;
+                float valueAvance = avanceBd * 100f;
                 var seguimientoDTO = new SeguimientoDTO
                 {
                     Id = seguimiento.Id,
                     OrdenDeTrabajoId = seguimiento.OrdenDeTrabajoId,
                     Fecha = seguimiento.Fecha,
-                    Avance = seguimiento.Avance,
+                    Avance = (decimal)valueAvance,
                     Observaciones = seguimiento.Observaciones
                 };
                 response.Data = seguimientoDTO;
@@ -76,13 +80,15 @@ namespace API_FerroLaminas.Services
         public async Task<ServiceResponse<SeguimientoDTO>> CreateSeguimiento(SeguimientoDTO seguimientoDTO)
         {
             var response = new ServiceResponse<SeguimientoDTO>();
+            float avanceBd = (float)seguimientoDTO.Avance;
+            float valueAvance = avanceBd * 0.01f;
             try
             {
                 var seguimiento = new Seguimiento
                 {
                     OrdenDeTrabajoId = seguimientoDTO.OrdenDeTrabajoId,
                     Fecha = seguimientoDTO.Fecha,
-                    Avance = seguimientoDTO.Avance,
+                    Avance = (decimal)valueAvance,
                     Observaciones = seguimientoDTO.Observaciones
                 };
 
@@ -104,12 +110,14 @@ namespace API_FerroLaminas.Services
             var response = new ServiceResponse<SeguimientoDTO>();
             try
             {
+                float avanceBd = (float)seguimientoDTO.Avance;
+                float valueAvance = avanceBd * 0.01f;
                 var seguimiento = new Seguimiento
                 {
                     Id = id,
                     OrdenDeTrabajoId = seguimientoDTO.OrdenDeTrabajoId,
                     Fecha = seguimientoDTO.Fecha,
-                    Avance = seguimientoDTO.Avance,
+                    Avance = (decimal)valueAvance,
                     Observaciones = seguimientoDTO.Observaciones
                 };
 
