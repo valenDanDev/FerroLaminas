@@ -11,10 +11,20 @@
 @code {
     private List<Cotization> contizations;
 
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
+
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        rol = JsonConvert.DeserializeObject<Rol>(response_rol);
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
@@ -47,8 +57,11 @@
                 <th>Peso Lamina</th>
                 <th>Precio Material</th>
                 <th>Precio Servicio</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
+                @if (rol.Nombre == "Administrador del sistema")
+                {
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -61,8 +74,11 @@
                     <td>@contization.PesoLamina</td>
                     <td>@contization.PrecioMaterial</td>
                     <td>@contization.PrecioServicio</td>
-                    <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
-                    <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>
+                    @if (rol.Nombre == "Administrador del sistema")
+                    {
+                        <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
+                        <td><a href="/cotizaciones" @onclick="@(() => DeleteCotitation(contization.Id))">Eliminar</a></td>                        
+                    }
                 </tr>
             }
         </tbody>
@@ -93,8 +109,10 @@ else
         </tbody>
     </table>
 }
-
-<button class="order-submit" type="button" onclick="@redirectCotization">Nuevo Material</button>
+@if (rol != null && rol.Nombre == "Administrador del sistema")
+{
+    <button class="order-submit" type="button" onclick="@redirectCotization">Nuevo Material</button>
+}
 
 @code {
     public class Cotization

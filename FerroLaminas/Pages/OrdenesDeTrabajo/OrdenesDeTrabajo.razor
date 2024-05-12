@@ -11,10 +11,20 @@
 @code {
     private List<Order> orders;
 
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
+
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        rol = JsonConvert.DeserializeObject<Rol>(response_rol);
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
@@ -48,8 +58,11 @@
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
                 <th>Estado</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
+                @if (rol.Nombre == "Administrador del sistema")
+                {
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -63,8 +76,11 @@
                     <td>@order.FechaInicio</td>
                     <td>@order.FechaFin</td>
                     <td>@order.EstadoId</td>
-                    <td><a href="/ordenes/@order.Id">Editar</a></td>
-                    <td><a href="/ordenes" @onclick="@(() => DeleteCotitation(order.Id))">Eliminar</a></td>
+                    @if (rol.Nombre == "Administrador del sistema")
+                    {
+                        <td><a href="/ordenes/@order.Id">Editar</a></td>
+                        <td><a href="/ordenes" @onclick="@(() => DeleteCotitation(order.Id))">Eliminar</a></td>
+                    }
                 </tr>
             }
         </tbody>
@@ -98,7 +114,10 @@ else
     </table>
 }
 
-<button class="order-submit" type="button" onclick="@redirectOrder">Nuevo Material</button>
+@if (rol != null && rol.Nombre == "Administrador del sistema")
+{
+    <button class="order-submit" type="button" onclick="@redirectOrder">Nuevo Material</button>
+}
 
 @code {
     public class Order
