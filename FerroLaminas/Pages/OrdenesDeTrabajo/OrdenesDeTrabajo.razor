@@ -75,7 +75,7 @@
                     <td>@order.NombreOperario</td>
                     <td>@order.FechaInicio</td>
                     <td>@order.FechaFin</td>
-                    <td>@order.EstadoId</td>
+                    <td>@order.Estado</td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
                         <td><a href="/ordenes/@order.Id">Editar</a></td>
@@ -114,10 +114,10 @@ else
     </table>
 }
 
-@if (rol != null && rol.Nombre == "Administrador del sistema")
+@* @if (rol != null && rol.Nombre == "Administrador del sistema")
 {
-    <button class="order-submit" type="button" onclick="@redirectOrder">Nuevo Material</button>
-}
+    <button class="order-submit" type="button" onclick="@redirectOrder">Nueva Orden</button>
+} *@
 
 @code {
     public class Order
@@ -129,6 +129,7 @@ else
         public string FechaInicio { get; set; }
         public string FechaFin { get; set; }
         public int EstadoId { get; set; }
+        public string Estado { get; set; }
     }
 
     private string logoClass { get; set; }
