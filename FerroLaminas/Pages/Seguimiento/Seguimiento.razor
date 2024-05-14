@@ -1,0 +1,145 @@
+﻿@page "/seguimiento"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    private Seguimient newSeguiment;
+    private List<Order> orders;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        newSeguiment = new Seguimient();
+        orders = new List<Order>();
+
+        var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var response = await httpClient.GetAsync($"{path}/OrdenDeTrabajo");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            orders = JsonConvert.DeserializeObject<List<Order>>(content);
+        }
+        else
+        {
+
+        }
+    }
+}
+<h3 class="cotizacion-title">Seguimiento</h3>
+<form class="cotizacion-form" onsubmit="@createSeguiment">
+        <div>
+            <label for="orden">Orden:</label>
+        <select id="orden" name="orden" @onchange="@((e) => handleChange(e,"orden"))" required>
+            <option value="0">Orden</option>
+                @if (orders != null)
+                {
+                @foreach (var order in orders)
+                    {
+                    <option value="@order.Id">@order.Id</option>
+                    }
+                }
+            </select>
+        </div>
+        <div>
+            <label for="avance">Avance:</label>
+        <input type="number" id="avance" name="avance" value="" @onchange="@((e) => handleChange(e,"avance"))" required />
+        </div>
+        <div>
+        <label for="observaciones">Observaciones:</label>
+        <input type="text" id="observaciones" name="observaciones" value="" @onchange="@((e) => handleChange(e,"observaciones"))" required />
+        </div>
+
+        <button type="submit" >Guardar Seguimiento</button>
+    </form>
+
+
+
+
+
+@code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    public class Order
+    {
+        public int Id { get; set; }
+        public int CotizacionId { get; set; }
+        public string OperarioId { get; set; }
+        public string NombreOperario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public int EstadoId { get; set; }
+    }
+
+    public class Seguimient
+    {
+        public int Id { get; set; }
+        public int OrdenDeTrabajoId { get; set; }
+        public string Fecha { get; set; }
+        public int Avance { get; set; }
+        public string Observaciones { get; set; }
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "orden")
+        {
+            string inputValue = e.Value.ToString();
+            newSeguiment.OrdenDeTrabajoId = Int32.Parse(inputValue);
+            Console.WriteLine("Cambio el valor " + newSeguiment.OrdenDeTrabajoId);
+        }
+
+        if (name == "avance")
+        {
+            string inputValue = e.Value.ToString();
+            newSeguiment.Avance = Int32.Parse(inputValue);
+            Console.WriteLine("Cambio el valor " + newSeguiment.Avance);
+
+        }
+
+        if (name == "observaciones")
+        {
+            string inputValue = e.Value.ToString();
+            newSeguiment.Observaciones = inputValue;
+            Console.WriteLine("Cambio el valor " + newSeguiment.Observaciones);
+        }
+        StateHasChanged();
+    }
+
+    private async Task createSeguiment()
+    {
+        DateTime fecha = new DateTime();
+        string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        newSeguiment.Fecha = fechaFormateada;
+        var httpClientCreateOrder = new HttpClient();
+        var content = new StringContent(JsonConvert.SerializeObject(newSeguiment), Encoding.UTF8, "application/json");
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
+        //desarrollo
+        var responseCreateOrder = await httpClientCreateOrder.PostAsync($"{path}/Seguimiento", content);
+
+        if (responseCreateOrder.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Se creo el Seguimiento");
+            await JSRuntime.InvokeVoidAsync("alert", "Se creo el Seguimiento");
+            Navigation.NavigateToLogin("/seguimientos");
+        } else
+        {
+            Console.WriteLine("Fallo el Seguimiento");
+            await JSRuntime.InvokeVoidAsync("alert", "Fallo el Seguimiento");
+        }
+    }
+}

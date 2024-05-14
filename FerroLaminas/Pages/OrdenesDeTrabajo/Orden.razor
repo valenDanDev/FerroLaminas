@@ -116,7 +116,7 @@
 }
 <h3 class="cotizacion-title">Orden</h3>
 <form class="cotizacion-form" onsubmit="@updateOrder">
-    <div>
+@*     <div>
         <label for="cotazation">Cotización:</label>
         <select id="cotazation" name="cotazation" @onchange="@((e) => handleChange(e,"cotazation"))" required>
             <option value="0">Cotización</option>
@@ -128,7 +128,7 @@
                 }
             }
         </select>
-    </div>
+    </div> *@
     <div>
         <label for="operario">Operario:</label>
         <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" required>
@@ -247,6 +247,7 @@
 
     private async Task updateOrder()
     {
+        editOrder.EstadoId = 2;
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(editOrder), Encoding.UTF8, "application/json");
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
