@@ -1,0 +1,307 @@
+﻿@page "/dashboard"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+@code {
+    private List<Order> orders;
+    private List<Order> ordersPendientes;
+    private List<Order> ordersProgress;
+    private List<Order> ordersCompletado;
+    private List<Order> ordersCancelado;
+    private List<Order> ordersRechazado;
+    Double PendientesPercent;
+    Double ProgessPercent;
+    Double CompletadoPercent;
+    Double CanceladoPercent;
+    Double RechazadoPercent;
+
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        rol = JsonConvert.DeserializeObject<Rol>(response_rol);
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
+        //desarrollo
+        var response = await httpClient.GetAsync($"{path}/OrdenDeTrabajo");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            orders = JsonConvert.DeserializeObject<List<Order>>(content);
+            List<Order> filteredItemsPendientes = new List<Order>();
+            List<Order> filteredItemsProgress = new List<Order>();
+            List<Order> filteredItemsCompletado = new List<Order>();
+            List<Order> filteredItemsCancelado = new List<Order>();
+            List<Order> filteredItemsRechazado = new List<Order>();
+            foreach (var order in orders)
+            {
+                if (order.EstadoId == 1)
+                {
+                    filteredItemsPendientes.Add(order);
+                } else if (order.EstadoId == 2)
+                {
+                    filteredItemsProgress.Add(order);
+                }
+                else if (order.EstadoId == 3)
+                {
+                    filteredItemsCompletado.Add(order);
+                }
+                else if (order.EstadoId == 4)
+                {
+                    filteredItemsCancelado.Add(order);
+                }
+                else
+                {
+                    filteredItemsRechazado.Add(order);
+                }
+            }
+            ordersPendientes = filteredItemsPendientes;
+            ordersProgress = filteredItemsProgress;
+            ordersCompletado = filteredItemsCompletado;
+            ordersRechazado = filteredItemsRechazado;
+            ordersCancelado = filteredItemsCancelado;
+            PendientesPercent = (ordersPendientes.Count * 100)/orders.Count;
+            ProgessPercent = (ordersProgress.Count * 100) / orders.Count;
+            CompletadoPercent = (ordersCompletado.Count * 100) / orders.Count;
+            RechazadoPercent = (ordersRechazado.Count * 100) / orders.Count;
+            CanceladoPercent = (ordersCancelado.Count * 100) / orders.Count;
+        }
+        else
+        {
+
+        }
+    }
+}
+
+<PageTitle>Ferro Laminas</PageTitle>
+
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        column-gap: 10px;
+        row-gap: 12px;
+    }
+
+    .dashboard-card {
+        padding: 8px;
+        border-radius: 9px;
+        border: 1px solid;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dashboard-card p {
+        color: rgb(97, 97, 97);
+    }
+
+    .percent-bar {
+        width: 100%;
+        border: 1px solid;
+        border-radius: 9px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        position: relative;
+        justify-content: center;
+    }
+
+    .percent-color {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 25%;
+        background: white;
+        z-index: 0;
+    }
+
+    .percent-value {
+        margin: 0;
+        padding: 8px 0;
+        z-index: 1;
+    }
+
+    .pendientes {
+        border-color: #FFA500;
+    }
+
+    .pendientes .percent-bar {
+        border-color: #FFA500;
+    }
+
+    .pendientes .percent-color {
+        background: #FFA500;
+    }
+
+    .progreso {
+        border-color: #90EE90;
+    }
+
+    .progreso .percent-bar{
+        border-color: #90EE90;
+    }
+
+    .progreso .percent-color {
+        background: #90EE90;
+    }
+
+    .complete {
+        border-color: #006400;
+    }
+
+    .complete .percent-bar {
+        border-color: #006400;
+    }
+
+    .complete .percent-color {
+        background: #006400;
+    }
+
+    .rechazado {
+        border-color: #FF6347;
+    }
+
+    .rechazado .percent-bar {
+        border-color: #FF6347;
+    }
+
+    .rechazado .percent-color {
+        background: #FF6347;
+    }
+
+    .cancel {
+        border-color: #8B0000;
+    }
+
+    .cancel .percent-bar {
+        border-color: #8B0000;
+    }
+
+    .cancel .percent-color {
+        background: #8B0000;
+    }
+</style>
+
+<h3 class="order-title">Dashboard</h3>
+
+<div class="dashboard-container">
+<div class="dashboard-card pendientes">
+    <p>Ordenes Pendientes</p>
+    <div class="percent-bar">
+            <div class="percent-color" style="width: @PendientesPercent%" />
+        <p class="percent-value">@PendientesPercent %</p>
+    </div>
+</div>
+    <div class="dashboard-card progreso">
+    <p>Ordenes En proceso</p>
+        <div class="percent-bar">
+            <div class="percent-color" style="width: @ProgessPercent%" />
+            <p class="percent-value">@ProgessPercent %</p>
+    </div>
+</div>
+    <div class="dashboard-card complete">
+    <p>Ordenes Completadas</p>
+        <div class="percent-bar">
+            <div class="percent-color" style="width: @CompletadoPercent%" />
+            <p class="percent-value">@CompletadoPercent %</p>
+    </div>
+</div>
+    <div class="dashboard-card rechazado">
+    <p>Ordenes Rechazadas</p>
+        <div class="percent-bar">
+            <div class="percent-color" style="width: @RechazadoPercent%"/>
+            <p class="percent-value">@RechazadoPercent %</p>
+    </div>
+</div>
+    <div class="dashboard-card cancel">
+    <p>Ordenes Canceladas</p>
+        <div class="percent-bar">
+            <div class="percent-color" style="width: @CanceladoPercent%" />
+            <p class="percent-value">@CanceladoPercent %</p>
+    </div>
+</div>
+</div>
+
+
+@* @if (rol != null && rol.Nombre == "Administrador del sistema")
+{
+    <button class="order-submit" type="button" onclick="@redirectOrder">Nueva Orden</button>
+} *@
+
+@code {
+    public class Order
+    {
+        public int Id { get; set; }
+        public int CotizacionId { get; set; }
+        public string OperarioId { get; set; }
+        public string NombreOperario { get; set; }
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public int EstadoId { get; set; }
+        public string Estado { get; set; }
+    }
+
+    private string logoClass { get; set; }
+    private string logoTextClass { get; set; }
+    private string formClass { get; set; }
+    private Timer timer { get; set; }
+
+    // protected override void OnInitialized()
+    // {
+    //     logoClass = "logo-rotation";
+    //     logoTextClass = "logo-text";
+    //     formClass = "form-login-hiden";
+    //     timer = new Timer(EjecutarTimeout, null, 2000, Timeout.Infinite);
+    // }
+
+    private async Task DeleteCotitation(int _id)
+    {
+        var httpClient = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        //produccion
+        //var response = await httpClient.DeleteAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + _id);
+        //desarrollo
+        var response = await httpClient.DeleteAsync($"{path}/OrdenDeTrabajo/" + _id);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await OnInitializedAsync();
+        }
+        else
+        {
+        }
+        StateHasChanged();
+    }
+
+    private void redirectOrder()
+    {
+        Navigation.NavigateToLogin("/orden");
+    }
+
+    // private void EjecutarTimeout(object state)
+    // {
+    //     logoClass = "logo";
+    //     logoTextClass = "logo-text-hiden";
+    //     formClass = "form-login";
+    //     StateHasChanged();
+    // }
+}
