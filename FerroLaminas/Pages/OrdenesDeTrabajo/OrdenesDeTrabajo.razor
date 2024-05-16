@@ -10,6 +10,7 @@
 @inject HttpClient httpClient
 @code {
     private List<Order> orders;
+    private List<Order> ordersPendientes;
 
     public class Rol
     {
@@ -34,6 +35,20 @@
         {
             var content = await response.Content.ReadAsStringAsync();
             orders = JsonConvert.DeserializeObject<List<Order>>(content);
+            List<Order> filteredItems = new List<Order>();
+            List<Order> filteredItemsPendientes = new List<Order>();
+            foreach (var order in orders)
+            {
+                if (order.EstadoId != 1)
+                {
+                    filteredItems.Add(order);
+                } else
+                {
+                    filteredItemsPendientes.Add(order);
+                }
+            }
+            orders = filteredItems;
+            ordersPendientes = filteredItemsPendientes;
         }
         else
         {
@@ -110,6 +125,49 @@ else
                 <td>...</td>
                 <td>...</td>
             </tr>
+        </tbody>
+    </table>
+}
+
+
+@if (ordersPendientes != null)
+{
+<h3 class="order-title">Ordenes de Trabajo Pendientes</h3>
+    <table class="order-table table">
+        <thead>
+            <tr class="order-table-head">
+                <th>ID</th>
+                <th>Cotizacion Id</th>
+                <th>Operario Id</th>
+                <th>Nombre Operario</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
+                @if (rol.Nombre == "Administrador del sistema")
+                {
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in ordersPendientes)
+            {
+                <tr class="order-table-body">
+                    <td>@order.Id</td>
+                    <td>@order.CotizacionId</td>
+                    <td>@order.OperarioId</td>
+                    <td>@order.NombreOperario</td>
+                    <td>@order.FechaInicio</td>
+                    <td>@order.FechaFin</td>
+                    <td>@order.Estado</td>
+                    @if (rol.Nombre == "Administrador del sistema")
+                    {
+                        <td><a href="/ordenes/@order.Id">Editar</a></td>
+                        <td><a href="/ordenes" @onclick="@(() => DeleteCotitation(order.Id))">Eliminar</a></td>
+                    }
+                </tr>
+            }
         </tbody>
     </table>
 }
