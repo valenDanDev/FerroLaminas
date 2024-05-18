@@ -155,7 +155,7 @@
 
         ApplicacionData appData = new ApplicacionData();
 
-        appData.ISONLINE = false;
+        appData.ISONLINE = true;
         //para usar produccion se debe cambiar isonline en true
 
         @if (appData.ISONLINE == true)
@@ -208,11 +208,12 @@
     {
         do
         {
+            var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
             var httpClient = new HttpClient();
             //produccion
             //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Auth/rol/" + UserResponse.IdUsuario);
             //desarrollo
-            var response = await httpClient.GetAsync("https://localhost:7263/api/Auth/rol/" + UserResponse.IdUsuario);
+            var response = await httpClient.GetAsync($"{path}/Auth/rol/" + UserResponse.IdUsuario);
 
             if (response.IsSuccessStatusCode)
             {
