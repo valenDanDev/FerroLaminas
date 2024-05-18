@@ -37,8 +37,11 @@
         <a href="/tipos-corte">Tipo de corte</a>
         <a href="/ordenes">Ordenes de Trabajo</a>
         <a href="/seguimientos">Seguimientos</a>
+        @if (UserRol != "Cliente")
+        {
         <a href="/dashboard">Dashboard</a>
-        @if (UserRol == "Cliente" || UserRol == "Vendedor")
+        }
+        @if (UserRol == "Cliente" || UserRol == "Vendedor" || UserRol == "Administrador del sistema")
         {
             <a href="/cotizaciones">Cotizaciones</a>
         }
@@ -56,8 +59,11 @@
         <a href="/tipos-corte">Tipo de corte</a>
         <a href="/ordenes">Ordenes de Trabajo</a>
         <a href="/seguimientos">Seguimientos</a>
-        <a href="/dashboard">Dashboard</a>
-        @if (UserRol == "Cliente" || UserRol == "Vendedor")
+        @if (UserRol != "Cliente")
+        {
+            <a href="/dashboard">Dashboard</a>
+        }
+        @if (UserRol == "Cliente" || UserRol == "Vendedor" || UserRol == "Administrador del sistema")
         {
             <a href="/cotizaciones">Cotizaciones</a>
         }
