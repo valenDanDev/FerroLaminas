@@ -53,7 +53,10 @@
                     filteredItemsUser.Add(contization);
                 }
             }
-            contizations = filteredItemsUser;
+            if(rol.Nombre != "Administrador del sistema")
+            {
+                contizations = filteredItemsUser;
+            }
         }
         else
         {
