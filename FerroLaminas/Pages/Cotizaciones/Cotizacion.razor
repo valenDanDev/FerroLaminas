@@ -126,10 +126,6 @@
         <input type="text" id="telefono" name="telefono" value="" @onchange="@((e) => handleChange(e,"telefono"))" required />
         </div>
         <div>
-            <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="" @onchange="@((e) => handleChange(e,"email"))" required />
-        </div>
-        <div>
             <label for="ubicacion">Ubicación:</label>
         <select id="ubicacion" name="ubicacion" @onchange="@((e) => handleChange(e,"ubicacion"))" required>
                 <option value="0">Ubicación</option>
@@ -477,6 +473,7 @@
 
     private async Task createClient()
     {
+        newCliente.email = UserResponse.email;
         var httpClientCreateClient = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(newCliente), Encoding.UTF8, "application/json");
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
