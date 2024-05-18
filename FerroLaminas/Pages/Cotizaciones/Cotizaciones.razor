@@ -109,10 +109,8 @@ else
         </tbody>
     </table>
 }
-@if (rol != null && rol.Nombre == "Administrador del sistema")
-{
+
     <button class="order-submit" type="button" onclick="@redirectCotization">Nueva Cotización</button>
-}
 
 @code {
     public class Cotization
