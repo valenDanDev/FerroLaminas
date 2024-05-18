@@ -17,14 +17,24 @@
         public string Nombre { get; set; }
     }
 
+    public class User
+    {
+        public string email { get; set; }
+        public string nombre { get; set; }
+        public int IdUsuario { get; set; }
+    }
+
     private Rol rol;
+    private User user;
 
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        var response_user = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "User");
         rol = JsonConvert.DeserializeObject<Rol>(response_rol);
+        user = JsonConvert.DeserializeObject<User>(response_user);
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
@@ -32,8 +42,18 @@
 
         if (response.IsSuccessStatusCode)
         {
+            Console.Write("User Mail" + user.email);
             var content = await response.Content.ReadAsStringAsync();
             contizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+            List<Cotization> filteredItemsUser = new List<Cotization>();
+            foreach (var contization in contizations)
+            {
+                if (contization.UsuarioId == user.IdUsuario)
+                {
+                    filteredItemsUser.Add(contization);
+                }
+            }
+            contizations = filteredItemsUser;
         }
         else
         {
