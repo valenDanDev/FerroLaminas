@@ -80,6 +80,7 @@
                 <th>Peso Lamina</th>
                 <th>Precio Material</th>
                 <th>Precio Servicio</th>
+                <th>Detalles</th>
                 @if (rol.Nombre == "Administrador del sistema")
                 {
                     <th>Editar</th>
@@ -97,6 +98,7 @@
                     <td>@contization.PesoLamina</td>
                     <td>@contization.PrecioMaterial</td>
                     <td>@contization.PrecioServicio</td>
+                    <td><a href="/cotizaciones/detalles/@contization.Id">Ver</a></td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
                         <td><a href="/cotizaciones/@contization.Id">Editar</a></td>
