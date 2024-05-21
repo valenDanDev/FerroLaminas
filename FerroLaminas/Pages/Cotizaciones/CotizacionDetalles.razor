@@ -1,0 +1,277 @@
+﻿@page "/cotizaciones/detalles/{id}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http
+@using static FerroLaminas.Pages.FetchData
+@using Newtonsoft.Json;
+@using System.Text;
+@inject NavigationManager Navigation
+@inject HttpClient httpClient
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private List<Material> materialList;
+    private List<Server> serverList;
+    private Cotization editCotization;
+
+    public class Rol
+    {
+        public int? Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
+    private Rol rol;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        materialList = new List<Material>();
+        serverList = new List<Server>();
+        editCotization = new Cotization();
+
+        var httpClientMaterial = new HttpClient();
+        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
+        var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        rol = JsonConvert.DeserializeObject<Rol>(response_rol);
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //desarrollo
+        // var responseMaterial = await httpClientMaterial.GetAsync("https://localhost:7263/api/Materiales");
+        var responseMaterial = await httpClientMaterial.GetAsync($"{path}/Materiales");
+
+        if (responseMaterial.IsSuccessStatusCode)
+        {
+            var content = await responseMaterial.Content.ReadAsStringAsync();
+            materialList = JsonConvert.DeserializeObject<List<Material>>(content);
+        }
+        else
+        {
+            materialList = new List<Material>();
+        }
+
+        var httpClient = new HttpClient();
+
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var response = await httpClient.GetAsync($"{path}/Servicios");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            serverList = JsonConvert.DeserializeObject<List<Server>>(content);
+        }
+        else
+        {
+
+        }
+
+        var httpClientCotization = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales");
+        //desarrollo
+        var responseCotization = await httpClientCotization.GetAsync($"{path}/Cotizaciones/" + id);
+
+        if (responseCotization.IsSuccessStatusCode)
+        {
+            var content = await responseCotization.Content.ReadAsStringAsync();
+            editCotization = JsonConvert.DeserializeObject<Cotization>(content);
+            Console.WriteLine("Get new cotitation" + editCotization);
+        }
+        else
+        {
+            editCotization = new Cotization();
+        }
+    }
+}
+<h3 class="cotizacion-title">Cotización</h3>
+<form class="cotizacion-form" onsubmit="@backHome">
+        <label for="tipo">Inforamción de la cotiazación:</label>
+        <br />
+        <div>
+            <label for="cedula">Cedula:</label>
+            <input type="number" id="cedula" name="cedula" value="@editCotization.ClienteId" @onchange="@((e) => handleChange(e,"cedula"))" readonly/>
+        </div>
+        <div>
+            <label for="proyect">Proyecto:</label>
+        <input type="text" id="proyect" name="proyect" value="@editCotization.ProyectoId" @onchange="@((e) => handleChange(e,"proyect"))" readonly/>
+        </div>
+    <div>
+        <label for="material">Material:</label>
+        <select id="material" name="material"  @onchange="@((e) => handleChange(e,"material"))" >
+            @if (materialList != null)
+            {
+                @foreach (var material in materialList)
+                {
+                    @if (material.Id == editCotization.MaterialId)
+                    {
+                    <option value="@material.Id">@material.Tipo</option>    
+                    }
+                }
+            }
+        </select>
+    </div>
+    <div>
+        <label for="servicio">Servicio:</label>
+        <select id="servicio" name="servicio" @onchange="@((e) => handleChange(e,"servicio"))">
+            @if (serverList != null)
+            {
+                @foreach (var server in serverList)
+                {
+                    @if (server.Id == editCotization.ServicioId)
+                    {
+                        <option value="@server.Id">@server.Nombre</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+        <div>
+            <label for="precioTotal">Precio Total:</label>
+        <input type="text" id="precioTotal" name="precioTotal" value="@editCotization.PrecioTotal" @onchange="@((e) => handleChange(e,"precioTotal"))" readonly/>
+        </div>
+        <div>
+            <label for="pesoLamina">Peso Lamina:</label>
+        <input type="text" id="pesoLamina" name="pesoLamina" value="@editCotization.PesoLamina" @onchange="@((e) => handleChange(e,"pesoLamina"))" readonly />
+        </div>
+        <div>
+        <label for="precioMaterial">Precio Material:</label>
+        <input type="text" id="precioMaterial" name="precioMaterial" value="@editCotization.PrecioMaterial" @onchange="@((e) => handleChange(e,"precioMaterial"))" readonly/>
+        </div>
+        <div>
+        <label for="precioServicio">Precio Servicio:</label>
+        <input type="text" id="precioServicio" name="precioServicio" value="@editCotization.PrecioServicio" @onchange="@((e) => handleChange(e,"precioServicio"))" readonly/>
+        </div>
+        <div>
+        <label for="usuarioId">Usuario Id:</label>
+        <input type="number" id="usuarioId" name="usuarioId" value="@editCotization.UsuarioId" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly/>
+        </div>
+
+        <button type="submit" >Volver</button>
+    </form>
+
+
+
+
+
+@code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    public class Material
+    {
+        public int Id { get; set; }
+        public string Tipo { get; set; }
+        public double PrecioPorKilo { get; set; }
+        public double StockKilos { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class MaterialList
+    {
+        public List<Material> Values { get; set; }
+    }
+
+    public class Server
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public decimal PrecioPorKilo { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+    public class ServerData
+    {
+        public List<Server> Values { get; set; }
+    }
+
+    public class Cotization
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public int ProyectoId { get; set; }
+        public int MaterialId { get; set; }
+        public int ServicioId { get; set; }
+        public double PrecioTotal { get; set; }
+        public double PesoLamina { get; set; }
+        public double PrecioMaterial { get; set; }
+        public double PrecioServicio { get; set; }
+        public int UsuarioId { get; set; }
+        public bool CotizacionFinalizada { get; set; }
+    }
+
+    public void handleChange(ChangeEventArgs e, string name)
+    {
+        if (name == "cedula")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.ClienteId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ClienteId);
+        }
+
+        if (name == "proyect")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.ProyectoId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ProyectoId);
+        }
+
+        if (name == "material")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.MaterialId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.MaterialId);
+        }
+
+        if (name == "servicio")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.ServicioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.ServicioId);
+        }
+
+        if (name == "precioTotal")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.PrecioTotal = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioTotal);
+        }
+
+        if (name == "pesoLamina")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.PesoLamina = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PesoLamina);
+        }
+
+        if (name == "precioMaterial")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.PrecioMaterial = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioMaterial);
+        }
+
+        if (name == "precioServicio")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.PrecioServicio = Double.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.PrecioServicio);
+        }
+
+
+        if (name == "usuarioId")
+        {
+            string inputValue = e.Value.ToString();
+            editCotization.UsuarioId = Int32.Parse(inputValue);
+            Console.WriteLine("El valor del input ha cambiado: " + editCotization.UsuarioId);
+        }
+        StateHasChanged();
+    }
+
+    private async Task backHome()
+    {
+        Navigation.NavigateToLogin("/cotizaciones");
+    }
+}

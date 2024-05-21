@@ -11,6 +11,8 @@
 @code {
     private List<Order> orders;
     private List<Order> ordersPendientes;
+    private List<Cotization> contizations;
+
 
     public class Rol
     {
@@ -18,25 +20,75 @@
         public string Nombre { get; set; }
     }
 
+    public class User
+    {
+        public string email { get; set; }
+        public string nombre { get; set; }
+        public int IdUsuario { get; set; }
+    }
+
     private Rol rol;
+    private User user;
 
     protected override async Task OnInitializedAsync()
     {
         var httpClient = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         var response_rol = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserRol");
+        var response_user = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "User");
         rol = JsonConvert.DeserializeObject<Rol>(response_rol);
+        user = JsonConvert.DeserializeObject<User>(response_user);
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
         //desarrollo
-        var response = await httpClient.GetAsync($"{path}/OrdenDeTrabajo");
+        var response = await httpClient.GetAsync($"{path}/Cotizaciones");
 
         if (response.IsSuccessStatusCode)
         {
+            Console.Write("User Mail" + user.email);
             var content = await response.Content.ReadAsStringAsync();
+            contizations = JsonConvert.DeserializeObject<List<Cotization>>(content);
+            List<Cotization> filteredItemsUser = new List<Cotization>();
+            foreach (var contization in contizations)
+            {
+                if (contization.UsuarioId == user.IdUsuario)
+                {
+                    filteredItemsUser.Add(contization);
+                }
+            }
+            if (rol.Nombre != "Administrador del sistema")
+            {
+                contizations = filteredItemsUser;
+            }
+        }
+        else
+        {
+
+        }
+
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Cotizaciones");
+        //desarrollo
+        var responseOrder = await httpClient.GetAsync($"{path}/OrdenDeTrabajo");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await responseOrder.Content.ReadAsStringAsync();
             orders = JsonConvert.DeserializeObject<List<Order>>(content);
             List<Order> filteredItems = new List<Order>();
             List<Order> filteredItemsPendientes = new List<Order>();
+            List<Order> filteredItemsForUser = new List<Order>();
+            foreach (var order in orders)
+            {
+                foreach (var cotization in contizations)
+                {
+                    if (order.CotizacionId == cotization.Id)
+                    {
+                        filteredItemsForUser.Add(order);
+                    }
+                }
+            }
+            orders = filteredItemsForUser;
             foreach (var order in orders)
             {
                 if (order.EstadoId != 1)
@@ -73,6 +125,7 @@
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
                 <th>Estado</th>
+                <th>Detalles</th>
                 @if (rol.Nombre == "Administrador del sistema")
                 {
                     <th>Editar</th>
@@ -91,6 +144,7 @@
                     <td>@order.FechaInicio</td>
                     <td>@order.FechaFin</td>
                     <td>@order.Estado</td>
+                    <td><a href="/ordenes/detalles/@order.Id">Ver</a></td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
                         <td><a href="/ordenes/@order.Id">Editar</a></td>
@@ -143,6 +197,7 @@ else
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
                 <th>Estado</th>
+                <th>Detalles</th>
                 @if (rol.Nombre == "Administrador del sistema")
                 {
                     <th>Editar</th>
@@ -161,6 +216,7 @@ else
                     <td>@order.FechaInicio</td>
                     <td>@order.FechaFin</td>
                     <td>@order.Estado</td>
+                    <td><a href="/ordenes/detalles/@order.Id">Ver</a></td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
                         <td><a href="/ordenes/@order.Id">Editar</a></td>
@@ -178,6 +234,21 @@ else
 } *@
 
 @code {
+    public class Cotization
+    {
+        public int Id { get; set; }
+        public int ClienteId { get; set; }
+        public int ProyectoId { get; set; }
+        public int MaterialId { get; set; }
+        public int ServicioId { get; set; }
+        public double PrecioTotal { get; set; }
+        public double PesoLamina { get; set; }
+        public double PrecioMaterial { get; set; }
+        public double PrecioServicio { get; set; }
+        public int UsuarioId { get; set; }
+        public bool CotizacionFinalizada { get; set; }
+    }
+
     public class Order
     {
         public int Id { get; set; }
