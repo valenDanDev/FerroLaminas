@@ -149,6 +149,53 @@
         <input type="number" id="usuarioId" name="usuarioId" value="@editCotization.UsuarioId" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly/>
         </div>
 
+
+    <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="@editCotization.Nombre" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="telefono">Telefono:</label>
+        <input type="text" id="telefono" name="telefono" value="@editCotization.Telefono" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+
+    <div>
+        <label for="direccion">Direccion:</label>
+        <input type="text" id="direccion" name="direccion" value="@editCotization.Direccion" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" value="@editCotization.Email" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="ubicacion">Ubicación:</label>
+        <input type="text" id="ubicacion" name="ubicacion" value="@editCotization.Ubicacion" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" value="@editCotization.DescripcionProyecto" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="largo">Largo:</label>
+        <input type="text" id="largo" name="largo" value="@editCotization.LargoProyecto" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="ancho">Ancho:</label>
+        <input type="text" id="ancho" name="ancho" value="@editCotization.AnchoProyecto" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="calibre">Calibre:</label>
+        <input type="text" id="calibre" name="calibre" value="@editCotization.Calibre" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="material">Material:</label>
+        <input type="text" id="material" name="material" value="@editCotization.TipoMaterial" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+    <div>
+        <label for="servicio">Servicio:</label>
+        <input type="text" id="servicio" name="servicio" value="@editCotization.NombreServicio" @onchange="@((e) => handleChange(e,"usuarioId"))" readonly />
+    </div>
+
         <button type="submit" >Volver</button>
     </form>
 
@@ -200,6 +247,17 @@
         public double PrecioServicio { get; set; }
         public int UsuarioId { get; set; }
         public bool CotizacionFinalizada { get; set; }
+        public string Nombre { get; set; }
+        public string Telefono { get; set; }
+        public string Direccion { get; set; }
+        public string Email { get; set; }
+        public string Ubicacion { get; set; }
+        public string DescripcionProyecto { get; set; }
+        public string TipoMaterial { get; set; }
+        public string NombreServicio { get; set; }
+        public double LargoProyecto { get; set; }
+        public double AnchoProyecto { get; set; }
+        public double Calibre { get; set; }
     }
 
     public void handleChange(ChangeEventArgs e, string name)
