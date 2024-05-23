@@ -76,6 +76,10 @@ builder.Services.AddScoped<ISeguimientoService, SeguimientoService>();
 
 builder.Services.AddScoped<ISeguimientoRepository, SeguimientoRepository>();
 
+builder.Services.AddScoped<EstadoOrdenTrabajoService, EstadoOrdenTrabajoService>();
+
+builder.Services.AddScoped<EstadoOrdenTrabajoRepository, EstadoOrdenTrabajoRepository>();
+
 
 var app = builder.Build();
 
