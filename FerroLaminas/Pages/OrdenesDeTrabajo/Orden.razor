@@ -18,6 +18,7 @@
     private Order editOrder;
     string InitialDate;
     string FinalDate;
+    private List<EstadoOrden> estados;
 
 
     protected override async Task OnInitializedAsync()
@@ -26,6 +27,7 @@
         cotizations = new List<Cotization>();
         operarios = new List<Operario>();
         operariosData = new OperarioData();
+        estados = new List<EstadoOrden>();
 
         var httpClientCotization = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
@@ -112,6 +114,24 @@
         {
             editOrder = new Order();
         }
+
+        var httpClientEstados = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var responseEstados = await httpClientEstados.GetAsync($"{path}/EstadoOrdenTrabajo");
+
+        if (responseEstados.IsSuccessStatusCode)
+        {
+            var content = await responseEstados.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            estados = JsonConvert.DeserializeObject<List<EstadoOrden>>(content);
+            Console.WriteLine(estados);
+        }
+        else
+        {
+
+        }
     }
 }
 <h3 class="cotizacion-title">Orden</h3>
@@ -150,6 +170,25 @@
         <label for="fechaFin">Fecha Fin:</label>
         <input type="date" id="fechaFin" name="fechaFin" value="@FinalDate" @onchange="@((e) => handleChange(e,"fechaFin"))" required />
     </div>
+    @if (editOrder.EstadoId != 1)
+    {
+        <div>
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" @onchange="@((e) => handleChange(e,"estado"))" required>
+                <option value="0">Estado</option>
+                @if (cotizations != null)
+                {
+                    @foreach (var estado in estados)
+                    {
+                        @if (estado.Id != 1)
+                        {
+                        <option value="@estado.Id">@estado.Nombre</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+    }
 
     <button type="submit">Guardar Orden</button>
     </form>
@@ -204,6 +243,12 @@
         public int EstadoId { get; set; }
     }
 
+    public class EstadoOrden
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
         if (name == "cotazation")
@@ -242,12 +287,22 @@
             editOrder.FechaFin = fechaFormateada;
             Console.WriteLine("Fecha Fin" + editOrder.FechaFin);
         }
+
+        if (name == "estado")
+        {
+            string inputValue = e.Value.ToString();
+            editOrder.EstadoId = Int32.Parse(inputValue);
+            Console.WriteLine("Fecha Fin" + editOrder.EstadoId);
+        }
         StateHasChanged();
     }
 
     private async Task updateOrder()
     {
-        editOrder.EstadoId = 2;
+        if (editOrder.EstadoId == 1)
+        {
+            editOrder.EstadoId = 2;
+        }
         var httpClientCreateCotitation = new HttpClient();
         var content = new StringContent(JsonConvert.SerializeObject(editOrder), Encoding.UTF8, "application/json");
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
@@ -259,6 +314,7 @@
         if (responseCreateCotitation.IsSuccessStatusCode)
         {
             Console.WriteLine("Se Modifico la ordenes");
+            await JSRuntime.InvokeVoidAsync("alert", "Se Actualizo la orden de trabajo");
             Navigation.NavigateToLogin("/ordenes");
         } else
         {
