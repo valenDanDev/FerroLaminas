@@ -30,8 +30,8 @@ namespace API_FerroLaminas.Services
                     CotizacionId = o.CotizacionId,
                     OperarioId = o.OperarioId,
                     NombreOperario = o.nombreOperario,
-                    FechaInicio = o.FechaInicio,
-                    FechaFin = o.FechaFin,
+                    FechaInicio = o.FechaInicio.AddTicks(-(o.FechaInicio.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
+                    FechaFin = o.FechaFin.AddTicks(-(o.FechaFin.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
                     EstadoId = o.EstadoId,
                     Estado = o.Estado.Nombre
                 });
@@ -64,8 +64,8 @@ namespace API_FerroLaminas.Services
                     CotizacionId = ordenDeTrabajo.CotizacionId,
                     OperarioId = ordenDeTrabajo.OperarioId,
                     NombreOperario = ordenDeTrabajo.nombreOperario,
-                    FechaInicio = ordenDeTrabajo.FechaInicio,
-                    FechaFin = ordenDeTrabajo.FechaFin,
+                    FechaInicio = ordenDeTrabajo.FechaInicio.AddTicks(-(ordenDeTrabajo.FechaInicio.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
+                    FechaFin = ordenDeTrabajo.FechaFin.AddTicks(-(ordenDeTrabajo.FechaFin.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
                     EstadoId = ordenDeTrabajo.EstadoId,
                     Estado = ordenDeTrabajo.Estado.Nombre
                 };
@@ -169,8 +169,8 @@ namespace API_FerroLaminas.Services
                     CotizacionId = o.CotizacionId,
                     OperarioId = o.OperarioId,
                     NombreOperario = o.nombreOperario,
-                    FechaInicio = o.FechaInicio,
-                    FechaFin = o.FechaFin,
+                    FechaInicio = o.FechaInicio.AddTicks(-(o.FechaInicio.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
+                    FechaFin = o.FechaFin.AddTicks(-(o.FechaFin.Ticks % TimeSpan.TicksPerSecond)), // Eliminar milisegundos
                     EstadoId = o.EstadoId,
                     Estado = o.Estado.Nombre
                 });
