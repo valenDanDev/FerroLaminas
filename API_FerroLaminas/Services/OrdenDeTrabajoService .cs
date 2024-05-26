@@ -12,10 +12,12 @@ namespace API_FerroLaminas.Services
     public class OrdenDeTrabajoService : IOrdenDeTrabajoService
     {
         private readonly IOrdenDeTrabajoRepository _ordenDeTrabajoRepository;
+        private readonly ICotizacionRepository _cotizacionRepository;
 
-        public OrdenDeTrabajoService(IOrdenDeTrabajoRepository ordenDeTrabajoRepository)
+        public OrdenDeTrabajoService(IOrdenDeTrabajoRepository ordenDeTrabajoRepository, ICotizacionRepository cotizacionRepository)
         {
             _ordenDeTrabajoRepository = ordenDeTrabajoRepository;
+            _cotizacionRepository = cotizacionRepository;
         }
 
         public async Task<ServiceResponse<IEnumerable<OrdenDeTrabajo_vista_DTO>>> GetAllOrdenesDeTrabajo()
@@ -126,6 +128,49 @@ namespace API_FerroLaminas.Services
                 };
 
                 await _ordenDeTrabajoRepository.UpdateOrdenDeTrabajo(id,ordenDeTrabajo);
+
+                // Obtener los detalles de la cotización actualizada
+                var cotizacionCorr =  _cotizacionRepository.GetCotizacionById(ordenDeTrabajo.CotizacionId);
+                var ordenT = _ordenDeTrabajoRepository.GetOrdenDeTrabajoById(ordenDeTrabajo.Id);
+                //Console.WriteLine("RESPUESTA"+ordenT.Result);
+                var emailService = new EmailService();
+                var cliente = cotizacionCorr.Cliente.Email; 
+                var subject = "Actualización de la orden de trabajo";
+                var body = $@"
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                        <title>Actualización de la orden de trabajo</title>
+                        </head>
+                        <body>
+                        <p>Estimado cliente,</p>
+
+                        <p>Su orden de trabajo ha sido actualizada.</p>
+
+                        <h2>Detalles de la orden de trabajo:</h2>
+                        <ul>
+                        <li>Id de la Orden: {ordenT.Id}</li>
+                        <li>Id de la Cotización: {ordenDeTrabajoDTO.CotizacionId}</li>
+                        <li>Operario: {ordenDeTrabajoDTO.NombreOperario}</li>
+                        <li>Fecha de Inicio: {ordenDeTrabajoDTO.FechaInicio:yyyy-MM-dd HH:mm}</li>
+                        <li>Fecha de Fin: {ordenDeTrabajoDTO.FechaFin:yyyy-MM-dd HH:mm}</li>
+                        <li>Estado: {ordenT.Result.Estado.Nombre}</li>
+                        </ul>
+
+                        <p>FerroLaminas, su mejor aliado.</p>
+
+                        </body>
+                        </html>
+                        ";
+
+                // Enviar el correo electrónico, mirar 
+                //await emailService.SendEmail(cliente, subject, body);              
+                if (cotizacionCorr == null)
+                {
+                    response.Success = false;
+                    response.Message = "No se pudo encontrar la cotización asociada.";
+                    return response;
+                }
 
                 response.Data = ordenDeTrabajoDTO;
                 response.Success = true;
