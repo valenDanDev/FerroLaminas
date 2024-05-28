@@ -152,7 +152,19 @@
     <div>
         <label for="operario">Operario:</label>
         <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" required>
-            <option value="0">Operario</option>
+            @if (editOrder.OperarioId == "sin asignar")
+            {
+                <option value="0">Operario</option>
+            } else if (operarios != null)
+            {
+                @foreach (var operario in operarios)
+                {
+                    @if (operario.Id == Int32.Parse(editOrder.OperarioId))
+                    {
+                        <option value="@operario.Id">@operario.Nombre</option>
+                    }
+                }
+            }
             @if (operarios != null)
             {
                 @foreach (var operario in operarios)
@@ -175,14 +187,23 @@
         <div>
             <label for="estado">Estado:</label>
             <select id="estado" name="estado" @onchange="@((e) => handleChange(e,"estado"))" required>
-                <option value="0">Estado</option>
-                @if (cotizations != null)
+                @if (estados != null)
+                {
+                    @foreach (var estado in estados)
+                    {
+                        @if (estado.Id != 1 && estado.Id == editOrder.EstadoId)
+                        {
+                            <option value="@estado.Id">@estado.Nombre</option>
+                        }
+                    }
+                }
+                @if (estados != null)
                 {
                     @foreach (var estado in estados)
                     {
                         @if (estado.Id != 1)
                         {
-                        <option value="@estado.Id">@estado.Nombre</option>
+                            <option value="@estado.Id">@estado.Nombre</option>
                         }
                     }
                 }

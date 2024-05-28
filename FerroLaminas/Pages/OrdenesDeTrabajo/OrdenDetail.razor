@@ -153,7 +153,10 @@
     <div>
         <label for="operario">Operario:</label>
         <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" >
-            @if (operarios != null)
+            @if (editOrder.OperarioId == "sin asignar")
+            {
+                <option value="0">Sin Asignar</option>
+            } else if (operarios != null)
             {
                 @foreach (var operario in operarios)
                 {

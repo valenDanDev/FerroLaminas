@@ -147,7 +147,13 @@
                     <td><a href="/ordenes/detalles/@order.Id">Ver</a></td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
-                        <td><a href="/ordenes/@order.Id">Editar</a></td>
+                        @if (order.EstadoId == 3)
+                        {
+                            <td>Completada</td>
+                        } else
+                        {
+                            <td><a href="/ordenes/@order.Id">Editar</a></td>
+                        }
                         <td><a href="/ordenes" @onclick="@(() => DeleteCotitation(order.Id))">Eliminar</a></td>
                     }
                 </tr>
