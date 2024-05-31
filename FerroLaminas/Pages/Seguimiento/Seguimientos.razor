@@ -58,6 +58,7 @@
                 <th>Fecha</th>
                 <th>Avance</th>
                 <th>Observaciones</th>
+                <th>Detalles</th>
                 @if (rol.Nombre == "Administrador del sistema")
                 {
                     <th>Eliminar</th>
@@ -70,9 +71,10 @@
                 <tr class="order-table-body">
                     <td>@seguimient.Id</td>
                     <td>@seguimient.OrdenDeTrabajoId</td>
-                    <td>@seguimient.Fecha</td>
+                    <td>@getDate(seguimient.Fecha)</td>
                     <td>@seguimient.Avance</td>
                     <td>@seguimient.Observaciones</td>
+                    <td><a href="/seguimiento/@seguimient.Id">Ver</a></td>
                     @if (rol.Nombre == "Administrador del sistema")
                     {
                         <td><a href="/seguimientos" @onclick="@(() => DeleteCotitation(seguimient.Id))">Eliminar</a></td>
@@ -161,6 +163,11 @@ else
     private void redirectOrder()
     {
         Navigation.NavigateToLogin("/seguimiento");
+    }
+
+    private string getDate(string date)
+    {
+        return DateTime.Parse(date).ToString();
     }
 
     // private void EjecutarTimeout(object state)
