@@ -1,4 +1,4 @@
-﻿@page "/seguimiento"
+﻿@page "/seguimiento/{id}"
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Net.Http
@@ -9,27 +9,56 @@
 @inject HttpClient httpClient
 
 @code {
+    [Parameter]
+    public string id { get; set; }
+
     private Seguimient newSeguiment;
     private List<Order> orders;
+    private Order order;
+    private string fechaI;
+    private string fechaF;
 
 
     protected override async Task OnInitializedAsync()
     {
         newSeguiment = new Seguimient();
         orders = new List<Order>();
+        order = new Order();
 
         var httpClient = new HttpClient();
         var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
         //produccion
         //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
         //desarrollo
-        var response = await httpClient.GetAsync($"{path}/OrdenDeTrabajo");
+        var response = await httpClient.GetAsync($"{path}/Seguimiento/" + id);
 
         if (response.IsSuccessStatusCode)
         {
+            SeguimientData data;
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine(content);
-            orders = JsonConvert.DeserializeObject<List<Order>>(content);
+            data = JsonConvert.DeserializeObject<SeguimientData>(content);
+            newSeguiment = data.data;
+            Console.WriteLine("Todo bien" + newSeguiment.Id + newSeguiment.OrdenDeTrabajoId);
+        }
+        else
+        {
+
+        }
+
+        var httpClientOrder = new HttpClient();
+        //produccion
+        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Servicios");
+        //desarrollo
+        var responseOrder = await httpClientOrder.GetAsync($"{path}/OrdenDeTrabajo/" + newSeguiment.OrdenDeTrabajoId);
+
+        if (responseOrder.IsSuccessStatusCode)
+        {
+            var contentOrder = await responseOrder.Content.ReadAsStringAsync();
+            Console.WriteLine(contentOrder);
+            order = JsonConvert.DeserializeObject<Order>(contentOrder);
+            fechaI = DateTime.Parse(order.FechaInicio).ToString() ?? "";
+            fechaF = DateTime.Parse(order.FechaFin).ToString() ?? "";
         }
         else
         {
@@ -38,28 +67,36 @@
     }
 }
 <h3 class="cotizacion-title">Seguimiento</h3>
-<form class="cotizacion-form" onsubmit="@createSeguiment">
+<form class="cotizacion-form" onsubmit="@goBack">
         <div>
             <label for="orden">Orden:</label>
-        <select id="orden" name="orden" @onchange="@((e) => handleChange(e,"orden"))" required>
-            <option value="0">Orden</option>
-                @if (orders != null)
+        <select id="orden" name="orden" @onchange="@((e) => handleChange(e,"orden"))" >
+                @if (order != null)
                 {
-                @foreach (var order in orders)
-                    {
                     <option value="@order.Id">@order.Id</option>
-                    }
                 }
             </select>
         </div>
         <div>
             <label for="avance">Avance:</label>
-        <input type="number" id="avance" name="avance" value="" @onchange="@((e) => handleChange(e,"avance"))" required />
+        <input type="number" id="avance" name="avance" value="@newSeguiment.Avance" @onchange="@((e) => handleChange(e,"avance"))" readonly />
         </div>
         <div>
         <label for="observaciones">Observaciones:</label>
-        <input type="text" id="observaciones" name="observaciones" value="" @onchange="@((e) => handleChange(e,"observaciones"))" required />
+        <input type="text" id="observaciones" name="observaciones" value="@newSeguiment.Observaciones" @onchange="@((e) => handleChange(e,"observaciones"))" readonly />
         </div>
+    <div>
+        <label for="operario">Operario:</label>
+        <input type="text" id="operario" name="operario" value="@order.NombreOperario" @onchange="@((e) => handleChange(e,"operario"))" readonly />
+    </div>
+    <div>
+        <label for="fechainicio">Fecha inicio:</label>
+        <input type="text" id="fechainicio" name="fechainicio" value="@fechaI" @onchange="@((e) => handleChange(e,"fechainicio"))" readonly />
+    </div>
+    <div>
+        <label for="fechafin">Fecha fin:</label>
+        <input type="text" id="fechafin" name="fechafin" value="@fechaF" @onchange="@((e) => handleChange(e,"fechafin"))" readonly />
+    </div>
 
         <button type="submit" >Guardar Seguimiento</button>
     </form>
@@ -92,6 +129,11 @@
         public string Observaciones { get; set; }
     }
 
+    public class SeguimientData
+    {
+        public Seguimient data { get; set; }
+    }
+
     public void handleChange(ChangeEventArgs e, string name)
     {
         if (name == "orden")
@@ -118,28 +160,8 @@
         StateHasChanged();
     }
 
-    private async Task createSeguiment()
+    private async Task goBack()
     {
-        DateTime fecha = DateTime.Now;
-        string fechaFormateada = fecha.ToString("yyyy-MM-ddTHH:mm:ss");
-        newSeguiment.Fecha = fechaFormateada;
-        var httpClientCreateOrder = new HttpClient();
-        var content = new StringContent(JsonConvert.SerializeObject(newSeguiment), Encoding.UTF8, "application/json");
-        var path = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "path");
-        //produccion
-        //var response = await httpClient.GetAsync("https://apiferrolaminas.azurewebsites.net/api/Materiales/" + id);
-        //desarrollo
-        var responseCreateOrder = await httpClientCreateOrder.PostAsync($"{path}/Seguimiento", content);
-
-        if (responseCreateOrder.IsSuccessStatusCode)
-        {
-            Console.WriteLine("Se creo el Seguimiento");
-            await JSRuntime.InvokeVoidAsync("alert", "Se creo el Seguimiento");
-            Navigation.NavigateToLogin("/seguimientos");
-        } else
-        {
-            Console.WriteLine("Fallo el Seguimiento");
-            await JSRuntime.InvokeVoidAsync("alert", "Fallo el Seguimiento");
-        }
+        Navigation.NavigateToLogin("/seguimientos");
     }
 }
