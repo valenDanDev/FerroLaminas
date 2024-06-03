@@ -134,9 +134,71 @@
         }
     }
 }
+
+<style>
+    /* Título del formulario */
+    .cotizacion-title {
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Estilo del formulario */
+    .cotizacion-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+        /* Estilo de las etiquetas */
+        .cotizacion-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* Estilo de los campos de entrada y select */
+        .cotizacion-form input[type="date"],
+        .cotizacion-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        /* Estilo del botón de submit */
+        .cotizacion-form button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            /* Cambio de color del botón al pasar el mouse */
+            .cotizacion-form button[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+        /* Estilo para los div contenedores de cada campo */
+        .cotizacion-form div {
+            margin-bottom: 20px;
+        }
+
+</style>
 <h3 class="cotizacion-title">Orden</h3>
 <form class="cotizacion-form" onsubmit="@updateOrder">
-@*     <div>
+    <!-- Comentado para futura referencia
+    <div>
         <label for="cotazation">Cotización:</label>
         <select id="cotazation" name="cotazation" @onchange="@((e) => handleChange(e,"cotazation"))" required>
             <option value="0">Cotización</option>
@@ -148,14 +210,16 @@
                 }
             }
         </select>
-    </div> *@
+    </div>
+    -->
     <div>
         <label for="operario">Operario:</label>
         <select id="operario" name="operario" @onchange="@((e) => handleChange(e,"operario"))" required>
             @if (editOrder.OperarioId == "sin asignar")
             {
                 <option value="0">Operario</option>
-            } else if (operarios != null)
+            }
+            else if (operarios != null)
             {
                 @foreach (var operario in operarios)
                 {
@@ -212,7 +276,7 @@
     }
 
     <button type="submit">Guardar Orden</button>
-    </form>
+</form>
 
 
 

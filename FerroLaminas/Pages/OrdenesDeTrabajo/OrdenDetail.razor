@@ -133,6 +133,76 @@
         }
     }
 }
+
+<style>
+    /* Título del formulario */
+    .cotizacion-title {
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Estilo del formulario */
+    .cotizacion-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+        /* Estilo de las etiquetas */
+        .cotizacion-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* Estilo de los campos de entrada y select */
+        .cotizacion-form input[type="date"],
+        .cotizacion-form input[type="text"],
+        .cotizacion-form input[type="number"],
+        .cotizacion-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        /* Estilo del botón de submit */
+        .cotizacion-form button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            /* Cambio de color del botón al pasar el mouse */
+            .cotizacion-form button[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+        /* Estilo para los div contenedores de cada campo */
+        .cotizacion-form div {
+            margin-bottom: 20px;
+        }
+
+        /* Estilo para campos readonly */
+        .cotizacion-form input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+</style>
+
 <h3 class="cotizacion-title">Orden</h3>
 <form class="cotizacion-form" onsubmit="@backHome">
     <div>
