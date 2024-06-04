@@ -20,6 +20,11 @@
     Double CompletadoPercent;
     Double CanceladoPercent;
     Double RechazadoPercent;
+    int PendientesNumber;
+    int ProgessNumber;
+    int CompletadoNumber;
+    int CanceladoNumber;
+    int RechazadoNumber;
 
     public class Rol
     {
@@ -76,6 +81,11 @@
             ordersCompletado = filteredItemsCompletado;
             ordersRechazado = filteredItemsRechazado;
             ordersCancelado = filteredItemsCancelado;
+            PendientesNumber = ordersPendientes.Count;
+            ProgessNumber = ordersProgress.Count;
+            CompletadoNumber = ordersCompletado.Count;
+            CanceladoNumber = ordersCancelado.Count; 
+            RechazadoNumber = ordersRechazado.Count;
             PendientesPercent = (ordersPendientes.Count * 100)/orders.Count;
             ProgessPercent = (ordersProgress.Count * 100) / orders.Count;
             CompletadoPercent = (ordersCompletado.Count * 100) / orders.Count;
@@ -206,6 +216,7 @@
 <div class="dashboard-container">
 <div class="dashboard-card pendientes">
     <p>Ordenes Pendientes</p>
+    <p class="order-number">@PendientesNumber</p>
     <div class="percent-bar">
             <div class="percent-color" style="width: @PendientesPercent%" />
         <p class="percent-value">@PendientesPercent %</p>
@@ -213,6 +224,7 @@
 </div>
     <div class="dashboard-card progreso">
     <p>Ordenes En proceso</p>
+        <p class="order-number">@ProgessNumber</p>
         <div class="percent-bar">
             <div class="percent-color" style="width: @ProgessPercent%" />
             <p class="percent-value">@ProgessPercent %</p>
@@ -220,6 +232,7 @@
 </div>
     <div class="dashboard-card complete">
     <p>Ordenes Completadas</p>
+        <p class="order-number">@CompletadoNumber</p>
         <div class="percent-bar">
             <div class="percent-color" style="width: @CompletadoPercent%" />
             <p class="percent-value">@CompletadoPercent %</p>
@@ -227,6 +240,7 @@
 </div>
     <div class="dashboard-card rechazado">
     <p>Ordenes Rechazadas</p>
+        <p class="order-number">@RechazadoNumber</p>
         <div class="percent-bar">
             <div class="percent-color" style="width: @RechazadoPercent%"/>
             <p class="percent-value">@RechazadoPercent %</p>
@@ -234,6 +248,7 @@
 </div>
     <div class="dashboard-card cancel">
     <p>Ordenes Canceladas</p>
+        <p class="order-number">@CanceladoNumber</p>
         <div class="percent-bar">
             <div class="percent-color" style="width: @CanceladoPercent%" />
             <p class="percent-value">@CanceladoPercent %</p>
