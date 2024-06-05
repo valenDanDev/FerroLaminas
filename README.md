@@ -42,7 +42,7 @@ El proyecto consiste en el desarrollo de un sistema web para gestionar las opera
   - Encargado de desarrollar y mantener la lógica del servidor.
   - Gestiona la base de datos y la integración de API.
 
-  - **Desarrollador Backend de Apoyo👨‍💻: Daniel Valencia Giraldo**
+- **Desarrollador Backend de Apoyo👨‍💻: Daniel Valencia Giraldo**
   - Encargado de desarrollar y mantener la lógica del servidor.
   - Gestiona la base de datos y la integración de API.
     
@@ -57,7 +57,6 @@ El proyecto consiste en el desarrollo de un sistema web para gestionar las opera
 - **Encargado del Despliegue 🚀: Daniel Valencia Giraldo**
   - Responsable de la implementación y mantenimiento del sistema en el entorno de producción.
   - Asegura la disponibilidad, rendimiento y seguridad del sistema desplegado.
----
 
 ---
 
