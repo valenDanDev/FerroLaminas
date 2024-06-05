@@ -64,5 +64,5 @@ El proyecto consiste en el desarrollo de un sistema web para gestionar las opera
 
 ---
 
-¡Gracias por interesarte en nuestro proyecto! Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
+¡Gracias por interesarte en nuestro proyecto! Si tienes alguna pregunta o necesitas más información,  no dudes en contactarnos.
 
